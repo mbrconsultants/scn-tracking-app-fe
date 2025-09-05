@@ -1,5 +1,6 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { Table } from "react-bootstrap";
+
 import user18 from "../../../assets/images/users/18.jpg";
 import user1 from "../../../assets/images/users/1.jpg";
 import user8 from "../../../assets/images/users/8.jpg";
@@ -32,7 +33,12 @@ export function Category() {
     },
   ];
   return (
-    <MultiSelect options={Options} onChange={handleOnchange}  placeholder="--Select--" singleSelect="true" />
+    <MultiSelect
+      options={Options}
+      onChange={handleOnchange}
+      placeholder="--Select--"
+      singleSelect="true"
+    />
   );
 }
 //Tableuserdata
@@ -51,12 +57,13 @@ export function Tableuserdata() {
     { IMG: user2, NAME: "Donnell Farries", DATE: "	03 Dec 2017", ID: 11 },
     { IMG: user5, NAME: "Letizia Puncher", DATE: "09 Dec 2017", ID: 12 },
   ];
+
   return (
     <Table className="border-top table-bordered">
       <thead>
         <tr>
           <th className="">Select</th>
-          <th className="">Photo</th>
+          {/* <th className="">Photo</th> */}
           <th>Name</th>
           <th>Date</th>
           <th className="">Actions</th>

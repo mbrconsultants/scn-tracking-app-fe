@@ -3,10 +3,8 @@ import { Link, Navigate } from "react-router-dom";
 import "react-data-table-component-extensions/dist/index.css";
 import DataTable from "react-data-table-component";
 import DataTableExtensions from "react-data-table-component-extensions";
-import { OverlayTrigger, Tooltip, Badge } from "react-bootstrap";
+
 import endpoint from "../../context/endpoint";
-import { Context } from "../../context/Context";
-import moment from "moment";
 import Loader from "../Loader/loader";
 import { Modal, FormGroup, Form } from "react-bootstrap";
 import { ErrorAlert, SuccessAlert } from "../../data/Toast/toast";
@@ -118,7 +116,7 @@ export const Users = () => {
 
     {
       name: "NAME",
-      selector: (row) => [row.surname],
+      selector: (row) => [row.fullname],
 
       style: { textAlign: "right" },
       sortable: true,
@@ -126,7 +124,7 @@ export const Users = () => {
       width: "400px",
       cell: (row) => (
         <div className="fs-12 fw-bold ">
-          {row.surname !== null ? row.surname : ""}{" "}
+          {row.fullname !== null ? row.fullname.toUpperCase() : ""}{" "}
         </div>
       ),
     },

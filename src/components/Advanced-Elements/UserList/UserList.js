@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Pagination, Breadcrumb,Row,Col,Card } from "react-bootstrap";
+import { Pagination, Breadcrumb, Row, Col, Card } from "react-bootstrap";
 import * as userdata from "../../../data/Advancedelements/userdata/userdata";
 export default function UserList() {
   return (

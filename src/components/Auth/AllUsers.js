@@ -27,6 +27,7 @@ export default function AllUsers() {
     unit_id: "",
     department_id: "",
     role_id: "",
+    signature_url: null,
   });
 
   // drawer controls
@@ -43,6 +44,7 @@ export default function AllUsers() {
       unit_id: "",
       department_id: "",
       role_id: "",
+      signature_url: null,
     });
   };
 
@@ -86,17 +88,40 @@ export default function AllUsers() {
   };
 
   // submit new user
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const res = await endpoint.post("/user/create", formData);
+  //     SuccessAlert(res.data.message);
+  //     handleClose();
+  //     // optionally refresh user list here
+  //   } catch (error) {
+  //     if (error.response) {
+  //       ErrorAlert(error.response.data.description);
+  //     }
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = await endpoint.post("/user/create", formData);
-      SuccessAlert(res.data.message);
-      handleClose();
-      // optionally refresh user list here
-    } catch (error) {
-      if (error.response) {
-        ErrorAlert(error.response.data.description);
+
+    const data = new FormData();
+
+    Object.keys(formData).forEach((key) => {
+      if (formData[key] !== null && formData[key] !== "") {
+        data.append(key, formData[key]);
       }
+    });
+
+    try {
+      const res = await endpoint.post("/user/create", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      console.log("✅ User added:", res.data);
+      handleClose();
+    } catch (err) {
+      console.error("❌ Upload failed:", err.response?.data || err.message);
     }
   };
 
@@ -302,6 +327,20 @@ export default function AllUsers() {
                   </option>
                 ))}
               </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Signature</Form.Label>
+              <Form.Control
+                type="file"
+                name="signature_url"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    setFormData({ ...formData, signature_url: file });
+                  }
+                }}
+              />
             </Form.Group>
 
             <div className="d-flex justify-content-end mt-3">

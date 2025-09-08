@@ -62,7 +62,7 @@ export default function Login() {
       padding: '20px'
     }}>
       {/* Home Button */}
-      <Link
+      {/* <Link
         to={`${process.env.PUBLIC_URL}/home/`}
         className="btn btn-outline-light home-btn"
         style={{
@@ -77,7 +77,7 @@ export default function Login() {
         }}
       >
         <span className="fa fa-home"></span> Home
-      </Link>
+      </Link> */}
 
       <div className="container">
         <div className="row justify-content-center">

@@ -8,7 +8,7 @@ import { Context, ContextProvider } from "./context/Context";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MainLayout from "./weblayouts/MainLayout";
-import Login2 from "./components/pages/Home";
+import Home from "./components/pages/Home";
 
 const Switcherlayout = React.lazy(() => import("./components/switcherlayout"));
 
@@ -385,8 +385,7 @@ const Root = () => {
                             /> */}
               <Route element={<MainLayout />}>
                
-                <Route path="/login" element={<Login />} />
-                {/* <Route path="/home" element={<Home />} /> */}
+                <Route path="/home" element={<Home />} />
              
               </Route>
 
@@ -396,7 +395,7 @@ const Root = () => {
                   user ? (
                     <App />
                   ) : (
-                    <Navigate to={`${process.env.PUBLIC_URL}/login`} />
+                    <Navigate to={`${process.env.PUBLIC_URL}/home`} />
                   )
                 }
               >
@@ -411,102 +410,102 @@ const Root = () => {
                   element={<Widgets />}
                 />
 
-                <Route>
-                    {/* supreme court route links */}
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/assign-module-to-role`}
-                        element={<AssignModuleToRole />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/submodule-list`}
-                        element={<CreateSubmodule />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/role`}
-                        element={<CreateRole />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/users-and-role`}
-                        element={<AssignUserToRole />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/users`}
-                        element={<AllUsers />}
-                    />
-                        <Route
-                        path={`${process.env.PUBLIC_URL}/create-user`}
-                        element={<CreateUser />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/module-list`}
-                        element={<CreateModule />}
-                    />
-                    
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/location-list`}
-                        element={<CreateLocation />}
-                    />
-                    
-                    
-                    
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/components/cardsDesign`}
-                        element={<CardDesign />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/components/fullCalendar`}
-                        element={<FullCalendar />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/components/defaultChat`}
-                        element={<DefaultChat />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/components/notifications`}
-                        element={<Notifications />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/components/sweetAlerts`}
-                        element={<SweetAlerts />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/components/rangeSlider`}
-                        element={<RangeSlider />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/components/contentScrollBar`}
-                        element={<ContentScrollBar />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/components/loader`}
-                        element={<Loader />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/components/counters`}
-                        element={<Counters />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/components/rating`}
-                        element={<Rating />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/components/timeline`}
-                        element={<Timeline />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/components/treeview`}
-                        element={<Treeview />}
-                    />
-                </Route>
-                <Route>
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/elements/alerts`}
-                        element={<Alerts />}
-                    />
-                    <Route
-                        path={`${process.env.PUBLIC_URL}/elements/buttons`}
-                        element={<Buttons />}
-                    />
+                                <Route>
+                                    {/* supreme court route links */}
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/assign-module-to-role`}
+                                        element={<AssignModuleToRole />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/submodule-list`}
+                                        element={<CreateSubmodule />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/role`}
+                                        element={<CreateRole />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/users-and-role`}
+                                        element={<AssignUserToRole />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/users`}
+                                        element={<AllUsers />}
+                                    />
+                                     <Route
+                                        path={`${process.env.PUBLIC_URL}/create-user`}
+                                        element={<CreateUser />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/module-list`}
+                                        element={<CreateModule />}
+                                    />
+                                    
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/location-list`}
+                                        element={<CreateLocation />}
+                                    />
+                                    
+                                    
+                                    
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/components/cardsDesign`}
+                                        element={<CardDesign />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/components/fullCalendar`}
+                                        element={<FullCalendar />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/components/defaultChat`}
+                                        element={<DefaultChat />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/components/notifications`}
+                                        element={<Notifications />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/components/sweetAlerts`}
+                                        element={<SweetAlerts />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/components/rangeSlider`}
+                                        element={<RangeSlider />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/components/contentScrollBar`}
+                                        element={<ContentScrollBar />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/components/loader`}
+                                        element={<Loader />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/components/counters`}
+                                        element={<Counters />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/components/rating`}
+                                        element={<Rating />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/components/timeline`}
+                                        element={<Timeline />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/components/treeview`}
+                                        element={<Treeview />}
+                                    />
+                                </Route>
+                                <Route>
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/elements/alerts`}
+                                        element={<Alerts />}
+                                    />
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/elements/buttons`}
+                                        element={<Buttons />}
+                                    />
 
                   <Route
                     path={`${process.env.PUBLIC_URL}/elements/colors`}

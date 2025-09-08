@@ -34,7 +34,7 @@ import {
   Dropdown,
 } from "react-bootstrap";
 
-export const Users = () => {
+export const Users = ({ refreshKey }) => {
   const {
     handleSubmit,
     register,
@@ -53,10 +53,15 @@ export const Users = () => {
     role_id: "",
   });
 
+  // useEffect(() => {
+  //   getUsersList();
+  //   getUsersroles();
+  // }, []);
+
   useEffect(() => {
     getUsersList();
     getUsersroles();
-  }, []);
+  }, [refreshKey]);
 
   //get users
   const getUsersList = async () => {

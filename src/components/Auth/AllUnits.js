@@ -16,6 +16,7 @@ export default function AllUsers() {
   const [roles, setRoles] = useState([]);
   const [units, setUnits] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -96,6 +97,7 @@ export default function AllUsers() {
 
       // ✅ show success toast
       SuccessAlert("Unit created successfully!");
+      setRefreshKey((prev) => prev + 1);
 
       // close drawer and reset form
       handleClose();
@@ -152,7 +154,7 @@ export default function AllUsers() {
             <Card.Body>
               <div className="">
                 <div className="">
-                  <Units.Units />
+                  <Units.Units refreshKey={refreshKey} />
                 </div>
               </div>
             </Card.Body>

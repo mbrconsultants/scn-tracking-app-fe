@@ -154,23 +154,12 @@ export default function AllUsers() {
         <div>
           {/* <h1 className="page-title">Documentation </h1> */}
           <Breadcrumb className="breadcrumb">
-            <Breadcrumb.Item className="breadcrumb-item" href="#">
-              Home
-            </Breadcrumb.Item>
-            <Breadcrumb.Item
-              className="breadcrumb-item active breadcrumds"
-              aria-current="page"
-            >
-              Users List
-              {/* Staff documentation */}
-            </Breadcrumb.Item>
+            {/* <Breadcrumb.Item href="#">Home</Breadcrumb.Item> */}
+            <Breadcrumb.Item active>Users List</Breadcrumb.Item>
           </Breadcrumb>
         </div>
         <div className="ms-auto pageheader-btn">
-          <Button
-            onClick={handleOpen}
-            className="btn btn-primary btn-icon text-white me-3"
-          >
+          <Button onClick={handleOpen} className="btn btn-green btn-icon me-3">
             <span>
               <i className="fe fe-plus"></i>&nbsp;
             </span>
@@ -241,7 +230,9 @@ export default function AllUsers() {
       {/* Drawer on the left */}
       <Drawer anchor="left" open={open} onClose={handleClose}>
         <div style={{ width: 400, padding: "20px" }}>
-          <h4 className="mb-3">Add User</h4>
+          <h4 className="mb-3" style={{ color: "#0a7e51" }}>
+            Add User
+          </h4>
           <Form onSubmit={handleSubmit}>
             <TextField
               label="Email"

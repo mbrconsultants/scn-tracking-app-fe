@@ -118,23 +118,24 @@ export default function AllUsers() {
       <div className="page-header ">
         <div>
           {/* <h1 className="page-title">Documentation </h1> */}
+
           <Breadcrumb className="breadcrumb">
-            <Breadcrumb.Item className="breadcrumb-item" href="#">
-              Home
-            </Breadcrumb.Item>
-            <Breadcrumb.Item
-              className="breadcrumb-item active breadcrumds text-white"
-              aria-current="page"
-            >
-              {/* Staff documentation */}Units List
-            </Breadcrumb.Item>
+            {/* <Breadcrumb.Item href="#">Home</Breadcrumb.Item> */}
+            <Breadcrumb.Item active>Units List</Breadcrumb.Item>
           </Breadcrumb>
         </div>
         <div className="ms-auto pageheader-btn">
-          <Button
+          {/* <Button
             onClick={handleOpen}
             className="btn btn-primary btn-icon text-white me-3"
           >
+            <span>
+              <i className="fe fe-plus"></i>&nbsp;
+            </span>
+            Add Unit
+          </Button> */}
+
+          <Button onClick={handleOpen} className="btn btn-green btn-icon me-3">
             <span>
               <i className="fe fe-plus"></i>&nbsp;
             </span>

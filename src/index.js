@@ -313,6 +313,10 @@ const AssignModuleToRole = React.lazy(() =>
 const CreateSubmodule = React.lazy(() =>
     import("./components/Module/CreateSubmodule")
 );
+
+const CreateLocation = React.lazy(() =>
+    import("./components/SetUp/CreateLocation")
+);
 const LockScreen = React.lazy(() =>
     import("./components/CustomPages/LockScreen/LockScreen")
 );
@@ -460,12 +464,12 @@ const Root = () => {
                                         element={<CreateModule />}
                                     />
                                     
+                                    <Route
+                                        path={`${process.env.PUBLIC_URL}/location-list`}
+                                        element={<CreateLocation />}
+                                    />
                                     
-                                    {/* <Route
-                                        path={`${process.env.PUBLIC_URL}/profile/show-profile/:id`}
-                                        element={<ViewProfile />}
-                                    /> */}
-
+                                    
                                     
                                     <Route
                                         path={`${process.env.PUBLIC_URL}/components/cardsDesign`}

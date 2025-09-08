@@ -307,9 +307,8 @@ const AssignModuleToRole = React.lazy(() =>
 const CreateSubmodule = React.lazy(() =>
   import("./components/Module/CreateSubmodule")
 );
-
 const CreateLocation = React.lazy(() =>
-    import("./components/SetUp/CreateLocation")
+  import("./components/SetUp/CreateLocation")
 );
 const LockScreen = React.lazy(() =>
   import("./components/CustomPages/LockScreen/LockScreen")

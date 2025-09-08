@@ -34,7 +34,7 @@ import {
   Dropdown,
 } from "react-bootstrap";
 
-export const Units = () => {
+export const Units = ({ refreshKey }) => {
   const {
     handleSubmit,
     register,
@@ -63,7 +63,7 @@ export const Units = () => {
   useEffect(() => {
     getUnitsList();
     getUsersroles();
-  }, []);
+  }, [refreshKey]);
 
   //get users
   const getUnitsList = async () => {

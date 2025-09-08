@@ -16,6 +16,7 @@ export default function AllUsers() {
   const [roles, setRoles] = useState([]);
   const [units, setUnits] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -61,7 +62,7 @@ export default function AllUsers() {
 
     const getUnits = async () => {
       try {
-        const res = await endpoint.get("/unit/list");
+        const res = await endpoint.get("/unit/get-all-units");
         setUnits(res.data.data);
       } catch (err) {
         console.error(err);
@@ -70,7 +71,7 @@ export default function AllUsers() {
 
     const getDepartments = async () => {
       try {
-        const res = await endpoint.get("/department/list");
+        const res = await endpoint.get("/department/get-all-departments");
         setDepartments(res.data.data);
       } catch (err) {
         console.error(err);
@@ -102,13 +103,34 @@ export default function AllUsers() {
   //   }
   // };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const data = new FormData();
+
+  //   Object.keys(formData).forEach((key) => {
+  //     if (formData[key] !== null && formData[key] !== "") {
+  //       data.append(key, formData[key]);
+  //     }
+  //   });
+
+  //   try {
+  //     const res = await endpoint.post("/user/create", data, {
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //     });
+
+  //     console.log("✅ User added:", res.data);
+  //     handleClose();
+  //   } catch (err) {
+  //     console.error("❌ Upload failed:", err.response?.data || err.message);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const data = new FormData();
-
     Object.keys(formData).forEach((key) => {
-      if (formData[key] !== null && formData[key] !== "") {
+      if (formData[key]) {
         data.append(key, formData[key]);
       }
     });
@@ -118,10 +140,11 @@ export default function AllUsers() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("✅ User added:", res.data);
+      SuccessAlert("✅ User added successfully!");
+      setRefreshKey((prev) => prev + 1); // 👈 trigger reload in Users
       handleClose();
     } catch (err) {
-      console.error("❌ Upload failed:", err.response?.data || err.message);
+      ErrorAlert(err.response?.data?.description || "Upload failed");
     }
   };
 
@@ -167,7 +190,7 @@ export default function AllUsers() {
             <Card.Body>
               <div className="">
                 <div className="">
-                  <Users.Users />
+                  <Users.Users refreshKey={refreshKey} />
                 </div>
               </div>
             </Card.Body>
@@ -291,7 +314,7 @@ export default function AllUsers() {
                 <option value="">-- select unit --</option>
                 {units.map((u) => (
                   <option key={u.id} value={u.id}>
-                    {u.unit_name}
+                    {u.name}
                   </option>
                 ))}
               </Form.Select>
@@ -307,7 +330,7 @@ export default function AllUsers() {
                 <option value="">-- select department --</option>
                 {departments.map((d) => (
                   <option key={d.id} value={d.id}>
-                    {d.department_name}
+                    {d.name}
                   </option>
                 ))}
               </Form.Select>

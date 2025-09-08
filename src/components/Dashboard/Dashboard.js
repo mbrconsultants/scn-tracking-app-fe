@@ -84,12 +84,12 @@ export default function Dashboard() {
       <div className="page-header">
         <div>
           <h1 className="page-title text-center">SCN FILE TRACKING SYSTEM</h1>
-          <Breadcrumb className="breadcrumb">
-            <Breadcrumb.Item className="breadcrumb-item" href="#">
+          <Breadcrumb className="">
+            <Breadcrumb.Item className="" href="#">
               Home
             </Breadcrumb.Item>
             <Breadcrumb.Item
-              className="breadcrumb-item active breadcrumds"
+              className=""
               aria-current="page"
             >
               Dashboard 

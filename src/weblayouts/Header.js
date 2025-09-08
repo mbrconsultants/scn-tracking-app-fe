@@ -14,7 +14,7 @@ const Header = () => {
     console.log("user", user)
     return (
         <>
-            <div>
+            {/* <div>
                 <div className="container-fluid bg-dark text-light px-0 py-2"
                     style={{ backgroundColor: '#008751' }}>
                     <div className="row gx-0 d-none d-lg-flex">
@@ -71,7 +71,7 @@ const Header = () => {
                         </div>
                     </>}
                 </nav>
-            </div>
+            </div> */}
 
         </>
     )

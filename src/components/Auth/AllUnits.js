@@ -3,7 +3,7 @@ import CountUp from "react-countup";
 import ReactApexChart from "react-apexcharts";
 import { Breadcrumb, Col, Row, Card, Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form"; // <-- add this
-import * as Users from "../../data/Users/Users";
+import * as Units from "../../data/Units/Units";
 import { Link, useNavigate } from "react-router-dom";
 import endpoint from "../../context/endpoint";
 import { useForm } from "react-hook-form";
@@ -18,16 +18,7 @@ export default function AllUsers() {
   const [departments, setDepartments] = useState([]);
 
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    surname: "",
-    first_name: "",
-    middle_name: "",
-    file_number: "",
-    unit_id: "",
-    department_id: "",
-    role_id: "",
-    signature_url: null,
+    name: "",
   });
 
   // drawer controls
@@ -35,16 +26,7 @@ export default function AllUsers() {
   const handleClose = () => {
     setOpen(false);
     setFormData({
-      email: "",
-      password: "",
-      surname: "",
-      first_name: "",
-      middle_name: "",
-      file_number: "",
-      unit_id: "",
-      department_id: "",
-      role_id: "",
-      signature_url: null,
+      name: "",
     });
   };
 
@@ -61,7 +43,7 @@ export default function AllUsers() {
 
     const getUnits = async () => {
       try {
-        const res = await endpoint.get("/unit/list");
+        const res = await endpoint.get("/unit/get-all-units");
         setUnits(res.data.data);
       } catch (err) {
         console.error(err);
@@ -87,41 +69,45 @@ export default function AllUsers() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // submit new user
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
+
   //   try {
-  //     const res = await endpoint.post("/user/create", formData);
-  //     SuccessAlert(res.data.message);
+  //     const res = await endpoint.post("/unit/create-unit", {
+  //       name: formData.name,
+  //     });
+
+  //     console.log("✅ Unit added:", res.data);
   //     handleClose();
-  //     // optionally refresh user list here
-  //   } catch (error) {
-  //     if (error.response) {
-  //       ErrorAlert(error.response.data.description);
-  //     }
+  //   } catch (err) {
+  //     console.error("❌ Upload failed:", err.response?.data || err.message);
   //   }
   // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = new FormData();
-
-    Object.keys(formData).forEach((key) => {
-      if (formData[key] !== null && formData[key] !== "") {
-        data.append(key, formData[key]);
-      }
-    });
-
     try {
-      const res = await endpoint.post("/user/create", data, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const res = await endpoint.post("/unit/create-unit", {
+        name: formData.name,
       });
 
-      console.log("✅ User added:", res.data);
+      console.log("✅ Unit added:", res.data);
+
+      // ✅ show success toast
+      SuccessAlert("Unit created successfully!");
+
+      // close drawer and reset form
       handleClose();
+
+      // optionally refresh the unit list
+      const refreshed = await endpoint.get("/unit/get-all-units");
+      setUnits(refreshed.data.data);
     } catch (err) {
       console.error("❌ Upload failed:", err.response?.data || err.message);
+
+      // ❌ show error toast
+      ErrorAlert(err.response?.data?.message || "Failed to create unit");
     }
   };
 
@@ -135,11 +121,10 @@ export default function AllUsers() {
               Home
             </Breadcrumb.Item>
             <Breadcrumb.Item
-              className="breadcrumb-item active breadcrumds"
+              className="breadcrumb-item active breadcrumds text-white"
               aria-current="page"
             >
-              Users List
-              {/* Staff documentation */}
+              {/* Staff documentation */}Units List
             </Breadcrumb.Item>
           </Breadcrumb>
         </div>
@@ -151,7 +136,7 @@ export default function AllUsers() {
             <span>
               <i className="fe fe-plus"></i>&nbsp;
             </span>
-            Add User
+            Add Unit
           </Button>
         </div>
       </div>
@@ -162,12 +147,12 @@ export default function AllUsers() {
         <Col sm={12} className="col-12">
           <Card>
             <Card.Header>
-              <Col className="card-title text-center mb-0"> USERS LIST </Col>
+              <Col className="card-title text-center mb-0"> UNITS LIST </Col>
             </Card.Header>
             <Card.Body>
               <div className="">
                 <div className="">
-                  <Users.Users />
+                  <Units.Units />
                 </div>
               </div>
             </Card.Body>
@@ -175,50 +160,10 @@ export default function AllUsers() {
         </Col>
       </Row>
 
-      {/* <Drawer anchor="left" open={open} onClose={handleClose}>
-        <div style={{ width: 350, padding: "20px" }}>
-          <h4>Add User</h4>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="fullname"
-            label="Full Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-          />
-          <TextField
-            margin="dense"
-            id="email"
-            label="Email"
-            type="email"
-            fullWidth
-            variant="outlined"
-          />
-          <TextField
-            margin="dense"
-            id="password"
-            label="Password"
-            type="password"
-            fullWidth
-            variant="outlined"
-          />
-
-          <div className="d-flex justify-content-end mt-3">
-            <Button onClick={handleClose} variant="secondary" className="me-2">
-              Cancel
-            </Button>
-            <Button onClick={handleClose} variant="success">
-              Save
-            </Button>
-          </div>
-        </div>
-      </Drawer> */}
-
       {/* Drawer on the left */}
-      <Drawer anchor="left" open={open} onClose={handleClose}>
+      {/* <Drawer anchor="left" open={open} onClose={handleClose}>
         <div style={{ width: 400, padding: "20px" }}>
-          <h4 className="mb-3">Add User</h4>
+          <h4 className="mb-3">Add Unit</h4>
           <Form onSubmit={handleSubmit}>
             <TextField
               label="Email"
@@ -343,6 +288,35 @@ export default function AllUsers() {
                 }}
               />
             </Form.Group>
+
+            <div className="d-flex justify-content-end mt-3">
+              <Button
+                onClick={handleClose}
+                variant="secondary"
+                className="me-2"
+              >
+                Cancel
+              </Button>
+              <Button type="submit" variant="success">
+                Save
+              </Button>
+            </div>
+          </Form>
+        </div>
+      </Drawer> */}
+      <Drawer anchor="left" open={open} onClose={handleClose}>
+        <div style={{ width: 400, padding: "20px" }}>
+          <h4 className="mb-3">Add Unit</h4>
+          <Form onSubmit={handleSubmit}>
+            <TextField
+              label="Unit Name"
+              name="name"
+              value={formData.name || ""}
+              onChange={handleChange}
+              fullWidth
+              required
+              className="mb-3"
+            />
 
             <div className="d-flex justify-content-end mt-3">
               <Button

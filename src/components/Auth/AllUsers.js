@@ -187,46 +187,6 @@ export default function AllUsers() {
         </Col>
       </Row>
 
-      {/* <Drawer anchor="left" open={open} onClose={handleClose}>
-        <div style={{ width: 350, padding: "20px" }}>
-          <h4>Add User</h4>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="fullname"
-            label="Full Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-          />
-          <TextField
-            margin="dense"
-            id="email"
-            label="Email"
-            type="email"
-            fullWidth
-            variant="outlined"
-          />
-          <TextField
-            margin="dense"
-            id="password"
-            label="Password"
-            type="password"
-            fullWidth
-            variant="outlined"
-          />
-
-          <div className="d-flex justify-content-end mt-3">
-            <Button onClick={handleClose} variant="secondary" className="me-2">
-              Cancel
-            </Button>
-            <Button onClick={handleClose} variant="success">
-              Save
-            </Button>
-          </div>
-        </div>
-      </Drawer> */}
-
       {/* Drawer on the left */}
       <Drawer anchor="left" open={open} onClose={handleClose}>
         <div style={{ width: 400, padding: "20px" }}>

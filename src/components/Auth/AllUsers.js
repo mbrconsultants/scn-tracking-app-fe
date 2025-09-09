@@ -88,44 +88,6 @@ export default function AllUsers() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // submit new user
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const res = await endpoint.post("/user/create", formData);
-  //     SuccessAlert(res.data.message);
-  //     handleClose();
-  //     // optionally refresh user list here
-  //   } catch (error) {
-  //     if (error.response) {
-  //       ErrorAlert(error.response.data.description);
-  //     }
-  //   }
-  // };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   const data = new FormData();
-
-  //   Object.keys(formData).forEach((key) => {
-  //     if (formData[key] !== null && formData[key] !== "") {
-  //       data.append(key, formData[key]);
-  //     }
-  //   });
-
-  //   try {
-  //     const res = await endpoint.post("/user/create", data, {
-  //       headers: { "Content-Type": "multipart/form-data" },
-  //     });
-
-  //     console.log("✅ User added:", res.data);
-  //     handleClose();
-  //   } catch (err) {
-  //     console.error("❌ Upload failed:", err.response?.data || err.message);
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
@@ -255,6 +217,22 @@ export default function AllUsers() {
               className="mb-3"
             />
 
+            {/* <Form.Group className="mb-3">
+              <Form.Label>Department</Form.Label>
+              <Form.Select
+                name="department_id"
+                value={formData.department_id}
+                onChange={handleChange}
+              >
+                <option value="">-- select department --</option>
+                {departments.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Unit</Form.Label>
               <Form.Select
@@ -269,14 +247,18 @@ export default function AllUsers() {
                   </option>
                 ))}
               </Form.Select>
-            </Form.Group>
+            </Form.Group> */}
 
             <Form.Group className="mb-3">
               <Form.Label>Department</Form.Label>
               <Form.Select
                 name="department_id"
                 value={formData.department_id}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  // reset unit when department changes
+                  setFormData((prev) => ({ ...prev, unit_id: "" }));
+                }}
               >
                 <option value="">-- select department --</option>
                 {departments.map((d) => (
@@ -284,6 +266,27 @@ export default function AllUsers() {
                     {d.name}
                   </option>
                 ))}
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Unit</Form.Label>
+              <Form.Select
+                name="unit_id"
+                value={formData.unit_id}
+                onChange={handleChange}
+                disabled={!formData.department_id} // disable until dept is selected
+              >
+                <option value="">-- select unit --</option>
+                {units
+                  .filter(
+                    (u) => u.department_id === parseInt(formData.department_id)
+                  ) // filter units by dept
+                  .map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.name}
+                    </option>
+                  ))}
               </Form.Select>
             </Form.Group>
 

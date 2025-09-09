@@ -11,7 +11,7 @@ import { ErrorAlert, SuccessAlert } from "../../data/Toast/toast";
 import Drawer from "@mui/material/Drawer";
 import TextField from "@mui/material/TextField";
 
-export default function AllUsers() {
+export default function AllUnits() {
   const [open, setOpen] = useState(false);
   const [roles, setRoles] = useState([]);
   const [units, setUnits] = useState([]);
@@ -33,14 +33,14 @@ export default function AllUsers() {
 
   // fetch dropdown data
   useEffect(() => {
-    const getRoles = async () => {
-      try {
-        const res = await endpoint.get("/role/getRoles");
-        setRoles(res.data.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+    // const getRoles = async () => {
+    //   try {
+    //     const res = await endpoint.get("/role/getRoles");
+    //     setRoles(res.data.data);
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
+    // };
 
     const getUnits = async () => {
       try {
@@ -51,18 +51,18 @@ export default function AllUsers() {
       }
     };
 
-    const getDepartments = async () => {
-      try {
-        const res = await endpoint.get("/department/list");
-        setDepartments(res.data.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+    // const getDepartments = async () => {
+    //   try {
+    //     const res = await endpoint.get("/department/list");
+    //     setDepartments(res.data.data);
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
+    // };
 
-    getRoles();
+    // getRoles();
     getUnits();
-    getDepartments();
+    // getDepartments();
   }, []);
 
   // handle input
@@ -164,149 +164,7 @@ export default function AllUsers() {
       </Row>
 
       {/* Drawer on the left */}
-      {/* <Drawer anchor="left" open={open} onClose={handleClose}>
-        <div style={{ width: 400, padding: "20px" }}>
-          <h4 className="mb-3">Add Unit</h4>
-          <Form onSubmit={handleSubmit}>
-            <TextField
-              label="Email"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              fullWidth
-              required
-              className="mb-3"
-            />
 
-            <TextField
-              label="Password"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              fullWidth
-              required
-              className="mb-3"
-            />
-
-            <TextField
-              label="Surname"
-              name="surname"
-              value={formData.surname}
-              onChange={handleChange}
-              fullWidth
-              required
-              className="mb-3"
-            />
-
-            <TextField
-              label="First Name"
-              name="first_name"
-              value={formData.first_name}
-              onChange={handleChange}
-              fullWidth
-              required
-              className="mb-3"
-            />
-
-            <TextField
-              label="Middle Name"
-              name="middle_name"
-              value={formData.middle_name}
-              onChange={handleChange}
-              fullWidth
-              className="mb-3"
-            />
-
-            <TextField
-              label="File Number"
-              name="file_number"
-              value={formData.file_number}
-              onChange={handleChange}
-              fullWidth
-              required
-              className="mb-3"
-            />
-
-            <Form.Group className="mb-3">
-              <Form.Label>Unit</Form.Label>
-              <Form.Select
-                name="unit_id"
-                value={formData.unit_id}
-                onChange={handleChange}
-              >
-                <option value="">-- select unit --</option>
-                {units.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.unit_name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Department</Form.Label>
-              <Form.Select
-                name="department_id"
-                value={formData.department_id}
-                onChange={handleChange}
-              >
-                <option value="">-- select department --</option>
-                {departments.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.department_name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Role</Form.Label>
-              <Form.Select
-                name="role_id"
-                value={formData.role_id}
-                onChange={handleChange}
-                required
-              >
-                <option value="">-- select role --</option>
-                {roles.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.role_name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Signature</Form.Label>
-              <Form.Control
-                type="file"
-                name="signature_url"
-                accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    setFormData({ ...formData, signature_url: file });
-                  }
-                }}
-              />
-            </Form.Group>
-
-            <div className="d-flex justify-content-end mt-3">
-              <Button
-                onClick={handleClose}
-                variant="secondary"
-                className="me-2"
-              >
-                Cancel
-              </Button>
-              <Button type="submit" variant="success">
-                Save
-              </Button>
-            </div>
-          </Form>
-        </div>
-      </Drawer> */}
       <Drawer anchor="left" open={open} onClose={handleClose}>
         <div style={{ width: 400, padding: "20px" }}>
           <h4 className="mb-3">Add Unit</h4>

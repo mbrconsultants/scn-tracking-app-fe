@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CountUp from "react-countup";
 import ReactApexChart from "react-apexcharts";
-import { Breadcrumb, Col, Row, Card, Button } from "react-bootstrap";
+import { Breadcrumb, Col, Row, Card, Button, Modal } from "react-bootstrap";
 import Form from "react-bootstrap/Form"; // <-- add this
 import * as Units from "../../data/Units/Units";
 import { Link, useNavigate } from "react-router-dom";
@@ -165,9 +165,11 @@ export default function AllUnits() {
 
       {/* Drawer on the left */}
 
-      <Drawer anchor="left" open={open} onClose={handleClose}>
+      {/* <Drawer anchor="left" open={open} onClose={handleClose}>
         <div style={{ width: 400, padding: "20px" }}>
-          <h4 className="mb-3">Add Unit</h4>
+          <h4 className="mb-3" style={{ color: "#0a7e51" }}>
+            Add Unit
+          </h4>
           <Form onSubmit={handleSubmit}>
             <TextField
               label="Unit Name"
@@ -193,7 +195,34 @@ export default function AllUnits() {
             </div>
           </Form>
         </div>
-      </Drawer>
+      </Drawer> */}
+
+      <Modal show={open} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ color: "#0a7e51" }}>Add Unit</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={handleSubmit}>
+          <Modal.Body>
+            <TextField
+              label="Unit Name"
+              name="name"
+              value={formData.name || ""}
+              onChange={handleChange}
+              fullWidth
+              required
+              className="mb-3"
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={handleClose} variant="secondary">
+              Cancel
+            </Button>
+            <Button type="submit" variant="success">
+              Save
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
     </div>
   );
 }

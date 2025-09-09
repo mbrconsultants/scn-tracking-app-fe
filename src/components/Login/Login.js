@@ -136,12 +136,12 @@ export default function Login() {
                       <label htmlFor="password" className="form-label fw-semibold" style={{ color: '#2c3e50' }}>
                         Password
                       </label>
-                      <Link
+                      {/* <Link
                         to={`${process.env.PUBLIC_URL}/forgotPassword/`}
                         className="text-primary small text-decoration-none"
                       >
                         Forgot Password?
-                      </Link>
+                      </Link> */}
                     </div>
                     <div className="input-group">
                       <span className="input-group-text bg-transparent" style={{ borderRight: 'none' }}>
@@ -165,15 +165,19 @@ export default function Login() {
 
                   <div className="mb-3">
                     <button 
-                      className={`btn w-100 py-2 fw-semibold ${loading ? "btn-primary btn-loading" : "btn-primary"}`}
+                      className={`btn w-100 py-2 fw-semibold ${loading ? "btn-loading" : ""}`}
                       disabled={isFetching}
                       style={{
                         borderRadius: '8px',
                         border: '0',
-                        background: 'linear-gradient(45deg, #4b6cb7, #182848)',
+                        backgroundColor: '#0A7E51',
+                        color: 'white',
                         fontSize: '1rem',
-                        position: 'relative'
+                        position: 'relative',
+                        transition: 'all 0.3s ease'
                       }}
+                      onMouseOver={(e) => e.target.style.backgroundColor = '#086845'}
+                      onMouseOut={(e) => e.target.style.backgroundColor = '#0A7E51'}
                     >
                       {loading ? (
                         <>
@@ -186,7 +190,7 @@ export default function Login() {
                     </button>
                   </div>
 
-                  <div className="text-center pt-2">
+                  {/* <div className="text-center pt-2">
                     <p className="mb-0 text-muted">
                       Don't have an account?{' '}
                       <Link
@@ -196,7 +200,7 @@ export default function Login() {
                         Create Account
                       </Link>
                     </p>
-                  </div>
+                  </div> */}
                 </form>
               </Card.Body>
             </Card>
@@ -215,7 +219,7 @@ export default function Login() {
         
         .form-control:focus {
           box-shadow: none;
-          border-color: #4b6cb7;
+          border-color: #0A7E51;
         }
         
         .input-group-text {

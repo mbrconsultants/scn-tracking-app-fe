@@ -281,9 +281,9 @@ const Login = React.lazy(() => import("./components/Login/Login"));
 
 // const OtpVerification = React.lazy(() => import("./components/Scn-Components/Login/OtpVerification"));
 
-const Register = React.lazy(() =>
-  import("./components/CustomPages/Register/Register")
-);
+// const Register = React.lazy(() =>
+//   import("./components/CustomPages/Register/Register")
+// );
 const ForgotPassword = React.lazy(() =>
   import("./components/ForgotPassword/ForgotPassword")
 );
@@ -309,6 +309,9 @@ const CreateSubmodule = React.lazy(() =>
 );
 const CreateLocation = React.lazy(() =>
   import("./components/SetUp/CreateLocation")
+);
+const CreateFile = React.lazy(() =>
+  import("./components/File/CreateFile")
 );
 const LockScreen = React.lazy(() =>
   import("./components/CustomPages/LockScreen/LockScreen")
@@ -446,6 +449,10 @@ const Root = () => {
                   <Route
                     path={`${process.env.PUBLIC_URL}/location-list`}
                     element={<CreateLocation />}
+                  />
+                  <Route
+                    path={`${process.env.PUBLIC_URL}/files`}
+                    element={<CreateFile />}
                   />
 
                   <Route
@@ -894,22 +901,22 @@ const Root = () => {
                                     path={`${process.env.PUBLIC_URL}/otp-verification`}
                                     element={<OtpVerification />}
                                 /> */}
-                <Route
+                {/* <Route
                   path={`${process.env.PUBLIC_URL}/register`}
                   element={<Register />}
-                />
-                <Route
+                /> */}
+                {/* <Route
                   path={`${process.env.PUBLIC_URL}/forgotPassword`}
                   element={<ForgotPassword />}
-                />
-                <Route
+                /> */}
+                {/* <Route
                   path={`${process.env.PUBLIC_URL}/forgot-password-request-success`}
                   element={<ForgotRequest />}
-                />
-                <Route
+                /> */}
+                {/* <Route
                   path={`${process.env.PUBLIC_URL}/reset-password/:id`}
                   element={<PasswordReset />}
-                />
+                /> */}
                 <Route
                   path={`${process.env.PUBLIC_URL}/custompages/lockScreen`}
                   element={<LockScreen />}

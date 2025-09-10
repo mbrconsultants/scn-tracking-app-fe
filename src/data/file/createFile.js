@@ -98,10 +98,14 @@ export const CreateFile = ({ datas, getAllData }) => {
     };
 
     const reset = () => {
-        setNewLocation({
-            location_id: "",
-            name: "",
+        setNewFile({
+             file_id: "",
+            file_Name: "",
             description: "",
+            file_Number: "",
+            process_Number: "",
+            page_Number: "",
+            parties: "",
         });
     };
 
@@ -118,18 +122,32 @@ export const CreateFile = ({ datas, getAllData }) => {
             width: "10%",
         },
         {
-            name: "Name",
+            name: "File Name",
             selector: (row) => row.file_Name,
             sortable: true,
-            width: "30%",
+            width: "20%",
             cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Name}</h6>,
         },
         {
-            name: "Name",
+            name: "File Number",
             selector: (row) => row.file_Number,
             sortable: true,
-            width: "30%",
+            width: "15%",
             cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Number}</h6>,
+        },
+        {
+            name: "Process Number",
+            selector: (row) => row.process_Number,
+            sortable: true,
+            width: "15%",
+            cell: (row) => <h6 className="fs-12 fw-semibold">{row.process_Number}</h6>,
+        },
+        {
+            name: "Page Number",
+            selector: (row) => row.page_Number,
+            sortable: true,
+            width: "15%",
+            cell: (row) => <h6 className="fs-12 fw-semibold">{row.page_Number}</h6>,
         },
         {
             name: "Description",
@@ -198,44 +216,98 @@ export const CreateFile = ({ datas, getAllData }) => {
                         {/* Edit Modal */}
                         <Modal show={open} onHide={onClose}>
                             <Modal.Header closeButton>
-                                <Modal.Title>Edit Location</Modal.Title>
+                                <Modal.Title>Edit File</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
                                 <form>
                                     <div className="form-group mb-3">
                                         <label>
-                                            Name <span className="text-danger">*</span>
+                                            File Name <span className="text-danger">*</span>
                                         </label>
                                         <input
                                             type="text"
                                             className="form-control"
-                                            value={newLocation.name}
+                                            value={newFile.file_Name}
                                             onChange={(e) =>
-                                                setNewLocation({
-                                                    ...newLocation,
-                                                    name: e.target.value,
+                                                setNewFile({
+                                                    ...newFile,
+                                                    file_Name: e.target.value,
                                                 })
                                             }
                                             required
                                         />
                                     </div>
                                     <div className="form-group mb-3">
+                                        <label>
+                                            Process Number <span className="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={newFile.process_Number}
+                                            onChange={(e) =>
+                                                setNewFile({
+                                                    ...newFile,
+                                                    process_Number: e.target.value,
+                                                })
+                                            }
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-group mb-3">
+                                        <label>
+                                            Page Number <span className="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={newFile.page_Number}
+                                            onChange={(e) =>
+                                                setNewFile({
+                                                    ...newFile,
+                                                    page_Number: e.target.value,
+                                                })
+                                            }
+                                            required
+                                        />
+                                    </div>
+                                     <div className="form-group mb-3">
                                         <label>
                                             Description <span className="text-danger">*</span>
                                         </label>
                                         <input
                                             type="text"
                                             className="form-control"
-                                            value={newLocation.description}
+                                            value={newFile.description}
                                             onChange={(e) =>
-                                                setNewLocation({
-                                                    ...newLocation,
+                                                setNewFile({
+                                                    ...newFile,
                                                     description: e.target.value,
                                                 })
                                             }
                                             required
                                         />
                                     </div>
+                                    <div className="form-group mb-3">
+                                        <label>
+                                            Parties <span className="text-danger">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={newFile.parties}
+                                            onChange={(e) =>
+                                                setNewFile({
+                                                    ...newFile,
+                                                    parties: e.target.value,
+                                                })
+                                            }
+                                            required
+                                        />
+                                    </div>
+                                    
+                                    
+                                   
                                 </form>
                             </Modal.Body>
                             <Modal.Footer>

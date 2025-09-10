@@ -9,7 +9,7 @@ import {
     Form,
     FormGroup,
 } from "react-bootstrap";
-import * as location from "../../data/setup/createlocation"
+import * as file from "../../data/file/createFile"
 import { CForm } from "@coreui/react";
 import { useForm } from "react-hook-form";
 import endpoint from "../../context/endpoint"
@@ -136,7 +136,7 @@ export default function CreateFile() {
                         <Card.Body>
                             <div className="">
                                 <div className="">
-                                    <location.CreateLocation
+                                    <file.CreateFile
                                         datas={datas}
                                         getAllData={getAllData}
                                     />

@@ -41,6 +41,29 @@ export const CreateFile = ({ datas, getAllData }) => {
         setPerPage(newPerPage);
     };
 
+    // Function to download QR code
+    const downloadQRCode = (qrCodeUrl, fileName) => {
+        // Create a temporary anchor element
+        const link = document.createElement('a');
+        link.href = qrCodeUrl;
+        
+        // Extract the filename from the URL or use a default name
+        const urlParts = qrCodeUrl.split('/');
+        const qrFileName = urlParts[urlParts.length - 1];
+        
+        // Set the download attribute with a proper filename
+        link.setAttribute('download', fileName ? `${fileName}_qrcode.png` : qrFileName);
+        
+        // Append to the document
+        document.body.appendChild(link);
+        
+        // Trigger the download
+        link.click();
+        
+        // Clean up
+        document.body.removeChild(link);
+    };
+
     const onEdit = (row) => {
         console.log("file to edit", row);
         setNewFile({
@@ -61,9 +84,9 @@ export const CreateFile = ({ datas, getAllData }) => {
         console.log("Data being sent:", newFile);
         
         try {
-            const res = await endpoint.put(`/file/updateLocation/${newFile.file_id}`, newFile);
+            const res = await endpoint.put(`/file/update/${newFile.file_id}`, newFile);
             console.log("Update successful:", res.data);
-            SuccessAlert(res.data.message || "Location updated successfully!");
+            SuccessAlert(res.data.message || "File updated successfully!");
             setLoading(false);
             setOpen(false);
             getAllData();
@@ -79,22 +102,6 @@ export const CreateFile = ({ datas, getAllData }) => {
         setIdToDelete(row.id);
         setnameToDelete(row.name);
         setDeleteOpen(true);
-    };
-
-    const handleDelete = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        try {
-            const res = await endpoint.delete(`/file/deleteLocation/${idToDelete}`);
-            console.log(res.data);
-            SuccessAlert(res.data.message || "File deleted successfully!");
-            setLoading(false);
-            setDeleteOpen(false);
-            getAllData();
-        } catch (err) {
-            setLoading(false);
-            ErrorAlert(err.response?.data?.message || err.response?.data?.description || "Failed to delete location");
-        }
     };
 
     const reset = () => {
@@ -132,7 +139,7 @@ export const CreateFile = ({ datas, getAllData }) => {
         name: "File Name",
         selector: (row) => row.file_Name,
         sortable: true,
-        width: "200px",
+        width: "210px",
         cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Name}</h6>,
     },
     {
@@ -142,20 +149,45 @@ export const CreateFile = ({ datas, getAllData }) => {
         width: "130px",
         cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Number}</h6>,
     },
-    {
-        name: "Page Number",
-        selector: (row) => row.page_Number,
-        sortable: true,
-        width: "150px",
-        cell: (row) => <h6 className="fs-12 fw-semibold">{row.page_Number}</h6>,
-    },
+    // {
+    //     name: "Page Number",
+    //     selector: (row) => row.page_Number,
+    //     sortable: true,
+    //     width: "150px",
+    //     cell: (row) => <h6 className="fs-12 fw-semibold">{row.page_Number}</h6>,
+    // },
     {
         name: "Description",
         selector: (row) => row.description,
         sortable: true,
-        width: "150px",
+        width: "170px",
         cell: (row) => <h6 className="fs-12 fw-semibold">{row.description}</h6>,
     },
+    {
+        name: "QRCode",
+        selector: (row) => row.qr_Code_Url,
+        sortable: true,
+        width: "110px",
+        cell: (row) => (
+            <h6 className="fs-12 fw-semibold"> 
+                {row.qr_Code_Url ? (
+                    <button 
+                        className="btn btn-sm mt-2" 
+                        style={{backgroundColor: "#525368", color: "#fff", borderColor: "#525368"}}
+                         onClick={() => window.open(row.qr_Code_Url, '_blank')}
+                        title="Download QR Code"
+                        target="_blank"
+                    >
+                        <i className="fa fa-download me-1"></i>
+                        QRCode
+                    </button>
+                ) : (
+                    <span className="text-muted">No QR</span>
+                )}
+            </h6>
+        ),
+    },
+    
     {
         name: "Actions",
         cell: (row) => (
@@ -169,7 +201,7 @@ export const CreateFile = ({ datas, getAllData }) => {
                 </button>
                 <button
                     className="btn btn-sm"
-                    style={{backgroundColor: "#0A7E51", color: "#fff", borderColor: "#0A7E51"}}
+                    style={{backgroundColor: "#0d0c22", color: "#fff", borderColor: "#0d0c22"}}
                     title="Forward">
                     Forward
                 </button>
@@ -183,7 +215,7 @@ export const CreateFile = ({ datas, getAllData }) => {
             </div>
         ),
     }
-];
+    ];
 
     return (
         <>
@@ -206,22 +238,22 @@ export const CreateFile = ({ datas, getAllData }) => {
                             highlightOnHover
                         />
 
-                        {/* Edit Modal */}
-                        <Modal show={open} onHide={onClose} className="custom-modal" centered>
-                            <Modal.Header closeButton className="modal-header-custom">
-                                <Modal.Title className="modal-title-custom">Edit File</Modal.Title>
+                       {/* Edit Modal */}
+                        <Modal show={open} onHide={onClose} className="file-modal-wrapper" centered>
+                            <Modal.Header closeButton className="file-modal-header">
+                                <Modal.Title className="file-modal-title">Edit File</Modal.Title>
                             </Modal.Header>
-                            <Modal.Body className="modal-body-custom">
-                                <form className="custom-form">
+                            <Modal.Body className="file-modal-body">
+                                <form className="file-form-wrapper">
                                     <Row>
                                         <Col md={6}>
-                                            <div className="form-group-custom mb-3">
-                                                <label className="form-label-custom">
-                                                    File Name <span className="required-asterisk">*</span>
+                                            <div className="file-form-group mb-3">
+                                                <label className="file-form-label">
+                                                    File Name <span className="file-required-asterisk">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    className="form-control-custom"
+                                                    className="form-control file-form-control"
                                                     value={newFile.file_Name}
                                                     onChange={(e) =>
                                                         setNewFile({
@@ -234,13 +266,13 @@ export const CreateFile = ({ datas, getAllData }) => {
                                             </div>
                                         </Col>
                                         <Col md={6}>
-                                            <div className="form-group-custom mb-3">
-                                                <label className="form-label-custom">
-                                                    Process Number <span className="required-asterisk">*</span>
+                                            <div className="file-form-group mb-3">
+                                                <label className="file-form-label">
+                                                    Process Number <span className="file-required-asterisk">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    className="form-control-custom"
+                                                    className="form-control file-form-control"
                                                     value={newFile.process_Number}
                                                     onChange={(e) =>
                                                         setNewFile({
@@ -256,13 +288,13 @@ export const CreateFile = ({ datas, getAllData }) => {
                                     
                                     <Row>
                                         <Col md={6}>
-                                            <div className="form-group-custom mb-3">
-                                                <label className="form-label-custom">
-                                                    File Number <span className="required-asterisk">*</span>
+                                            <div className="file-form-group mb-3">
+                                                <label className="file-form-label">
+                                                    File Number <span className="file-required-asterisk">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    className="form-control-custom"
+                                                    className="form-control file-form-control"
                                                     value={newFile.file_Number}
                                                     onChange={(e) =>
                                                         setNewFile({
@@ -275,13 +307,13 @@ export const CreateFile = ({ datas, getAllData }) => {
                                             </div>
                                         </Col>
                                         <Col md={6}>
-                                            <div className="form-group-custom mb-3">
-                                                <label className="form-label-custom">
-                                                    Page Number <span className="required-asterisk">*</span>
+                                            <div className="file-form-group mb-3">
+                                                <label className="file-form-label">
+                                                    Page Number <span className="file-required-asterisk">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    className="form-control-custom"
+                                                    className="form-control file-form-control"
                                                     value={newFile.page_Number}
                                                     onChange={(e) =>
                                                         setNewFile({
@@ -297,13 +329,13 @@ export const CreateFile = ({ datas, getAllData }) => {
                                     
                                     <Row>
                                         <Col md={12}>
-                                            <div className="form-group-custom mb-3">
-                                                <label className="form-label-custom">
-                                                    Description <span className="required-asterisk">*</span>
+                                            <div className="file-form-group mb-3">
+                                                <label className="file-form-label">
+                                                    Description <span className="file-required-asterisk">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    className="form-control-custom"
+                                                    className="form-control file-form-control"
                                                     value={newFile.description}
                                                     onChange={(e) =>
                                                         setNewFile({
@@ -319,13 +351,13 @@ export const CreateFile = ({ datas, getAllData }) => {
                                     
                                     <Row>
                                         <Col md={12}>
-                                            <div className="form-group-custom mb-3">
-                                                <label className="form-label-custom">
-                                                    Parties <span className="required-asterisk">*</span>
+                                            <div className="file-form-group mb-3">
+                                                <label className="file-form-label">
+                                                    Parties <span className="file-required-asterisk">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    className="form-control-custom"
+                                                    className="form-control file-form-control"
                                                     value={newFile.parties}
                                                     onChange={(e) =>
                                                         setNewFile({
@@ -340,12 +372,12 @@ export const CreateFile = ({ datas, getAllData }) => {
                                     </Row>
                                 </form>
                             </Modal.Body>
-                            <Modal.Footer className="modal-footer-custom">
-                                <Button variant="secondary" onClick={onClose} className="btn-cancel">
+                            <Modal.Footer className="file-modal-footer">
+                                <Button variant="secondary" onClick={onClose} className="file-btn-cancel">
                                     Close
                                 </Button>
                                 <Button 
-                                    className="btn-update"
+                                    className="file-btn-update"
                                     onClick={handleEdit}
                                     disabled={isLoading}>
                                     {isLoading ? (
@@ -359,38 +391,10 @@ export const CreateFile = ({ datas, getAllData }) => {
                                 </Button>
                             </Modal.Footer>
                         </Modal>
-
-                        {/* Delete Modal */}
-                        <Modal show={deleteOpen} onHide={onClose}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Delete</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <p>
-                                    Do you really want to delete{" "}
-                                    <strong className="text-danger">'{nameToDelete}'</strong> location?
-                                </p>
-                                <p>This process cannot be undone.</p>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={onClose}>
-                                    Cancel
-                                </Button>
-                                <Button variant="danger" onClick={handleDelete}>
-                                    Delete
-                                </Button>
-                            </Modal.Footer>
-                        </Modal>
                     </Col>
                 </Row>
             </div>
-
-            {/* Add custom CSS for the form */}
-            <style>
-                {`
-                   
-                `}
-            </style>
+            
         </>
     );
 };

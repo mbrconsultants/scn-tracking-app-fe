@@ -1,5 +1,5 @@
 /* The switch - the box around the slider */
-.switch {
+.file-switch {
     position: relative;
     display: inline-block;
     width: 50px;
@@ -7,14 +7,14 @@
 }
 
 /* Hide default HTML checkbox */
-.switch input {
+.file-switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
 /* The slider */
-.slider {
+.file-slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -26,7 +26,7 @@
     transition: .4s;
 }
 
-.slider:before {
+.file-slider:before {
     position: absolute;
     content: "";
     height: 25px;
@@ -36,7 +36,7 @@
     transition: .4s;
 }
 
-.slider:before {
+.file-slider:before {
     position: absolute;
     content: "";
     height: 25px;
@@ -45,151 +45,151 @@
     transition: .4s;
 }
 
-.slider.active:before {
+.file-slider.file-active:before {
     transform: translateX(26px); /* Move right when active */
 }
 
-.slider.round:before {
+.file-slider.file-round:before {
     border-radius: 50%;
 }
 
-input:checked + .slider {
+input:checked + .file-slider {
     background-color: rgb(41, 150, 41);
 }
 
-input:focus + .slider {
+input:focus + .file-slider {
     box-shadow: 0 0 1px rgb(41, 150, 41);
 }
 
-input:checked + .slider:before {
+input:checked + .file-slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
 }
 
 /* Rounded sliders */
-.slider.round {
+.file-slider.file-round {
     border-radius: 34px;
 }
 
-.slider.round:before {
+.file-slider.file-round:before {
     border-radius: 50%;
 }
 
-/* Modal styling */
-.custom-modal .modal-dialog {
-    max-width: 700px;
+/* File Modal styling - more specific selectors */
+.file-modal-wrapper .modal-dialog {
+    max-width: 700px !important;
     border-radius: 16px;
     overflow: hidden;
 }
 
-.modal-header-custom {
-    background: linear-gradient(135deg, #0A7E51 0%, #0a5e3c 100%);
-    color: white;
-    border-bottom: none;
-    padding: 1.2rem 1.5rem;
+.file-modal-wrapper .modal-header {
+    background: linear-gradient(135deg, #0A7E51 0%, #0a5e3c 100%) !important;
+    color: white !important;
+    border-bottom: none !important;
+    padding: 1.2rem 1.5rem !important;
 }
 
-.modal-title-custom {
-    color: white;
-    font-weight: 600;
-    font-size: 1.4rem;
-    margin: 0;
+.file-modal-wrapper .modal-title {
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 1.4rem !important;
+    margin: 0 !important;
 }
 
-.modal-body-custom {
-    padding: 1.5rem;
-    background-color: #fafbfc;
+.file-modal-wrapper .modal-body {
+    padding: 1.5rem !important;
+    background-color: #fafbfc !important;
 }
 
-/* Form elements styling */
-.custom-form {
-    padding: 0.5rem;
+/* Form elements styling with specific selectors */
+.file-form-wrapper {
+    padding: 0.5rem !important;
 }
 
-.form-group-custom {
-    position: relative;
-    margin-bottom: 1.2rem;
+.file-form-group {
+    position: relative !important;
+    margin-bottom: 1.2rem !important;
 }
 
-.form-label-custom {
-    font-weight: 600;
-    color: #495057;
-    margin-bottom: 0.5rem;
-    display: block;
-    font-size: 0.9rem;
+.file-form-label {
+    font-weight: 600 !important;
+    color: #495057 !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+    font-size: 0.9rem !important;
 }
 
-.required-asterisk {
-    color: #dc3545;
+.file-required-asterisk {
+    color: #dc3545 !important;
 }
 
-.form-control-custom {
-    border: 1px solid #dce1e6;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
-    transition: all 0.3s;
-    background-color: #fff;
-    width: 100%;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+.file-form-control {
+    border: 1px solid #dce1e6 !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s !important;
+    background-color: #fff !important;
+    width: 100% !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
 }
 
-.form-control-custom:focus {
-    border-color: #0A7E51;
-    box-shadow: 0 0 0 0.2rem rgba(10, 126, 81, 0.15);
-    background-color: #fff;
-    outline: none;
+.file-form-control:focus {
+    border-color: #0A7E51 !important;
+    box-shadow: 0 0 0 0.2rem rgba(10, 126, 81, 0.15) !important;
+    background-color: #fff !important;
+    outline: none !important;
 }
 
 /* Button styling */
-.modal-footer-custom {
-    border-top: 1px solid #e9ecef;
-    padding: 1rem 1.5rem;
-    background-color: #f8f9fa;
-    border-radius: 0 0 12px 12px;
+.file-modal-wrapper .modal-footer {
+    border-top: 1px solid #e9ecef !important;
+    padding: 1rem 1.5rem !important;
+    background-color: #f8f9fa !important;
+    border-radius: 0 0 12px 12px !important;
 }
 
-.btn-cancel {
-    background-color: #6c757d;
-    border: none;
-    border-radius: 8px;
-    padding: 0.6rem 1.5rem;
-    font-weight: 600;
-    transition: all 0.3s;
-    color: white;
+.file-btn-cancel {
+    background-color: #6c757d !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.5rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s !important;
+    color: white !important;
 }
 
-.btn-cancel:hover {
-    background-color: #5a6268;
-    transform: translateY(-1px);
-    color: white;
+.file-btn-cancel:hover {
+    background-color: #5a6268 !important;
+    transform: translateY(-1px) !important;
+    color: white !important;
 }
 
-.btn-update {
-    background: linear-gradient(135deg, #0A7E51 0%, #0a5e3c 100%);
-    border: none;
-    border-radius: 8px;
-    padding: 0.6rem 1.8rem;
-    font-weight: 600;
-    transition: all 0.3s;
-    color: white;
+.file-btn-update {
+    background: linear-gradient(135deg, #0A7E51 0%, #0a5e3c 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.8rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s !important;
+    color: white !important;
 }
 
-.btn-update:hover:not(:disabled) {
-    background: linear-gradient(135deg, #0a915d 0%, #0b6e45 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(10, 126, 81, 0.3);
-    color: white;
+.file-btn-update:hover:not(:disabled) {
+    background: linear-gradient(135deg, #0a915d 0%, #0b6e45 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(10, 126, 81, 0.3) !important;
+    color: white !important;
 }
 
-.btn-update:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
+.file-btn-update:disabled {
+    opacity: 0.7 !important;
+    cursor: not-allowed !important;
 }
 
 /* Animation for modal appearance */
-@keyframes modalAppear {
+@keyframes fileModalAppear {
     from {
         opacity: 0;
         transform: translateY(-20px);
@@ -200,88 +200,88 @@ input:checked + .slider:before {
     }
 }
 
-.custom-modal .modal-content {
-    animation: modalAppear 0.3s ease-out;
-    border-radius: 16px;
-    overflow: hidden;
-    border: none;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+.file-modal-wrapper .modal-content {
+    animation: fileModalAppear 0.3s ease-out !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    border: none !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .custom-modal .modal-dialog {
-        max-width: 95%;
-        margin: 0.5rem auto;
+    .file-modal-wrapper .modal-dialog {
+        max-width: 95% !important;
+        margin: 0.5rem auto !important;
     }
     
-    .modal-body-custom {
-        padding: 1rem;
+    .file-modal-wrapper .modal-body {
+        padding: 1rem !important;
     }
     
-    .custom-form {
-        padding: 0;
+    .file-form-wrapper {
+        padding: 0 !important;
     }
 }
 
-/* Additional styles for the main card */
-.elegant-card {
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: none;
-    overflow: hidden;
+/* Additional styles for the main card with specific selectors */
+.file-card-wrapper {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    border: none !important;
+    overflow: hidden !important;
 }
 
-.card-header-custom {
-    background: linear-gradient(135deg, #0A7E51 0%, #0a5e3c 100%);
-    color: white;
-    border-bottom: none;
-    padding: 1.2rem 1.5rem;
-}
-
-.card-title-custom {
+.file-card-header {
+    background: linear-gradient(135deg, #0A7E51 0%, #0a5e3c 100%) !important;
     color: white !important;
-    font-weight: 700;
-    margin: 0;
-    font-size: 1.5rem;
+    border-bottom: none !important;
+    padding: 1.2rem 1.5rem !important;
 }
 
-.btn-add-file {
-    background-color: #fff;
-    color: #0A7E51;
-    border: none;
-    font-weight: 600;
-    padding: 0.5rem 1.2rem;
-    border-radius: 8px;
-    transition: all 0.3s;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.file-card-title {
+    color: white !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+    font-size: 1.5rem !important;
 }
 
-.btn-add-file:hover {
-    background-color: #f8f9fa;
-    color: #0a5e3c;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+.file-btn-add {
+    background-color: #fff !important;
+    color: #0A7E51 !important;
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 0.5rem 1.2rem !important;
+    border-radius: 8px !important;
+    transition: all 0.3s !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.file-btn-add:hover {
+    background-color: #f8f9fa !important;
+    color: #0a5e3c !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Data table styling */
-.rdt_TableCol {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.file-data-table .rdt_TableCol {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
-.rdt_TableCol:first-child {
-    justify-content: center;
+.file-data-table .rdt_TableCol:first-child {
+    justify-content: center !important;
 }
 
 /* Action buttons styling */
-.action-buttons {
-    white-space: nowrap;
-    display: flex;
-    gap: 4px;
+.file-action-buttons {
+    white-space: nowrap !important;
+    display: flex !important;
+    gap: 4px !important;
 }
 
-.action-buttons .btn {
-    flex-shrink: 0;
+.file-action-buttons .btn {
+    flex-shrink: 0 !important;
 }

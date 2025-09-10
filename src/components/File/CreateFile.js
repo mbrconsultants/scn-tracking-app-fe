@@ -281,8 +281,6 @@ export default function CreateFile() {
                 </CForm>
             </Modal>
 
-            {/* Add custom CSS for the form */}
-           
         </div>
     );
 }

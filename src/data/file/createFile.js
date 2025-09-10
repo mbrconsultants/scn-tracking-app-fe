@@ -116,81 +116,74 @@ export const CreateFile = ({ datas, getAllData }) => {
     };
 
     const columns = [
-        {
-            name: "S/N",
-            cell: (row, index) => index + 1 + (page - 1) * perPage,
-            width: "10%",
-        },
-        {
-            name: "File Name",
-            selector: (row) => row.file_Name,
-            sortable: true,
-            width: "20%",
-            cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Name}</h6>,
-        },
-        {
-            name: "File Number",
-            selector: (row) => row.file_Number,
-            sortable: true,
-            width: "15%",
-            cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Number}</h6>,
-        },
-        {
-            name: "Process Number",
-            selector: (row) => row.process_Number,
-            sortable: true,
-            width: "15%",
-            cell: (row) => <h6 className="fs-12 fw-semibold">{row.process_Number}</h6>,
-        },
-        {
-            name: "Page Number",
-            selector: (row) => row.page_Number,
-            sortable: true,
-            width: "15%",
-            cell: (row) => <h6 className="fs-12 fw-semibold">{row.page_Number}</h6>,
-        },
-        {
-            name: "Description",
-            selector: (row) => row.description,
-            sortable: true,
-            width: "40%",
-            cell: (row) => <h6 className="fs-12 fw-semibold">{row.description}</h6>,
-        },
-        {
-            name: "Actions",
-            cell: (row) => (
-                <Row>
-                    <Col sm={6}>
-                        <button
-                            className="btn btn-sm"
-                            onClick={() => onEdit(row)}
-                            style={{backgroundColor: "#0A7E51", color: "#fff", borderColor: "#0A7E51"}}
-                            title="Edit">
-                            Edit
-                        </button>
-                    </Col>
-                    <Col sm={6}>
-                        <button
-                            className="btn btn-sm"
-                            
-                            style={{backgroundColor: "#0A7E51", color: "#fff", borderColor: "#0A7E51"}}
-                            title="Edit">
-                            Forward
-                        </button>
-                    </Col>
-                    <Col sm={6}>
-                        <Button
-                             className="btn btn-sm btn-danger"
-                            variant="danger"
-                            title="Action"
-                            size="sm">
-                            Reject
-                        </Button>
-                    </Col>
-                </Row>
-            ),
-        },
-    ];
+    {
+        name: <div className="text-center">S/N</div>,
+        selector: (row, index) => index + 1 + (page - 1) * perPage,
+        sortable: false,
+        width: "60px",
+        center: true,
+        cell: (row, index) => (
+            <div className="text-center">
+                {index + 1 + (page - 1) * perPage}
+            </div>
+        ),
+    },
+    {
+        name: "File Name",
+        selector: (row) => row.file_Name,
+        sortable: true,
+        width: "200px",
+        cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Name}</h6>,
+    },
+    {
+        name: "File Number",
+        selector: (row) => row.file_Number,
+        sortable: true,
+        width: "130px",
+        cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Number}</h6>,
+    },
+    {
+        name: "Page Number",
+        selector: (row) => row.page_Number,
+        sortable: true,
+        width: "150px",
+        cell: (row) => <h6 className="fs-12 fw-semibold">{row.page_Number}</h6>,
+    },
+    {
+        name: "Description",
+        selector: (row) => row.description,
+        sortable: true,
+        width: "150px",
+        cell: (row) => <h6 className="fs-12 fw-semibold">{row.description}</h6>,
+    },
+    {
+        name: "Actions",
+        cell: (row) => (
+            <div className="d-flex flex-nowrap gap-1">
+                <button
+                    className="btn btn-sm"
+                    onClick={() => onEdit(row)}
+                    style={{backgroundColor: "#0A7E51", color: "#fff", borderColor: "#0A7E51"}}
+                    title="Edit">
+                    Edit
+                </button>
+                <button
+                    className="btn btn-sm"
+                    style={{backgroundColor: "#0A7E51", color: "#fff", borderColor: "#0A7E51"}}
+                    title="Forward">
+                    Forward
+                </button>
+                <Button
+                    className="btn btn-sm btn-danger"
+                    variant="danger"
+                    title="Action"
+                    size="sm">
+                    Reject
+                </Button>
+            </div>
+        ),
+    }
+];
 
     return (
         <>
@@ -214,111 +207,155 @@ export const CreateFile = ({ datas, getAllData }) => {
                         />
 
                         {/* Edit Modal */}
-                        <Modal show={open} onHide={onClose}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Edit File</Modal.Title>
+                        <Modal show={open} onHide={onClose} className="custom-modal" centered>
+                            <Modal.Header closeButton className="modal-header-custom">
+                                <Modal.Title className="modal-title-custom">Edit File</Modal.Title>
                             </Modal.Header>
-                            <Modal.Body>
-                                <form>
-                                    <div className="form-group mb-3">
-                                        <label>
-                                            File Name <span className="text-danger">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            value={newFile.file_Name}
-                                            onChange={(e) =>
-                                                setNewFile({
-                                                    ...newFile,
-                                                    file_Name: e.target.value,
-                                                })
-                                            }
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>
-                                            Process Number <span className="text-danger">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            value={newFile.process_Number}
-                                            onChange={(e) =>
-                                                setNewFile({
-                                                    ...newFile,
-                                                    process_Number: e.target.value,
-                                                })
-                                            }
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>
-                                            Page Number <span className="text-danger">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            value={newFile.page_Number}
-                                            onChange={(e) =>
-                                                setNewFile({
-                                                    ...newFile,
-                                                    page_Number: e.target.value,
-                                                })
-                                            }
-                                            required
-                                        />
-                                    </div>
-                                     <div className="form-group mb-3">
-                                        <label>
-                                            Description <span className="text-danger">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            value={newFile.description}
-                                            onChange={(e) =>
-                                                setNewFile({
-                                                    ...newFile,
-                                                    description: e.target.value,
-                                                })
-                                            }
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group mb-3">
-                                        <label>
-                                            Parties <span className="text-danger">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            value={newFile.parties}
-                                            onChange={(e) =>
-                                                setNewFile({
-                                                    ...newFile,
-                                                    parties: e.target.value,
-                                                })
-                                            }
-                                            required
-                                        />
-                                    </div>
+                            <Modal.Body className="modal-body-custom">
+                                <form className="custom-form">
+                                    <Row>
+                                        <Col md={6}>
+                                            <div className="form-group-custom mb-3">
+                                                <label className="form-label-custom">
+                                                    File Name <span className="required-asterisk">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control-custom"
+                                                    value={newFile.file_Name}
+                                                    onChange={(e) =>
+                                                        setNewFile({
+                                                            ...newFile,
+                                                            file_Name: e.target.value,
+                                                        })
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                        </Col>
+                                        <Col md={6}>
+                                            <div className="form-group-custom mb-3">
+                                                <label className="form-label-custom">
+                                                    Process Number <span className="required-asterisk">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control-custom"
+                                                    value={newFile.process_Number}
+                                                    onChange={(e) =>
+                                                        setNewFile({
+                                                            ...newFile,
+                                                            process_Number: e.target.value,
+                                                        })
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                        </Col>
+                                    </Row>
                                     
+                                    <Row>
+                                        <Col md={6}>
+                                            <div className="form-group-custom mb-3">
+                                                <label className="form-label-custom">
+                                                    File Number <span className="required-asterisk">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control-custom"
+                                                    value={newFile.file_Number}
+                                                    onChange={(e) =>
+                                                        setNewFile({
+                                                            ...newFile,
+                                                            file_Number: e.target.value,
+                                                        })
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                        </Col>
+                                        <Col md={6}>
+                                            <div className="form-group-custom mb-3">
+                                                <label className="form-label-custom">
+                                                    Page Number <span className="required-asterisk">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control-custom"
+                                                    value={newFile.page_Number}
+                                                    onChange={(e) =>
+                                                        setNewFile({
+                                                            ...newFile,
+                                                            page_Number: e.target.value,
+                                                        })
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                        </Col>
+                                    </Row>
                                     
-                                   
+                                    <Row>
+                                        <Col md={12}>
+                                            <div className="form-group-custom mb-3">
+                                                <label className="form-label-custom">
+                                                    Description <span className="required-asterisk">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control-custom"
+                                                    value={newFile.description}
+                                                    onChange={(e) =>
+                                                        setNewFile({
+                                                            ...newFile,
+                                                            description: e.target.value,
+                                                        })
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                        </Col>
+                                    </Row>
+                                    
+                                    <Row>
+                                        <Col md={12}>
+                                            <div className="form-group-custom mb-3">
+                                                <label className="form-label-custom">
+                                                    Parties <span className="required-asterisk">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control-custom"
+                                                    value={newFile.parties}
+                                                    onChange={(e) =>
+                                                        setNewFile({
+                                                            ...newFile,
+                                                            parties: e.target.value,
+                                                        })
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                        </Col>
+                                    </Row>
                                 </form>
                             </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={onClose}>
+                            <Modal.Footer className="modal-footer-custom">
+                                <Button variant="secondary" onClick={onClose} className="btn-cancel">
                                     Close
                                 </Button>
                                 <Button 
-                                    variant="success" 
+                                    className="btn-update"
                                     onClick={handleEdit}
-                                    style={{backgroundColor: "#0A7E51", borderColor: "#0A7E51"}}>
-                                    Update
+                                    disabled={isLoading}>
+                                    {isLoading ? (
+                                        <>
+                                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                            Updating...
+                                        </>
+                                    ) : (
+                                        "Update File"
+                                    )}
                                 </Button>
                             </Modal.Footer>
                         </Modal>
@@ -347,6 +384,13 @@ export const CreateFile = ({ datas, getAllData }) => {
                     </Col>
                 </Row>
             </div>
+
+            {/* Add custom CSS for the form */}
+            <style>
+                {`
+                   
+                `}
+            </style>
         </>
     );
 };

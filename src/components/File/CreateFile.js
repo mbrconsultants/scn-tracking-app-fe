@@ -14,6 +14,7 @@ import { CForm } from "@coreui/react";
 import { useForm } from "react-hook-form";
 import endpoint from "../../context/endpoint"
 import { ErrorAlert, SuccessAlert } from "../../data/Toast/toast"
+import "./filestyle.css"
 
 export default function CreateFile() {
     const { register, handleSubmit, reset: resetFormHook } = useForm();
@@ -107,26 +108,20 @@ export default function CreateFile() {
         <div>
             <Row>
                 <Col sm={12} className="col-12">
-                    <Card>
-                        <Card.Header>
+                    <Card className="elegant-card">
+                        <Card.Header className="card-header-custom">
                             <Col className="text-beginning">
-                                <Card.Title as="h3" style={{ color: "#0A7E51", fontWeight: 900 }}>
+                                <Card.Title as="h3" className="card-title-custom">
                                     FILES
                                 </Card.Title>
                             </Col>
                             <Col className="text-end">
                                 <Button
-                                    className="btn btn-sm" 
+                                    className="btn btn-add-file" 
                                     type="button" 
                                     variant=""
                                     onClick={(e) => {
                                         handleFileModal();
-                                    }}
-                                    style={{ 
-                                        backgroundColor: "#0A7E51", 
-                                        borderColor: "#0A7E51",
-                                        color: "white", 
-                                        fontWeight: 900 
                                     }}>
                                     <span className="fa fa-plus"></span>
                                     Add File
@@ -147,133 +142,147 @@ export default function CreateFile() {
                 </Col>
             </Row>
 
-            <Modal show={fileModal} onHide={handleModalClose} size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title>{fileModalHeading}</Modal.Title>
+            <Modal show={fileModal} onHide={handleModalClose} className="custom-modal" centered>
+                <Modal.Header closeButton className="modal-header-custom">
+                    <Modal.Title className="modal-title-custom">{fileModalHeading}</Modal.Title>
                 </Modal.Header>
-                <CForm onSubmit={handleSubmit(handleCreateFile)} className="row g-3 needs-validation">
-                    <Modal.Body>
-                        <Card>
-                            <Card.Body>
-                                <Row>
-                                    <Col lg={6} md={6}>
-                                        <FormGroup className="mb-3">
-                                            <label htmlFor="name">
-                                                File Name <span style={{ color: "red" }}>*</span>
-                                            </label>
-                                            <Form.Control
-                                                type="text"
-                                                name="file_Name"
-                                                value={file_Name}
-                                                onChange={(e) => setFileName(e.target.value)}
-                                                className="form-control"
-                                                required
-                                            />
-                                        </FormGroup>
-                                    </Col>
-                                    <Col lg={6} md={6}>
-                                        <FormGroup className="mb-3">
-                                            <label htmlFor="name">
-                                                File Number <span style={{ color: "red" }}>*</span>
-                                            </label>
-                                            <Form.Control
-                                                type="text"
-                                                name="file_Number"
-                                                value={file_Number}
-                                                onChange={(e) => setFileNumber(e.target.value)}
-                                                className="form-control"
-                                                required
-                                            />
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
-                                
-                                <Row>
-                                    <Col lg={6} md={6}>
-                                        <FormGroup className="mb-3">
-                                            <label htmlFor="name">
-                                                Process Number <span style={{ color: "red" }}>*</span>
-                                            </label>
-                                            <Form.Control
-                                                type="text"
-                                                name="process_Number"
-                                                value={process_Number}
-                                                onChange={(e) => setProcessNumber(e.target.value)}
-                                                className="form-control"
-                                                required
-                                            />
-                                        </FormGroup>
-                                    </Col>
-                                    <Col lg={6} md={6}>
-                                        <FormGroup className="mb-3">
-                                            <label htmlFor="name">
-                                                Page Number <span style={{ color: "red" }}>*</span>
-                                            </label>
-                                            <Form.Control
-                                                type="text"
-                                                name="page_Number"
-                                                value={page_Number}
-                                                onChange={(e) => setPageNumber(e.target.value)}
-                                                className="form-control"
-                                                required
-                                            />
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
-                                
-                                <Row>
-                                    <Col lg={12} md={12}>
-                                        <FormGroup className="mb-3">
-                                            <label htmlFor="name">
-                                                Description <span style={{ color: "red" }}>*</span>
-                                            </label>
-                                            <Form.Control
-                                                type="text"
-                                                name="description"
-                                                value={description}
-                                                onChange={(e) => setDescription(e.target.value)}
-                                                className="form-control"
-                                                required
-                                            />
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
-                                
-                                <Row>
-                                    <Col lg={12} md={12}>
-                                        <FormGroup className="mb-3">
-                                            <label htmlFor="description">
-                                                Parties <span style={{ color: "red" }}>*</span>
-                                            </label>
-                                            <Form.Control
-                                                type="text"
-                                                name="parties"
-                                                value={parties}
-                                                onChange={(e) => setParties(e.target.value)}
-                                                className="form-control"
-                                                required
-                                            />
-                                        </FormGroup>
+                <CForm onSubmit={handleSubmit(handleCreateFile)} className="custom-form">
+                    <Modal.Body className="modal-body-custom">
+                        <Card className="form-card">
+                            <Card.Body className="form-card-body">
+                                <Row className="justify-content-center">
+                                    <Col xl={10} lg={10} md={10} sm={12}>
+                                        <Row>
+                                            <Col lg={6} md={6}>
+                                                <FormGroup className="form-group-custom mb-3">
+                                                    <label htmlFor="name" className="form-label-custom">
+                                                        File Name <span className="required-asterisk">*</span>
+                                                    </label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        name="file_Name"
+                                                        value={file_Name}
+                                                        onChange={(e) => setFileName(e.target.value)}
+                                                        className="form-control-custom"
+                                                        required
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                            <Col lg={6} md={6}>
+                                                <FormGroup className="form-group-custom mb-3">
+                                                    <label htmlFor="name" className="form-label-custom">
+                                                        File Number <span className="required-asterisk">*</span>
+                                                    </label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        name="file_Number"
+                                                        value={file_Number}
+                                                        onChange={(e) => setFileNumber(e.target.value)}
+                                                        className="form-control-custom"
+                                                        required
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                        
+                                        <Row>
+                                            <Col lg={6} md={6}>
+                                                <FormGroup className="form-group-custom mb-3">
+                                                    <label htmlFor="name" className="form-label-custom">
+                                                        Process Number <span className="required-asterisk">*</span>
+                                                    </label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        name="process_Number"
+                                                        value={process_Number}
+                                                        onChange={(e) => setProcessNumber(e.target.value)}
+                                                        className="form-control-custom"
+                                                        required
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                            <Col lg={6} md={6}>
+                                                <FormGroup className="form-group-custom mb-3">
+                                                    <label htmlFor="name" className="form-label-custom">
+                                                        Page Number <span className="required-asterisk">*</span>
+                                                    </label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        name="page_Number"
+                                                        value={page_Number}
+                                                        onChange={(e) => setPageNumber(e.target.value)}
+                                                        className="form-control-custom"
+                                                        required
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                        
+                                        <Row>
+                                            <Col lg={12} md={12}>
+                                                <FormGroup className="form-group-custom mb-3">
+                                                    <label htmlFor="name" className="form-label-custom">
+                                                        Description <span className="required-asterisk">*</span>
+                                                    </label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        name="description"
+                                                        value={description}
+                                                        onChange={(e) => setDescription(e.target.value)}
+                                                        className="form-control-custom"
+                                                        required
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                        
+                                        <Row>
+                                            <Col lg={12} md={12}>
+                                                <FormGroup className="form-group-custom mb-3">
+                                                    <label htmlFor="description" className="form-label-custom">
+                                                        Parties <span className="required-asterisk">*</span>
+                                                    </label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        name="parties"
+                                                        value={parties}
+                                                        onChange={(e) => setParties(e.target.value)}
+                                                        className="form-control-custom"
+                                                        required
+                                                    />
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
                                     </Col>
                                 </Row>
                             </Card.Body>
                         </Card>
 
-                        <Modal.Footer>
-                            <Button variant="secondary" onClick={handleModalClose}>
+                        <Modal.Footer className="modal-footer-custom">
+                            <Button variant="secondary" onClick={handleModalClose} className="btn-cancel">
                                 Close
                             </Button>
                             <Button
                                 variant="success"
-                                style={{backgroundColor: "#0A7E51", borderColor: "#0A7E51"}}
+                                className="btn-save"
                                 type="submit"
                                 disabled={isLoading}>
-                                {isLoading ? "Creating..." : "Save"}
+                                {isLoading ? (
+                                    <>
+                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Creating...
+                                    </>
+                                ) : (
+                                    "Save File"
+                                )}
                             </Button>
                         </Modal.Footer>
                     </Modal.Body>
                 </CForm>
             </Modal>
+
+            {/* Add custom CSS for the form */}
+           
         </div>
     );
 }

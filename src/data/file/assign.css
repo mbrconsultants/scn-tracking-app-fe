@@ -1,77 +1,287 @@
 /* The switch - the box around the slider */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 25px;
-  }
-  
-  /* Hide default HTML checkbox */
-  .switch input {
+.file-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 25px;
+}
+
+/* Hide default HTML checkbox */
+.file-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.file-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: red;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.file-slider:before {
+  position: absolute;
+  content: "";
+  height: 25px;
+  width: 25px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.file-slider:before {
+  position: absolute;
+  content: "";
+  height: 25px;
+  width: 25px;
+  background-color: white;
+  transition: 0.4s;
+}
+
+.file-slider.file-active:before {
+  transform: translateX(26px); /* Move right when active */
+}
+
+.file-slider.file-round:before {
+  border-radius: 50%;
+}
+
+input:checked + .file-slider {
+  background-color: rgb(41, 150, 41);
+}
+
+input:focus + .file-slider {
+  box-shadow: 0 0 1px rgb(41, 150, 41);
+}
+
+input:checked + .file-slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.file-slider.file-round {
+  border-radius: 34px;
+}
+
+.file-slider.file-round:before {
+  border-radius: 50%;
+}
+
+/* File Modal styling - more specific selectors */
+.file-modal-wrapper .modal-dialog {
+  max-width: 700px !important;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.file-modal-wrapper .modal-header {
+  background: linear-gradient(135deg, #0a7e51 0%, #0a5e3c 100%) !important;
+  color: white !important;
+  border-bottom: none !important;
+  padding: 1.2rem 1.5rem !important;
+}
+
+.file-modal-wrapper .modal-title {
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 1.4rem !important;
+  margin: 0 !important;
+}
+
+.file-modal-wrapper .modal-body {
+  padding: 1.5rem !important;
+  background-color: #fafbfc !important;
+}
+
+/* Form elements styling with specific selectors */
+.file-form-wrapper {
+  padding: 0.5rem !important;
+}
+
+.file-form-group {
+  position: relative !important;
+  margin-bottom: 1.2rem !important;
+}
+
+.file-form-label {
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+  display: block !important;
+  font-size: 0.9rem !important;
+}
+
+.file-required-asterisk {
+  color: #dc3545 !important;
+}
+
+.file-form-control {
+  border: 1px solid #dce1e6 !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 0.95rem !important;
+  transition: all 0.3s !important;
+  background-color: #fff !important;
+  width: 100% !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+}
+
+.file-form-control:focus {
+  border-color: #0a7e51 !important;
+  box-shadow: 0 0 0 0.2rem rgba(10, 126, 81, 0.15) !important;
+  background-color: #fff !important;
+  outline: none !important;
+}
+
+/* Button styling */
+.file-modal-wrapper .modal-footer {
+  border-top: 1px solid #e9ecef !important;
+  padding: 1rem 1.5rem !important;
+  background-color: #f8f9fa !important;
+  border-radius: 0 0 12px 12px !important;
+}
+
+.file-btn-cancel {
+  background-color: #6c757d !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1.5rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s !important;
+  color: white !important;
+}
+
+.file-btn-cancel:hover {
+  background-color: #5a6268 !important;
+  transform: translateY(-1px) !important;
+  color: white !important;
+}
+
+.file-btn-update {
+  background: linear-gradient(135deg, #0a7e51 0%, #0a5e3c 100%) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.6rem 1.8rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s !important;
+  color: white !important;
+}
+
+.file-btn-update:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0a915d 0%, #0b6e45 100%) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(10, 126, 81, 0.3) !important;
+  color: white !important;
+}
+
+.file-btn-update:disabled {
+  opacity: 0.7 !important;
+  cursor: not-allowed !important;
+}
+
+/* Animation for modal appearance */
+@keyframes fileModalAppear {
+  from {
     opacity: 0;
-    width: 0;
-    height: 0;
+    transform: translateY(-20px);
   }
-  
-  /* The slider */
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: red;
-    -webkit-transition: .4s;
-    transition: .4s;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 25px;
-    width: 25px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 25px;
-    width: 25px;
-    background-color: white;
-    transition: .4s;
 }
 
-.slider.active:before {
-    transform: translateX(26px); /* Move right when active */
+.file-modal-wrapper .modal-content {
+  animation: fileModalAppear 0.3s ease-out !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  border: none !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
 }
 
-.slider.round:before {
-    border-radius: 50%;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .file-modal-wrapper .modal-dialog {
+    max-width: 95% !important;
+    margin: 0.5rem auto !important;
+  }
+
+  .file-modal-wrapper .modal-body {
+    padding: 1rem !important;
+  }
+
+  .file-form-wrapper {
+    padding: 0 !important;
+  }
 }
 
-  input:checked + .slider {
-    background-color: rgb(41, 150, 41);
-  }
-  
-  input:focus + .slider {
-    box-shadow: 0 0 1px rgb(41, 150, 41);
-  }
-  
-  input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
-  }
-  
-  /* Rounded sliders */
-  .slider.round {
-    border-radius: 34px;
-  }
-  
-  .slider.round:before {
-    border-radius: 50%;
-  }
+/* Additional styles for the main card with specific selectors */
+.file-card-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  border: none !important;
+  overflow: hidden !important;
+}
+
+.file-card-header {
+  background: linear-gradient(135deg, #0a7e51 0%, #0a5e3c 100%) !important;
+  color: white !important;
+  border-bottom: none !important;
+  padding: 1.2rem 1.5rem !important;
+}
+
+.file-card-title {
+  color: white !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  font-size: 1.5rem !important;
+}
+
+.file-btn-add {
+  background-color: #fff !important;
+  color: #0a7e51 !important;
+  border: none !important;
+  font-weight: 600 !important;
+  padding: 0.5rem 1.2rem !important;
+  border-radius: 8px !important;
+  transition: all 0.3s !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.file-btn-add:hover {
+  background-color: #f8f9fa !important;
+  color: #0a5e3c !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Data table styling */
+.file-data-table .rdt_TableCol {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.file-data-table .rdt_TableCol:first-child {
+  justify-content: center !important;
+}
+
+/* Action buttons styling */
+.file-action-buttons {
+  white-space: nowrap !important;
+  display: flex !important;
+  gap: 4px !important;
+}
+
+.file-action-buttons .btn {
+  flex-shrink: 0 !important;
+}

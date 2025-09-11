@@ -10548,6 +10548,31 @@ body.fixed-header .page {
   font-weight: 700;
 }
 
+/* -----btn----- */
+
+.file-btn-update {
+  background-color: #0a7148 !important;
+  border-color: #0a7148 !important;
+  color: #fff !important;
+}
+.file-btn-update:hover {
+  background-color: #09613c !important; /* darker on hover */
+  border-color: #09613c !important;
+}
+
+.file-btn-cancel {
+  background-color: #5a6268 !important;
+  border-color: #5a6268 !important;
+  color: #fff !important;
+}
+
+.file-btn-cancel:hover,
+.file-btn-cancel:focus {
+  background-color: #4e555b !important; /* slightly darker for hover */
+  border-color: #4e555b !important;
+  color: #fff !important;
+}
+
 .pageheader-btn .btn-green {
   background-color: #0a7e51 !important;
   color: #fff !important;

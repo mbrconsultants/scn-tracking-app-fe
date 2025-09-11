@@ -1,0 +1,174 @@
+.elegant-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: none;
+  overflow: hidden;
+}
+
+.card-header-custom {
+  background: linear-gradient(135deg, #0a7e51 0%, #0a5e3c 100%);
+  color: white;
+  border-bottom: none;
+  padding: 1.2rem 1.5rem;
+}
+
+.card-title-custom {
+  color: white !important;
+  font-weight: 700;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.btn-add-file {
+  background-color: #fff;
+  color: #0a7e51;
+  border: none;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn-add-file:hover {
+  background-color: #f8f9fa;
+  color: #0a5e3c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal styling */
+.custom-modal .modal-dialog {
+  max-width: 650px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.modal-header-custom {
+  background: linear-gradient(135deg, #0a7e51 0%, #0a5e3c 100%);
+  color: white;
+  border-bottom: none;
+  padding: 1.2rem 1.5rem;
+}
+
+.modal-title-custom {
+  color: white;
+  font-weight: 600;
+  font-size: 1.4rem;
+}
+
+.modal-body-custom {
+  padding: 0;
+}
+
+/* Form card styling */
+.form-card {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.form-card-body {
+  padding: 1.5rem;
+}
+
+/* Form elements styling */
+.form-group-custom {
+  position: relative;
+}
+
+.form-label-custom {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-size: 0.9rem;
+}
+
+.required-asterisk {
+  color: #dc3545;
+}
+
+.form-control-custom {
+  border: 1px solid #dce1e6;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+  background-color: #fafbfc;
+}
+
+.form-control-custom:focus {
+  border-color: #0a7e51;
+  box-shadow: 0 0 0 0.2rem rgba(10, 126, 81, 0.15);
+  background-color: #fff;
+}
+
+/* Button styling */
+.modal-footer-custom {
+  border-top: 1px solid #e9ecef;
+  padding: 1rem 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 0 0 12px 12px;
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
+  transform: translateY(-1px);
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #0a7e51 0%, #0a5e3c 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.8rem;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-save:hover {
+  background: linear-gradient(135deg, #0a915d 0%, #0b6e45 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(10, 126, 81, 0.3);
+}
+
+/* Animation for modal appearance */
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.custom-modal .modal-content {
+  animation: modalAppear 0.3s ease-out;
+  border-radius: 16px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .custom-modal .modal-dialog {
+    max-width: 95%;
+    margin: 0.5rem auto;
+  }
+
+  .form-card-body {
+    padding: 1rem;
+  }
+}

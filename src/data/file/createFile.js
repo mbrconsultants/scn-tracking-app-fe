@@ -14,14 +14,15 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   TextField,
 } from "@mui/material";
-import { Card, Row, Col, Modal } from "react-bootstrap";
+import { Card, Row, Col, Modal, Button } from "react-bootstrap";
+import Form from "react-bootstrap/Form";
+
 // import Drawer from "@mui/material/Drawer";
 
 import DataTable from "react-data-table-component";
@@ -58,9 +59,8 @@ export const CreateFile = ({ datas, getAllData }) => {
   });
   const [forwardData, setForwardData] = useState({
     loginUser: user?.id,
-    user_id: "",
-    department_id: "",
-    unit_id: "",
+    to_user_id: "",
+
     remark: "",
   });
 
@@ -97,9 +97,8 @@ export const CreateFile = ({ datas, getAllData }) => {
     setOpenDrawer(false);
     setForwardData({
       loginUser: user?.id,
-      user_id: "",
-      department_id: "",
-      unit_id: "",
+      to_user_id: "",
+
       remark: "",
     });
     setFilteredUnits([]);
@@ -124,25 +123,37 @@ export const CreateFile = ({ datas, getAllData }) => {
   };
 
   const handleForwardSubmit = async () => {
-    if (
-      !forwardData.user_id ||
-      !forwardData.department_id ||
-      !forwardData.unit_id
-    ) {
-      return ErrorAlert("Please fill all required fields");
+    if (!forwardData.user_id) {
+      return ErrorAlert("Please select a user");
     }
+
+    if (!selectedFile?.id) {
+      return ErrorAlert("File ID is missing");
+    }
+
     setLoading(true);
     try {
+      const payload = {
+        file_id: selectedFile.id, // required
+        from_user_id: forwardData.loginUser, // 👈 logged-in user
+        to_user_id: forwardData.user_id, // 👈 recipient
+        remark: forwardData.remark || "",
+      };
+
+      console.log("Submitting payload:", payload); // debug
+
       const res = await endpoint.post(
-        `/file/forward/${selectedFile.id}`,
-        forwardData
+        `/file-track/create-file-tracking`,
+        payload
       );
+
       SuccessAlert(res.data.message || "File forwarded successfully!");
-      getAllData();
+      getAllData(); // refresh after forwarding
       handleDrawerClose();
-      setLoading(false);
     } catch (err) {
+      console.error("Forward error:", err.response?.data || err);
       ErrorAlert(err.response?.data?.message || "Forward failed!");
+    } finally {
       setLoading(false);
     }
   };
@@ -242,97 +253,80 @@ export const CreateFile = ({ datas, getAllData }) => {
 
   const columns = [
     {
-      name: "S/N",
-      cell: (row, index) => index + 1 + (page - 1) * perPage,
-      width: "10%",
+      name: <div className="text-center">S/N</div>,
+      selector: (row, index) => index + 1 + (page - 1) * perPage,
+      sortable: false,
+      width: "60px",
+      center: true,
+      cell: (row, index) => (
+        <div className="text-center">{index + 1 + (page - 1) * perPage}</div>
+      ),
     },
     {
       name: "File Name",
       selector: (row) => row.file_Name,
       sortable: true,
-      width: "20%",
+      width: "200px",
       cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Name}</h6>,
     },
     {
       name: "File Number",
       selector: (row) => row.file_Number,
       sortable: true,
-      width: "15%",
+      width: "130px",
       cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Number}</h6>,
-    },
-    {
-      name: "Process Number",
-      selector: (row) => row.process_Number,
-      sortable: true,
-      width: "15%",
-      cell: (row) => (
-        <h6 className="fs-12 fw-semibold">{row.process_Number}</h6>
-      ),
     },
     {
       name: "Page Number",
       selector: (row) => row.page_Number,
       sortable: true,
-      width: "15%",
+      width: "150px",
       cell: (row) => <h6 className="fs-12 fw-semibold">{row.page_Number}</h6>,
     },
     {
       name: "Description",
       selector: (row) => row.description,
       sortable: true,
-      width: "40%",
+      width: "150px",
       cell: (row) => <h6 className="fs-12 fw-semibold">{row.description}</h6>,
     },
     {
       name: "Actions",
       cell: (row) => (
-        <Row>
-          <Col sm={6}>
-            <button
-              className="btn btn-sm"
-              onClick={() => onEdit(row)}
-              style={{
-                backgroundColor: "#0A7E51",
-                color: "#fff",
-                borderColor: "#0A7E51",
-              }}
-              title="Edit"
-            >
-              Edit
-            </button>
-          </Col>
-          <Col sm={6}>
-            {/* <button
-              className="btn btn-sm"
-              style={{
-                backgroundColor: "#0A7E51",
-                color: "#fff",
-                borderColor: "#0A7E51",
-              }}
-              title="Edit"
-            >
-              Forward
-            </button> */}
-
-            <Button
-              style={{ backgroundColor: "#0A7E51" }}
-              size="sm"
-              onClick={() => handleDrawerOpen(row)}
-            >
-              Forward
-            </Button>
-          </Col>
-          <Col sm={6}>
-            <Button
-              className="btn btn-sm btn-danger"
-              variant="danger"
-              title="Action"
-              size="sm"
-            >
-              Reject
-            </Button>
-          </Col>
-        </Row>
+        <div className="d-flex flex-nowrap gap-1">
+          <button
+            className="btn btn-sm"
+            onClick={() => onEdit(row)}
+            style={{
+              backgroundColor: "#0A7E51",
+              color: "#fff",
+              borderColor: "#0A7E51",
+            }}
+            title="Edit"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => handleDrawerOpen(row)}
+            className="btn btn-sm"
+            style={{
+              backgroundColor: "#0A7E51",
+              color: "#fff",
+              borderColor: "#0A7E51",
+            }}
+            title="Forward"
+          >
+            Forward
+          </button>
+          <Button
+            className="btn btn-sm btn-danger"
+            variant="danger"
+            title="Action"
+            size="sm"
+          >
+            Reject
+          </Button>
+        </div>
       ),
     },
   ];
@@ -359,113 +353,180 @@ export const CreateFile = ({ datas, getAllData }) => {
             />
 
             {/* Edit Modal */}
-            <Modal show={open} onHide={onClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Edit File</Modal.Title>
+            <Modal
+              show={open}
+              onHide={onClose}
+              className="file-modal-wrapper"
+              centered
+            >
+              <Modal.Header closeButton className="file-modal-header">
+                <Modal.Title className="file-modal-title">
+                  Edit File
+                </Modal.Title>
               </Modal.Header>
-              <Modal.Body>
-                <form>
-                  <div className="form-group mb-3">
-                    <label>
-                      File Name <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={newFile.file_Name}
-                      onChange={(e) =>
-                        setNewFile({
-                          ...newFile,
-                          file_Name: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="form-group mb-3">
-                    <label>
-                      Process Number <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={newFile.process_Number}
-                      onChange={(e) =>
-                        setNewFile({
-                          ...newFile,
-                          process_Number: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="form-group mb-3">
-                    <label>
-                      Page Number <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={newFile.page_Number}
-                      onChange={(e) =>
-                        setNewFile({
-                          ...newFile,
-                          page_Number: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="form-group mb-3">
-                    <label>
-                      Description <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={newFile.description}
-                      onChange={(e) =>
-                        setNewFile({
-                          ...newFile,
-                          description: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="form-group mb-3">
-                    <label>
-                      Parties <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={newFile.parties}
-                      onChange={(e) =>
-                        setNewFile({
-                          ...newFile,
-                          parties: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
+              <Modal.Body className="file-modal-body">
+                <form className="file-form-wrapper">
+                  <Row>
+                    <Col md={6}>
+                      <div className="file-form-group mb-3">
+                        <label className="file-form-label">
+                          File Name{" "}
+                          <span className="file-required-asterisk">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control file-form-control"
+                          value={newFile.file_Name}
+                          onChange={(e) =>
+                            setNewFile({
+                              ...newFile,
+                              file_Name: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
+                    </Col>
+                    <Col md={6}>
+                      <div className="file-form-group mb-3">
+                        <label className="file-form-label">
+                          Process Number{" "}
+                          <span className="file-required-asterisk">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control file-form-control"
+                          value={newFile.process_Number}
+                          onChange={(e) =>
+                            setNewFile({
+                              ...newFile,
+                              process_Number: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col md={6}>
+                      <div className="file-form-group mb-3">
+                        <label className="file-form-label">
+                          File Number{" "}
+                          <span className="file-required-asterisk">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control file-form-control"
+                          value={newFile.file_Number}
+                          onChange={(e) =>
+                            setNewFile({
+                              ...newFile,
+                              file_Number: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
+                    </Col>
+                    <Col md={6}>
+                      <div className="file-form-group mb-3">
+                        <label className="file-form-label">
+                          Page Number{" "}
+                          <span className="file-required-asterisk">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control file-form-control"
+                          value={newFile.page_Number}
+                          onChange={(e) =>
+                            setNewFile({
+                              ...newFile,
+                              page_Number: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col md={12}>
+                      <div className="file-form-group mb-3">
+                        <label className="file-form-label">
+                          Description{" "}
+                          <span className="file-required-asterisk">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control file-form-control"
+                          value={newFile.description}
+                          onChange={(e) =>
+                            setNewFile({
+                              ...newFile,
+                              description: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col md={12}>
+                      <div className="file-form-group mb-3">
+                        <label className="file-form-label">
+                          Parties{" "}
+                          <span className="file-required-asterisk">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control file-form-control"
+                          value={newFile.parties}
+                          onChange={(e) =>
+                            setNewFile({
+                              ...newFile,
+                              parties: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
+                    </Col>
+                  </Row>
                 </form>
               </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>
+              <Modal.Footer className="file-modal-footer">
+                <Button
+                  variant="secondary"
+                  onClick={onClose}
+                  className="file-btn-cancel"
+                >
                   Close
                 </Button>
                 <Button
-                  variant="success"
+                  className="file-btn-update"
                   onClick={handleEdit}
-                  style={{ backgroundColor: "#0A7E51", borderColor: "#0A7E51" }}
+                  disabled={isLoading}
                 >
-                  Update
+                  {isLoading ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      Updating...
+                    </>
+                  ) : (
+                    "Update File"
+                  )}
                 </Button>
               </Modal.Footer>
             </Modal>
-
             {/* Delete Modal */}
             <Modal show={deleteOpen} onHide={onClose}>
               <Modal.Header closeButton>
@@ -488,107 +549,80 @@ export const CreateFile = ({ datas, getAllData }) => {
                 </Button>
               </Modal.Footer>
             </Modal>
-            {/* Drawer */}
-            <Dialog
-              open={openDrawer}
-              onClose={handleDrawerClose}
-              fullWidth
-              maxWidth="sm"
+            {/* Forword Modal */}
+            <Modal
+              show={openDrawer}
+              onHide={handleDrawerClose}
+              className="file-modal-wrapper"
+              centered
             >
-              <DialogTitle sx={{ color: "#0A7E51" }}>Forward File</DialogTitle>
+              <Modal.Header closeButton className="file-modal-header">
+                <Modal.Title className="file-modal-title">
+                  Forward File
+                </Modal.Title>
+              </Modal.Header>
 
-              <DialogContent>
+              <Modal.Body className="file-modal-body">
                 {/* Hidden loginUser */}
                 <input type="hidden" value={forwardData.loginUser} />
 
                 {/* User Select */}
-                <FormControl fullWidth margin="normal">
-                  <InputLabel>User</InputLabel>
-                  <Select
-                    value={forwardData.user_id}
-                    onChange={(e) => {
-                      const selectedUser = usersList.find(
-                        (u) => u.id === e.target.value
-                      );
+
+                <Form.Group className="mb-3">
+                  <Form.Label>User</Form.Label>
+                  <Form.Select
+                    value={forwardData.user_id || ""}
+                    onChange={(e) =>
                       setForwardData({
                         ...forwardData,
                         user_id: e.target.value,
-                        department_id: selectedUser?.department_id || "",
-                        unit_id: selectedUser?.unit_id || "",
-                      });
-
-                      // Filter units for the selected department
-                      const units =
-                        departmentsList.find(
-                          (d) => d.id === selectedUser?.department_id
-                        )?.units || [];
-                      setFilteredUnits(units);
-                    }}
-                    label="User"
+                      })
+                    }
                   >
+                    <option value="" disabled hidden>
+                      -- Select User --
+                    </option>
                     {usersList.map((u) => (
-                      <MenuItem key={u.id} value={u.id}>
+                      <option key={u.id} value={u.id}>
                         {`${u.surname} ${u.first_name}${
                           u.middle_name ? ` ${u.middle_name}` : ""
                         }`}
-                      </MenuItem>
+                      </option>
                     ))}
-                  </Select>
-                </FormControl>
-
-                {/* Department Select (disabled) */}
-                <FormControl fullWidth margin="normal">
-                  <InputLabel>Department</InputLabel>
-                  <Select value={forwardData.department_id} disabled>
-                    {departmentsList.map((d) => (
-                      <MenuItem key={d.id} value={d.id}>
-                        {d.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                {/* Unit Select (disabled) */}
-                <FormControl fullWidth margin="normal">
-                  <InputLabel>Unit</InputLabel>
-                  <Select value={forwardData.unit_id} disabled>
-                    {filteredUnits.map((u) => (
-                      <MenuItem key={u.id} value={u.id}>
-                        {u.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                  </Form.Select>
+                </Form.Group>
 
                 {/* Remark */}
-                <TextField
-                  label="Remark"
-                  fullWidth
-                  margin="normal"
-                  value={forwardData.remark}
-                  onChange={(e) =>
-                    setForwardData({ ...forwardData, remark: e.target.value })
-                  }
-                />
-              </DialogContent>
+                <Form.Group className="mb-3">
+                  <Form.Label>Remark</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    value={forwardData.remark}
+                    onChange={(e) =>
+                      setForwardData({ ...forwardData, remark: e.target.value })
+                    }
+                  />
+                </Form.Group>
+              </Modal.Body>
 
-              <DialogActions>
+              <Modal.Footer className="file-modal-footer">
                 <Button
-                  variant="contained"
-                  color="error"
+                  variant="danger"
+                  className="file-btn-cancel"
                   onClick={handleDrawerClose}
                 >
                   Close
                 </Button>
                 <Button
-                  variant="contained"
-                  sx={{ backgroundColor: "#0A7E51" }}
+                  variant="success"
+                  className="file-btn-update"
                   onClick={handleForwardSubmit}
                 >
                   Forward
                 </Button>
-              </DialogActions>
-            </Dialog>
+              </Modal.Footer>
+            </Modal>
           </Col>
         </Row>
       </div>

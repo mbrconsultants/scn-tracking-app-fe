@@ -19,6 +19,11 @@ export const CreateFile = ({ datas, getAllData }) => {
     const [idToReject, setIdToReject] = useState("");
     const [nameToReject, setnameToReject] = useState("");
     const [rejectRemark, setRejectRemark] = useState(""); // New state for reject remark
+    const [usersList, setUsersList] = useState([]);
+    const [departmentsList, setDepartmentsList] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [openDrawer, setOpenDrawer] = useState(false);
+    const [filteredUnits, setFilteredUnits] = useState([]);
 
     const [newFile, setNewFile] = useState({
         file_id: "",
@@ -29,18 +34,69 @@ export const CreateFile = ({ datas, getAllData }) => {
         page_Number: "",
         parties: "",
     });
+    const [forwardData, setForwardData] = useState({
+        loginUser: user?.id,
+        to_user_id: "",
 
-    useEffect(() => {
-        setData(datas);
-    }, [datas]);
+        remark: "",
+    });
 
     const handlePageChange = (page) => {
         setPage(page);
     };
 
-    const handlePerRowsChange = async (newPerPage, page) => {
-        setPerPage(newPerPage);
+  useEffect(() => {
+    setData(datas);
+  }, [datas]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch users
+        const usersRes = await endpoint.get("/user/list");
+        setUsersList(usersRes.data.data);
+        console.log("Users fetched:", usersRes.data.data);
+
+        // Fetch departments
+        const deptRes = await endpoint.get("/department/get-all-departments");
+        setDepartmentsList(deptRes.data.data);
+      } catch (err) {
+        console.error("Error fetching users or departments:", err);
+      }
     };
+
+    fetchData();
+  }, []);
+
+  const handleDrawerOpen = (file) => {
+    setSelectedFile(file);
+    setForwardData({ ...forwardData, loginUser: user?.id });
+    setOpenDrawer(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpenDrawer(false);
+    setForwardData({
+      loginUser: user?.id,
+      to_user_id: "",
+
+      remark: "",
+    });
+    setFilteredUnits([]);
+  };
+
+  //   const handleDepartmentChange = (e) => {
+  //     const deptId = e.target.value;
+  //     setForwardData({ ...forwardData, department_id: deptId, unit_id: "" });
+
+  //     const units =
+  //       departmentsList.find((d) => d.id === parseInt(deptId))?.units || [];
+  //     setFilteredUnits(units);
+  //   };
+
+  const handleDepartmentChange = (e) => {
+    const deptId = e.target.value;
+    setForwardData({ ...forwardData, department_id: deptId, unit_id: "" });
 
     // Function to open QR code in new tab
     const openQRCodeInNewTab = (qrCodeUrl) => {
@@ -238,8 +294,7 @@ export const CreateFile = ({ datas, getAllData }) => {
             </div>
         ),
     }
-    ];
-
+]
     return (
         <>
             {isLoading && <Loader />}
@@ -458,4 +513,4 @@ export const CreateFile = ({ datas, getAllData }) => {
             </div>
         </>
     );
-};
+}};

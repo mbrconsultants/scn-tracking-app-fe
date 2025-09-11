@@ -588,14 +588,13 @@ export const Tracking = ({ refreshKey }) => {
 
         <Modal.Footer className="file-modal-footer">
           <Button
-            variant="danger"
+            variant="dark"
             className="file-btn-cancel"
             onClick={handleDrawerClose}
           >
             Close
           </Button>
           <Button
-            variant="success"
             style={{ backgroundColor: "#0a7148", color: "#fff" }}
             className="file-btn-update"
             onClick={handleForwardSubmit}

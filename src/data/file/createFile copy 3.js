@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Card, Row, Col, Modal, Button, Form } from "react-bootstrap";
+import { Card, Row, Col, Modal, Button } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import endpoint from "../../context/endpoint";
 import { Context } from "../../context/Context";
@@ -13,12 +13,11 @@ export const CreateFile = ({ datas, getAllData }) => {
     const [data, setData] = useState([]);
     const [isLoading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
-    const [rejectOpen, setRejectOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
-    const [idToReject, setIdToReject] = useState("");
-    const [nameToReject, setnameToReject] = useState("");
-    const [rejectRemark, setRejectRemark] = useState(""); // New state for reject remark
+    const [idToDelete, setIdToDelete] = useState("");
+    const [nameToDelete, setnameToDelete] = useState("");
 
     const [newFile, setNewFile] = useState({
         file_id: "",
@@ -42,19 +41,18 @@ export const CreateFile = ({ datas, getAllData }) => {
         setPerPage(newPerPage);
     };
 
-    // Function to open QR code in new tab
-    const openQRCodeInNewTab = (qrCodeUrl) => {
-        window.open(qrCodeUrl, '_blank', 'noopener,noreferrer');
-    };
-
     // Function to download QR code
     const downloadQRCode = (qrCodeUrl, fileName) => {
         // Create a temporary anchor element
         const link = document.createElement('a');
         link.href = qrCodeUrl;
         
+        // Extract the filename from the URL or use a default name
+        const urlParts = qrCodeUrl.split('/');
+        const qrFileName = urlParts[urlParts.length - 1];
+        
         // Set the download attribute with a proper filename
-        link.setAttribute('download', fileName ? `${fileName}_qrcode.png` : 'qrcode.png');
+        link.setAttribute('download', fileName ? `${fileName}_qrcode.png` : qrFileName);
         
         // Append to the document
         document.body.appendChild(link);
@@ -99,16 +97,16 @@ export const CreateFile = ({ datas, getAllData }) => {
         }
     };
 
-    const onReject = (row) => {
+    const onDelete = (row) => {
         setOpen(false);
-        setIdToReject(row.id);
-        setnameToReject(row.file_Name);
-        setRejectOpen(true);
+        setIdToDelete(row.id);
+        setnameToDelete(row.name);
+        setDeleteOpen(true);
     };
 
     const reset = () => {
         setNewFile({
-            file_id: "",
+             file_id: "",
             file_Name: "",
             description: "",
             file_Number: "",
@@ -116,32 +114,12 @@ export const CreateFile = ({ datas, getAllData }) => {
             page_Number: "",
             parties: "",
         });
-        setRejectRemark(""); // Reset reject remark when closing modal
     };
 
     const onClose = () => {
         reset();
         setOpen(false);
-        setRejectOpen(false);
-    };
-
-    // Handle reject action
-    const handleReject = async () => {
-        setLoading(true);
-        try {
-            // Add your reject API call here
-            await endpoint.post(`/file/reject/${idToReject}`, { remark: rejectRemark });
-            
-            SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
-            setLoading(false);
-            setRejectOpen(false);
-            getAllData();
-            setRejectRemark(""); // Reset remark after successful rejection
-        } catch (err) {
-            console.error("Reject error:", err.response);
-            ErrorAlert(err.response?.data?.message || "Failed to reject file");
-            setLoading(false);
-        }
+        setDeleteOpen(false);
     };
 
     const columns = [
@@ -156,7 +134,7 @@ export const CreateFile = ({ datas, getAllData }) => {
         name: "File Name",
         selector: (row) => row.file_Name,
         sortable: true,
-        width: "180px",
+        width: "215px",
         cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Name}</h6>,
     },
     {
@@ -166,6 +144,13 @@ export const CreateFile = ({ datas, getAllData }) => {
         width: "130px",
         cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Number}</h6>,
     },
+    // {
+    //     name: "Page Number",
+    //     selector: (row) => row.page_Number,
+    //     sortable: true,
+    //     width: "150px",
+    //     cell: (row) => <h6 className="fs-12 fw-semibold">{row.page_Number}</h6>,
+    // },
     {
         name: "Description",
         selector: (row) => row.description,
@@ -177,36 +162,29 @@ export const CreateFile = ({ datas, getAllData }) => {
         name: "QRCode",
         selector: (row) => row.qr_Code_Url,
         sortable: true,
-        width: "105px",
+        width: "110px",
         cell: (row) => (
-            <div className="d-flex flex-column align-items-center">
+            <h6 className="fs-12 fw-semibold"> 
                 {row.qr_Code_Url ? (
-                    <>
-                        <img 
-                            src={row.qr_Code_Url} 
-                            alt="QR Code" 
-                            className="qr-code-image mb-1"
-                            style={{ 
-                                width: "70px", 
-                                height: "70px",
-                                objectFit: "contain",
-                                cursor: "pointer"
-                            }}
-                            onClick={() => openQRCodeInNewTab(row.qr_Code_Url)}
-                            title="Click to view QR code in new tab"
-                        />
-                       
-                    </>
+                    <button 
+                        className="btn btn-sm mt-2" 
+                        style={{backgroundColor: "#525368", color: "#fff", borderColor: "#525368"}}
+                         onClick={() => window.open(row.qr_Code_Url, '_blank')}
+                        title="Download QR Code"
+                        target="_blank"
+                    >
+                        <i className="fa fa-download me-1"></i>
+                        QRCode
+                    </button>
                 ) : (
                     <span className="text-muted">No QR</span>
                 )}
-            </div>
+            </h6>
         ),
     },
     
     {
         name: "Actions",
-        width: "180px",
         cell: (row) => (
             <div className="d-flex flex-nowrap gap-1">
                 <button
@@ -214,25 +192,19 @@ export const CreateFile = ({ datas, getAllData }) => {
                     onClick={() => onEdit(row)}
                     style={{backgroundColor: "#0A7E51", color: "#fff", borderColor: "#0A7E51"}}
                     title="Edit">
-                    <i className="fa fa-edit me-1"></i>
                     Edit
                 </button>
                 <button
                     className="btn btn-sm"
                     style={{backgroundColor: "#0d0c22", color: "#fff", borderColor: "#0d0c22"}}
                     title="Forward">
-                    <i className="fa fa-forward me-1"></i>
                     Forward
                 </button>
                 <Button
                     className="btn btn-sm btn-danger"
-                    onClick={(e) => {
-                        onReject(row);
-                    }}
                     variant="danger"
-                    title="Reject"
+                    title="Action"
                     size="sm">
-                    <i className="fa fa-times me-1"></i>
                     Reject
                 </Button>
             </div>
@@ -414,48 +386,10 @@ export const CreateFile = ({ datas, getAllData }) => {
                                 </Button>
                             </Modal.Footer>
                         </Modal>
-
-                        {/* Reject Modal */}
-                        <Modal show={rejectOpen} onHide={onClose}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Reject File</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <p>
-                                    Do you really want to reject{" "}
-                                    <strong className="text-danger">'{nameToReject}'</strong> file?
-                                </p>
-                                <p>This process cannot be undone.</p>
-                                
-                                <Form.Group className="mb-3">
-                                    <Form.Label>
-                                        Reason for rejection (optional)
-                                    </Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={3}
-                                        placeholder="Optionally provide a reason for rejecting this file..."
-                                        value={rejectRemark}
-                                        onChange={(e) => setRejectRemark(e.target.value)}
-                                    />
-                                    
-                                </Form.Group>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={onClose}>
-                                    Cancel
-                                </Button>
-                                <Button 
-                                    variant="danger" 
-                                    onClick={handleReject}
-                                >
-                                    Reject File
-                                </Button>
-                            </Modal.Footer>
-                        </Modal>
                     </Col>
                 </Row>
             </div>
+            
         </>
     );
 };

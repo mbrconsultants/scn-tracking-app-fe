@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Card, Row, Col, Modal, Button, Form } from "react-bootstrap";
+import { Card, Row, Col, Modal, Button } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import endpoint from "../../context/endpoint";
 import { Context } from "../../context/Context";
@@ -16,9 +16,8 @@ export const CreateFile = ({ datas, getAllData }) => {
     const [rejectOpen, setRejectOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(10);
-    const [idToReject, setIdToReject] = useState("");
-    const [nameToReject, setnameToReject] = useState("");
-    const [rejectRemark, setRejectRemark] = useState(""); // New state for reject remark
+    const [idToDelete, setIdToDelete] = useState("");
+    const [nameToDelete, setnameToDelete] = useState("");
 
     const [newFile, setNewFile] = useState({
         file_id: "",
@@ -99,16 +98,16 @@ export const CreateFile = ({ datas, getAllData }) => {
         }
     };
 
-    const onReject = (row) => {
+    const onDelete = (row) => {
         setOpen(false);
-        setIdToReject(row.id);
-        setnameToReject(row.file_Name);
+        setIdToDelete(row.id);
+        setnameToDelete(row.file_Name);
         setRejectOpen(true);
     };
 
     const reset = () => {
         setNewFile({
-            file_id: "",
+             file_id: "",
             file_Name: "",
             description: "",
             file_Number: "",
@@ -116,32 +115,12 @@ export const CreateFile = ({ datas, getAllData }) => {
             page_Number: "",
             parties: "",
         });
-        setRejectRemark(""); // Reset reject remark when closing modal
     };
 
     const onClose = () => {
         reset();
         setOpen(false);
         setRejectOpen(false);
-    };
-
-    // Handle reject action
-    const handleReject = async () => {
-        setLoading(true);
-        try {
-            // Add your reject API call here
-            await endpoint.post(`/file/reject/${idToReject}`, { remark: rejectRemark });
-            
-            SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
-            setLoading(false);
-            setRejectOpen(false);
-            getAllData();
-            setRejectRemark(""); // Reset remark after successful rejection
-        } catch (err) {
-            console.error("Reject error:", err.response);
-            ErrorAlert(err.response?.data?.message || "Failed to reject file");
-            setLoading(false);
-        }
     };
 
     const columns = [
@@ -226,9 +205,9 @@ export const CreateFile = ({ datas, getAllData }) => {
                 </button>
                 <Button
                     className="btn btn-sm btn-danger"
-                    onClick={(e) => {
-                        onReject(row);
-                    }}
+                     onClick={(e) => {
+                                onDelete(row);
+                            }}
                     variant="danger"
                     title="Reject"
                     size="sm">
@@ -236,7 +215,7 @@ export const CreateFile = ({ datas, getAllData }) => {
                     Reject
                 </Button>
             </div>
-        ),
+    ),
     }
     ];
 
@@ -415,41 +394,26 @@ export const CreateFile = ({ datas, getAllData }) => {
                             </Modal.Footer>
                         </Modal>
 
-                        {/* Reject Modal */}
+                        {/* Delete Modal */}
                         <Modal show={rejectOpen} onHide={onClose}>
                             <Modal.Header closeButton>
-                                <Modal.Title>Reject File</Modal.Title>
+                                <Modal.Title>Reject</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
                                 <p>
                                     Do you really want to reject{" "}
-                                    <strong className="text-danger">'{nameToReject}'</strong> file?
+                                    <strong className="text-danger">'{nameToDelete}'</strong> file?
                                 </p>
                                 <p>This process cannot be undone.</p>
-                                
-                                <Form.Group className="mb-3">
-                                    <Form.Label>
-                                        Reason for rejection (optional)
-                                    </Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={3}
-                                        placeholder="Optionally provide a reason for rejecting this file..."
-                                        value={rejectRemark}
-                                        onChange={(e) => setRejectRemark(e.target.value)}
-                                    />
-                                    
-                                </Form.Group>
                             </Modal.Body>
                             <Modal.Footer>
                                 <Button variant="secondary" onClick={onClose}>
                                     Cancel
                                 </Button>
-                                <Button 
-                                    variant="danger" 
-                                    onClick={handleReject}
+                                <Button variant="danger" 
+                                // onClick={handleReject}
                                 >
-                                    Reject File
+                                    Reject
                                 </Button>
                             </Modal.Footer>
                         </Modal>

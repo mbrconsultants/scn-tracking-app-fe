@@ -127,6 +127,11 @@ export const CreateFile = ({ datas, getAllData }) => {
 
     // Handle reject action
     const handleReject = async () => {
+        if (!rejectRemark.trim()) {
+            ErrorAlert("Please provide a reason for rejection");
+            return;
+        }
+        
         setLoading(true);
         try {
             // Add your reject API call here
@@ -429,16 +434,19 @@ export const CreateFile = ({ datas, getAllData }) => {
                                 
                                 <Form.Group className="mb-3">
                                     <Form.Label>
-                                        Reason for rejection (optional)
+                                        Reason for rejection <span className="text-danger">*</span>
                                     </Form.Label>
                                     <Form.Control
                                         as="textarea"
                                         rows={3}
-                                        placeholder="Optionally provide a reason for rejecting this file..."
+                                        placeholder="Please provide a reason for rejecting this file..."
                                         value={rejectRemark}
                                         onChange={(e) => setRejectRemark(e.target.value)}
+                                        required
                                     />
-                                    
+                                    <Form.Text className="text-muted">
+                                        This remark will be recorded with the rejection.
+                                    </Form.Text>
                                 </Form.Group>
                             </Modal.Body>
                             <Modal.Footer>
@@ -448,6 +456,7 @@ export const CreateFile = ({ datas, getAllData }) => {
                                 <Button 
                                     variant="danger" 
                                     onClick={handleReject}
+                                    disabled={!rejectRemark.trim()}
                                 >
                                     Reject File
                                 </Button>

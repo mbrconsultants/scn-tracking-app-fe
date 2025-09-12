@@ -268,151 +268,6 @@ export const Units = ({ refreshKey }) => {
           )}
         </DataTableExtensions>
       }
-      {/* <Modal show={showEditModal}>
-        <Modal.Header>
-          <Button
-            onClick={() => setShowEditModal(false)}
-            className="btn-close"
-            variant=""
-          >
-            x
-          </Button>
-        </Modal.Header>
-        <CForm
-          onSubmit={handleSubmit(modifyUser)}
-          className="row g-3 needs-validation"
-        >
-          <Modal.Body>
-            <div>
-              <Card>
-                <Card.Header>
-                  <Card.Title as="h3">Update User Password</Card.Title>
-                </Card.Header>
-                <Card.Body>
-                  <h5>
-                    pls input new passord for <span> {value.fullname} </span> to
-                    change password
-                  </h5>
-                  <Col lg={12} md={12}>
-                    <FormGroup>
-                      <label htmlFor="exampleInputname">Full Name</label>
-                      <Form.Control
-                        type="text"
-                        name="fullname"
-                        defaultValue={value.fullname}
-                        onChange={(e) => {
-                          setValue({ ...value, fullname: e.target.value });
-                        }}
-                        className="form-control"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col lg={12} md={12}>
-                    <FormGroup>
-                      <label htmlFor="exampleInputname">Email</label>
-                      <Form.Control
-                        defaultValue={value.email}
-                        type="text"
-                        name="email"
-                        onChange={(e) => {
-                          setValue({ ...value, email: e.target.value });
-                        }}
-                        className="form-control"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col lg={12} md={12}>
-                    <FormGroup>
-                      <label htmlFor="exampleInputname"> Password</label>
-                      <Form.Control
-                        type="password"
-                        name="password"
-                        className="form-control"
-                        onChange={(e) => {
-                          setValue({ ...value, password: e.target.value });
-                        }}
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col lg={12} md={12}>
-                    <FormGroup>
-                      <label htmlFor="exampleInputname">Role</label>
-                      <select
-                        defaultValue={value.role_id}
-                        className="form-control"
-                        name="role_id"
-                        id=""
-                        onChange={(e) => {
-                          setValue({ ...value, role_id: e.target.value });
-                        }}
-                      >
-                        <option value="">--select--</option>
-                        {roles &&
-                          roles.map((role) => (
-                            <option value={role.id}>{role.role_name}</option>
-                          ))}
-                      </select>
-                    </FormGroup>
-                  </Col>
-                </Card.Body>
-              </Card>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="warning"
-              className="me-1"
-              onClick={() => setShowEditModal(false)}
-            >
-              Close
-            </Button>
-            <Button variant="primary" type="submit" className="me-1">
-              <span className="fe fe-arrow-right"></span> Save
-            </Button>
-          </Modal.Footer>
-        </CForm>
-      </Modal> */}
-      {/* <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Unit</Modal.Title>
-        </Modal.Header>
-
-        <CForm
-          onSubmit={handleSubmit(modifyUser)}
-          className="row g-3 needs-validation"
-        >
-          <Modal.Body>
-            <Card>
-              <Card.Body>
-                <Col lg={12} md={12}>
-                  <FormGroup>
-                    <label htmlFor="unitName">Unit Name</label>
-                    <Form.Control
-                      type="text"
-                      name="name"
-                      defaultValue={value.name}
-                      onChange={(e) => {
-                        setValue({ ...value, name: e.target.value });
-                      }}
-                      className="form-control"
-                      required
-                    />
-                  </FormGroup>
-                </Col>
-              </Card.Body>
-            </Card>
-          </Modal.Body>
-
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowEditModal(false)}>
-              Close
-            </Button>
-            <Button variant="primary" type="submit">
-              <span className="fe fe-save"></span> Save
-            </Button>
-          </Modal.Footer>
-        </CForm>
-      </Modal> */}
 
       <Modal show={showEditModal}>
         <Modal.Header>
@@ -431,7 +286,9 @@ export const Units = ({ refreshKey }) => {
           <Modal.Body>
             <Card>
               <Card.Header>
-                <Card.Title as="h3">Edit Unit</Card.Title>
+                <Card.Title as="h3" style={{ color: "#0a7148" }}>
+                  Edit Unit
+                </Card.Title>
               </Card.Header>
               <Card.Body>
                 <Col lg={12} md={12}>
@@ -453,21 +310,21 @@ export const Units = ({ refreshKey }) => {
           </Modal.Body>
           <Modal.Footer>
             <Button
-              variant="warning"
+              variant="danger"
               className="me-1"
               onClick={() => setShowEditModal(false)}
             >
               Close
             </Button>
             <Button variant="primary" type="submit" className="me-1">
-              <span className="fe fe-arrow-right"></span> Save
+              Save
             </Button>
           </Modal.Footer>
         </CForm>
       </Modal>
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
+          <Modal.Title style={{ color: "#d62640" }}>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body className="text-center text-bold">
           Are you sure you want to delete this unit?

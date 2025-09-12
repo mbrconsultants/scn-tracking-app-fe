@@ -27,6 +27,9 @@ const CardDesign = React.lazy(() =>
 
 const AllUsers = React.lazy(() => import("./components/Auth/AllUsers"));
 const AllUnits = React.lazy(() => import("./components/Auth/AllUnits"));
+const AllDepertments = React.lazy(() =>
+  import("./components/Auth/AllDepertments")
+);
 const AllTracking = React.lazy(() => import("./components/Auth/AllTracking"));
 
 const CreateUser = React.lazy(() => import("./components/Auth/CreateUser"));
@@ -435,6 +438,10 @@ const Root = () => {
                   <Route
                     path={`${process.env.PUBLIC_URL}/units`}
                     element={<AllUnits />}
+                  />
+                  <Route
+                    path={`${process.env.PUBLIC_URL}/depertments`}
+                    element={<AllDepertments />}
                   />
                   <Route
                     path={`${process.env.PUBLIC_URL}/tracking-files`}

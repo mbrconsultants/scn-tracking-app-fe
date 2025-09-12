@@ -85,52 +85,18 @@ export const CreateFile = ({ datas, getAllData }) => {
     setFilteredUnits([]);
   };
 
+  //   const handleDepartmentChange = (e) => {
+  //     const deptId = e.target.value;
+  //     setForwardData({ ...forwardData, department_id: deptId, unit_id: "" });
+
+  //     const units =
+  //       departmentsList.find((d) => d.id === parseInt(deptId))?.units || [];
+  //     setFilteredUnits(units);
+  //   };
+
   const handleDepartmentChange = (e) => {
     const deptId = e.target.value;
     setForwardData({ ...forwardData, department_id: deptId, unit_id: "" });
-
-    const units =
-      departmentsList.find((d) => d.id === parseInt(deptId))?.units || [];
-    setFilteredUnits(units);
-  };
-
-   const handleForwardSubmit = async () => {
-    if (!forwardData.user_id) {
-      return ErrorAlert("Please select a user");
-    }
-
-    if (!selectedFile?.id) {
-      return ErrorAlert("File ID is missing");
-    }
-
-    setLoading(true);
-    try {
-      const payload = {
-        file_id: selectedFile.id, // required
-        from_user_id: forwardData.loginUser, // 👈 logged-in user
-        to_user_id: forwardData.user_id, // 👈 recipient
-        remark: forwardData.remark || "",
-      };
-
-      console.log("Submitting payload:", payload); // debug
-
-      const res = await endpoint.post(
-        `/file-track/create-file-tracking`,
-        payload
-      );
-
-      SuccessAlert(res.data.message || "File forwarded successfully!");
-      getAllData(); // refresh after forwarding
-      handleDrawerClose();
-    } catch (err) {
-      console.error("Forward error:", err.response?.data || err);
-      ErrorAlert(err.response?.data?.message || "Forward failed!");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  
 
     // Function to open QR code in new tab
     const openQRCodeInNewTab = (qrCodeUrl) => {
@@ -308,7 +274,6 @@ export const CreateFile = ({ datas, getAllData }) => {
                     Edit
                 </button>
                 <button
-                    onClick={() => handleDrawerOpen(row)}
                     className="btn btn-sm"
                     style={{backgroundColor: "#0d0c22", color: "#fff", borderColor: "#0d0c22"}}
                     title="Forward">
@@ -543,85 +508,9 @@ export const CreateFile = ({ datas, getAllData }) => {
                                 </Button>
                             </Modal.Footer>
                         </Modal>
-
-                        {/* Forword Modal */}
-                        <Modal
-                            show={openDrawer}
-                            onHide={handleDrawerClose}
-                            className="file-modal-wrapper"
-                            centered
-                        >
-                        <Modal.Header closeButton className="file-modal-header">
-                            <Modal.Title className="file-modal-title">
-                            Forward File
-                            </Modal.Title>
-                        </Modal.Header>
-
-                        <Modal.Body className="file-modal-body">
-                            {/* Hidden loginUser */}
-                            <input type="hidden" value={forwardData.loginUser} />
-
-                            {/* User Select */}
-
-                            <Form.Group className="mb-3">
-                            <Form.Label>User</Form.Label>
-                            <Form.Select
-                                value={forwardData.user_id || ""}
-                                onChange={(e) =>
-                                setForwardData({
-                                    ...forwardData,
-                                    user_id: e.target.value,
-                                })
-                                }
-                            >
-                                <option value="" disabled hidden>
-                                -- Select User --
-                                </option>
-                                {usersList.map((u) => (
-                                <option key={u.id} value={u.id}>
-                                    {`${u.surname} ${u.first_name}${
-                                    u.middle_name ? ` ${u.middle_name}` : ""
-                                    }`}
-                                </option>
-                                ))}
-                            </Form.Select>
-                            </Form.Group>
-
-                            {/* Remark */}
-                            <Form.Group className="mb-3">
-                            <Form.Label>Remark</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={3}
-                                value={forwardData.remark}
-                                onChange={(e) =>
-                                setForwardData({ ...forwardData, remark: e.target.value })
-                                }
-                            />
-                            </Form.Group>
-                        </Modal.Body>
-
-                        <Modal.Footer className="file-modal-footer">
-                            <Button
-                            variant="danger"
-                            className="file-btn-cancel"
-                            onClick={handleDrawerClose}
-                            >
-                            Close
-                            </Button>
-                            <Button
-                            variant="success"
-                            className="file-btn-update"
-                            onClick={handleForwardSubmit}
-                            >
-                            Forward
-                            </Button>
-                        </Modal.Footer>
-                        </Modal>
-
                     </Col>
                 </Row>
             </div>
         </>
     );
-};
+}};

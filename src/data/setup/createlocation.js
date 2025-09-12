@@ -167,6 +167,9 @@ export const CreateLocation = ({ datas, getAllData }) => {
                             striped={true}
                             center={true}
                             pagination
+                             paginationComponentOptions={{
+                                noRowsPerPage: true 
+                            }}
                             onChangePage={handlePageChange}
                             onChangeRowsPerPage={handlePerRowsChange}
                             paginationRowsPerPageOptions={[10, 15, 20, 25, 30, 50, 100]}

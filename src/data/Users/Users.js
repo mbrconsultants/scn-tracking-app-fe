@@ -209,10 +209,17 @@ export const Users = ({ refreshKey }) => {
           <img
             src={row.signature_url}
             alt="signature"
+            // style={{
+            //   width: "100px",
+            //   height: "auto",
+            //   border: "1px solid #ddd",
+            //   borderRadius: "4px",
+            // }}
             style={{
-              width: "100px",
-              height: "auto",
-              border: "1px solid #ddd",
+              width: "100px", // fixed width
+              height: "50px", // fixed height
+              objectFit: "contain", // keep aspect ratio inside box
+              // border: "1px solid #ddd",
               borderRadius: "4px",
             }}
             onError={(e) => {

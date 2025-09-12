@@ -3,7 +3,7 @@ import CountUp from "react-countup";
 import ReactApexChart from "react-apexcharts";
 import { Breadcrumb, Col, Row, Card, Button, Modal } from "react-bootstrap";
 import Form from "react-bootstrap/Form"; // <-- add this
-import * as Units from "../../data/Units/Units";
+import * as Depertments from "../../data/Depertments/Depertments";
 import { Link, useNavigate } from "react-router-dom";
 import endpoint from "../../context/endpoint";
 import { useForm } from "react-hook-form";
@@ -11,7 +11,7 @@ import { ErrorAlert, SuccessAlert } from "../../data/Toast/toast";
 import Drawer from "@mui/material/Drawer";
 import TextField from "@mui/material/TextField";
 
-export default function AllUnits() {
+export default function AllDepertments() {
   const [open, setOpen] = useState(false);
   const [roles, setRoles] = useState([]);
   const [units, setUnits] = useState([]);
@@ -42,10 +42,10 @@ export default function AllUnits() {
     //   }
     // };
 
-    const getUnits = async () => {
+    const getDepartments = async () => {
       try {
-        const res = await endpoint.get("/unit/get-all-units");
-        setUnits(res.data.data);
+        const res = await endpoint.get("/department/get-all-departments");
+        setDepartments(res.data.data);
       } catch (err) {
         console.error(err);
       }
@@ -61,7 +61,7 @@ export default function AllUnits() {
     // };
 
     // getRoles();
-    getUnits();
+    getDepartments();
     // getDepartments();
   }, []);
 
@@ -89,27 +89,27 @@ export default function AllUnits() {
     e.preventDefault();
 
     try {
-      const res = await endpoint.post("/unit/create-unit", {
+      const res = await endpoint.post("/department/create-department", {
         name: formData.name,
       });
 
-      console.log("✅ Unit added:", res.data);
+      console.log("✅ Depertment added:", res.data);
 
       // ✅ show success toast
-      SuccessAlert("Unit created successfully!");
+      SuccessAlert("Depertment created successfully!");
       setRefreshKey((prev) => prev + 1);
 
       // close drawer and reset form
       handleClose();
 
       // optionally refresh the unit list
-      const refreshed = await endpoint.get("/unit/get-all-units");
-      setUnits(refreshed.data.data);
+      const refreshed = await endpoint.get("/department/get-all-departments");
+      setDepartments(refreshed.data.data);
     } catch (err) {
       console.error("❌ Upload failed:", err.response?.data || err.message);
 
       // ❌ show error toast
-      ErrorAlert(err.response?.data?.message || "Failed to create unit");
+      ErrorAlert(err.response?.data?.message || "Failed to create depertment");
     }
   };
 
@@ -121,7 +121,7 @@ export default function AllUnits() {
 
           <Breadcrumb className="breadcrumb">
             {/* <Breadcrumb.Item href="#">Home</Breadcrumb.Item> */}
-            <Breadcrumb.Item active>Units List</Breadcrumb.Item>
+            <Breadcrumb.Item active>Depertments List</Breadcrumb.Item>
           </Breadcrumb>
         </div>
         <div className="ms-auto pageheader-btn">
@@ -139,7 +139,7 @@ export default function AllUnits() {
             <span>
               <i className="fe fe-plus"></i>&nbsp;
             </span>
-            Add Unit
+            Add Depertment
           </Button>
         </div>
       </div>
@@ -150,12 +150,15 @@ export default function AllUnits() {
         <Col sm={12} className="col-12">
           <Card>
             <Card.Header>
-              <Col className="card-title text-center mb-0"> UNITS LIST </Col>
+              <Col className="card-title text-center mb-0">
+                {" "}
+                DEPERTMENTS LIST{" "}
+              </Col>
             </Card.Header>
             <Card.Body>
               <div className="">
                 <div className="">
-                  <Units.Units refreshKey={refreshKey} />
+                  <Depertments.Depertments refreshKey={refreshKey} />
                 </div>
               </div>
             </Card.Body>
@@ -199,12 +202,12 @@ export default function AllUnits() {
 
       <Modal show={open} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title style={{ color: "#0a7e51" }}>Add Unit</Modal.Title>
+          <Modal.Title style={{ color: "#0a7e51" }}>Add Depertment</Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
             <TextField
-              label="Unit Name"
+              label="Depertment Name"
               name="name"
               value={formData.name || ""}
               onChange={handleChange}

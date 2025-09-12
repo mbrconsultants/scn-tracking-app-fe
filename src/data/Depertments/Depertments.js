@@ -34,37 +34,45 @@ import {
   Dropdown,
 } from "react-bootstrap";
 
-export const Users = () => {
+export const Depertments = ({ refreshKey }) => {
   const {
     handleSubmit,
     register,
     formState: { errors },
     reset,
   } = useForm();
-  const [data, setUsersList] = useState([]);
+  const [data, setDepartments] = useState([]);
   const [roles, setUsersRoles] = useState([]);
 
   const [isLoading, setLoading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  // const [value, setValue] = useState({
+  //   fullname: "",
+  //   email: "",
+  //   password: "",
+  //   role_id: "",
+  // });
   const [value, setValue] = useState({
-    fullname: "",
-    email: "",
-    password: "",
-    role_id: "",
+    id: "",
+    name: "",
   });
 
   useEffect(() => {
-    getUsersList();
+    // getUnitsList();
+    getDepartmentsList();
     getUsersroles();
-  }, []);
+  }, [refreshKey]);
 
   //get users
-  const getUsersList = async () => {
+  const getDepartmentsList = async () => {
     setLoading(true);
     await endpoint
-      .get("/user/list")
+      .get("/department/get-all-departments")
       .then((res) => {
-        setUsersList(res.data.data);
+        setDepartments(res.data.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -86,13 +94,38 @@ export const Users = () => {
       });
   };
 
-  const modifyUser = async (data) => {
+  // const deleteUnit = async (id) => {
+  //   if (!window.confirm("Are you sure you want to delete this unit?")) return;
+
+  //   try {
+  //     await endpoint.delete(`/unit/delete-unit-by-id/${id}`);
+  //     SuccessAlert("Unit deleted successfully!");
+  //     getUnitsList(); // refresh list
+  //   } catch (err) {
+  //     console.error(err);
+  //     ErrorAlert(err.response?.data?.message || "Failed to delete unit");
+  //   }
+  // };
+
+  const handleDeleteDepartment = async (id) => {
+    try {
+      await endpoint.delete(`/department/delete-department-by-id/${id}`);
+      SuccessAlert("Depertment deleted successfully!");
+      getDepartmentsList(); // refresh list
+      setShowDeleteModal(false);
+    } catch (err) {
+      console.error(err);
+      ErrorAlert(err.response?.data?.message || "Failed to delete depertment");
+    }
+  };
+
+  const modifyDepertment = async (data) => {
     await endpoint
-      .put(`/user/edit/${value.id}`, value)
+      .put(`/department/update-department-by-id/${value.id}`, value)
       .then((res) => {
         setLoading(false);
         SuccessAlert(res.data.message);
-        getUsersList();
+        getDepartmentsList();
         setShowEditModal(false);
         setLoading(false);
       })
@@ -102,10 +135,16 @@ export const Users = () => {
         }
       });
   };
+  // const handleShowEditModal = (row) => {
+  //   setValue(row);
+  //   setShowEditModal(true);
+  //   // console.log("user:",row);
+  //   reset();
+  // };
+
   const handleShowEditModal = (row) => {
-    setValue(row);
+    setValue({ id: row.id, name: row.name });
     setShowEditModal(true);
-    // console.log("user:",row);
     reset();
   };
 
@@ -118,7 +157,7 @@ export const Users = () => {
 
     {
       name: "NAME",
-      selector: (row) => [row.surname],
+      selector: (row) => [row.name],
 
       style: { textAlign: "right" },
       sortable: true,
@@ -126,24 +165,24 @@ export const Users = () => {
       width: "400px",
       cell: (row) => (
         <div className="fs-12 fw-bold ">
-          {row.surname !== null ? row.surname : ""}{" "}
+          {row.name !== null ? row.name : ""}{" "}
         </div>
       ),
     },
-    {
-      name: "Email",
-      selector: (row) => [row.email],
+    // {
+    //   name: "Email",
+    //   selector: (row) => [row.email],
 
-      style: { textAlign: "right" },
-      sortable: true,
+    //   style: { textAlign: "right" },
+    //   sortable: true,
 
-      width: "400px",
-      cell: (row) => (
-        <div className="fs-12 fw-bold ">
-          {row.email !== null ? row.email : ""}
-        </div>
-      ),
-    },
+    //   width: "400px",
+    //   cell: (row) => (
+    //     <div className="fs-12 fw-bold ">
+    //       {row.email !== null ? row.email : ""}
+    //     </div>
+    //   ),
+    // },
     // {
     //   name: "PHONE",
     //   selector: (row) => [row.phone],
@@ -166,11 +205,28 @@ export const Users = () => {
       cell: (row) => (
         <div className="fs-12 fw-bold ">
           <button
-            className="btn btn-warning btn-sm my-1"
+            className="btn btn-warning btn-sm my-1 me-2"
             variant="warning"
             onClick={() => handleShowEditModal(row)}
           >
             <span className="fe fe-edit"> </span>
+          </button>
+
+          {/* <button
+            className="btn btn-danger btn-sm"
+            onClick={() => deleteUnit(row.id)}
+          >
+            <span className="fe fe-trash"></span>
+          </button> */}
+          <button
+            className="btn btn-danger btn-sm my-1 ms-2"
+            variant="danger"
+            onClick={() => {
+              setDeleteId(row.id);
+              setShowDeleteModal(true);
+            }}
+          >
+            <span className="fe fe-trash"></span>
           </button>
         </div>
       ),
@@ -213,6 +269,7 @@ export const Users = () => {
           )}
         </DataTableExtensions>
       }
+
       <Modal show={showEditModal}>
         <Modal.Header>
           <Button
@@ -224,98 +281,68 @@ export const Users = () => {
           </Button>
         </Modal.Header>
         <CForm
-          onSubmit={handleSubmit(modifyUser)}
+          onSubmit={handleSubmit(modifyDepertment)}
           className="row g-3 needs-validation"
         >
           <Modal.Body>
-            <div>
-              <Card>
-                <Card.Header>
-                  <Card.Title as="h3">Update User Password</Card.Title>
-                </Card.Header>
-                <Card.Body>
-                  <h5>
-                    pls input new passord for <span> {value.fullname} </span> to
-                    change password
-                  </h5>
-                  <Col lg={12} md={12}>
-                    <FormGroup>
-                      <label htmlFor="exampleInputname">Full Name</label>
-                      <Form.Control
-                        type="text"
-                        name="fullname"
-                        defaultValue={value.fullname}
-                        onChange={(e) => {
-                          setValue({ ...value, fullname: e.target.value });
-                        }}
-                        className="form-control"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col lg={12} md={12}>
-                    <FormGroup>
-                      <label htmlFor="exampleInputname">Email</label>
-                      <Form.Control
-                        defaultValue={value.email}
-                        type="text"
-                        name="email"
-                        onChange={(e) => {
-                          setValue({ ...value, email: e.target.value });
-                        }}
-                        className="form-control"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col lg={12} md={12}>
-                    <FormGroup>
-                      <label htmlFor="exampleInputname"> Password</label>
-                      <Form.Control
-                        type="password"
-                        name="password"
-                        className="form-control"
-                        onChange={(e) => {
-                          setValue({ ...value, password: e.target.value });
-                        }}
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col lg={12} md={12}>
-                    <FormGroup>
-                      <label htmlFor="exampleInputname">Role</label>
-                      <select
-                        defaultValue={value.role_id}
-                        className="form-control"
-                        name="role_id"
-                        id=""
-                        onChange={(e) => {
-                          setValue({ ...value, role_id: e.target.value });
-                        }}
-                      >
-                        <option value="">--select--</option>
-                        {roles &&
-                          roles.map((role) => (
-                            <option value={role.id}>{role.role_name}</option>
-                          ))}
-                      </select>
-                    </FormGroup>
-                  </Col>
-                </Card.Body>
-              </Card>
-            </div>
+            <Card>
+              <Card.Header>
+                <Card.Title as="h3">Edit Depertment</Card.Title>
+              </Card.Header>
+              <Card.Body>
+                <Col lg={12} md={12}>
+                  <FormGroup>
+                    <label htmlFor="unitName">Depertment Name</label>
+                    <Form.Control
+                      type="text"
+                      name="name"
+                      value={value.name}
+                      onChange={(e) => {
+                        setValue({ ...value, name: e.target.value });
+                      }}
+                      className="form-control"
+                    />
+                  </FormGroup>
+                </Col>
+              </Card.Body>
+            </Card>
           </Modal.Body>
           <Modal.Footer>
             <Button
-              variant="warning"
-              className="me-1"
+              variant="danger"
+              className="me-1 file-btn-cancel"
               onClick={() => setShowEditModal(false)}
             >
               Close
             </Button>
-            <Button variant="primary" type="submit" className="me-1">
-              <span className="fe fe-arrow-right"></span> Save
+            <Button
+              variant="primary"
+              type="submit"
+              className="me-1 file-btn-update"
+            >
+              Save
             </Button>
           </Modal.Footer>
         </CForm>
+      </Modal>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ color: "#d62640" }}>Confirm Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-center text-bold">
+          Are you sure you want to delete this depertment?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancel
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => handleDeleteDepartment(deleteId)}
+          >
+            Delete
+          </Button>
+        </Modal.Footer>
       </Modal>
     </>
   );

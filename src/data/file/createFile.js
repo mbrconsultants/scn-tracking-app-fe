@@ -138,23 +138,23 @@ export const CreateFile = ({ datas, getAllData }) => {
     };
 
     // Function to download QR code
-    const downloadQRCode = (qrCodeUrl, fileName) => {
-        // Create a temporary anchor element
-        const link = document.createElement('a');
-        link.href = qrCodeUrl;
+    // const downloadQRCode = (qrCodeUrl, fileName) => {
+    //     // Create a temporary anchor element
+    //     const link = document.createElement('a');
+    //     link.href = qrCodeUrl;
         
-        // Set the download attribute with a proper filename
-        link.setAttribute('download', fileName ? `${fileName}_qrcode.png` : 'qrcode.png');
+    //     // Set the download attribute with a proper filename
+    //     link.setAttribute('download', fileName ? `${fileName}_qrcode.png` : 'qrcode.png');
         
-        // Append to the document
-        document.body.appendChild(link);
+    //     // Append to the document
+    //     document.body.appendChild(link);
         
-        // Trigger the download
-        link.click();
+    //     // Trigger the download
+    //     link.click();
         
-        // Clean up
-        document.body.removeChild(link);
-    };
+    //     // Clean up
+    //     document.body.removeChild(link);
+    // };
 
     const onEdit = (row) => {
         console.log("file to edit", row);
@@ -220,7 +220,7 @@ export const CreateFile = ({ datas, getAllData }) => {
         setLoading(true);
         try {
             // Add your reject API call here
-            await endpoint.post(`/file/reject/${idToReject}`, { remark: rejectRemark });
+            await endpoint.post(`/file/reject-file-tracking/${idToReject}`, { remark: rejectRemark });
             
             SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
             setLoading(false);

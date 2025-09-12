@@ -20,6 +20,7 @@ export default function AllUnits() {
 
   const [formData, setFormData] = useState({
     name: "",
+    department_id: "",
   });
 
   // drawer controls
@@ -28,6 +29,7 @@ export default function AllUnits() {
     setOpen(false);
     setFormData({
       name: "",
+      department_id: "",
     });
   };
 
@@ -51,18 +53,18 @@ export default function AllUnits() {
       }
     };
 
-    // const getDepartments = async () => {
-    //   try {
-    //     const res = await endpoint.get("/department/list");
-    //     setDepartments(res.data.data);
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // };
+    const getDepartments = async () => {
+      try {
+        const res = await endpoint.get("/department/get-all-departments");
+        setDepartments(res.data.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
     // getRoles();
     getUnits();
-    // getDepartments();
+    getDepartments();
   }, []);
 
   // handle input
@@ -91,6 +93,7 @@ export default function AllUnits() {
     try {
       const res = await endpoint.post("/unit/create-unit", {
         name: formData.name,
+        department_id: formData.department_id,
       });
 
       console.log("✅ Unit added:", res.data);
@@ -163,40 +166,6 @@ export default function AllUnits() {
         </Col>
       </Row>
 
-      {/* Drawer on the left */}
-
-      {/* <Drawer anchor="left" open={open} onClose={handleClose}>
-        <div style={{ width: 400, padding: "20px" }}>
-          <h4 className="mb-3" style={{ color: "#0a7e51" }}>
-            Add Unit
-          </h4>
-          <Form onSubmit={handleSubmit}>
-            <TextField
-              label="Unit Name"
-              name="name"
-              value={formData.name || ""}
-              onChange={handleChange}
-              fullWidth
-              required
-              className="mb-3"
-            />
-
-            <div className="d-flex justify-content-end mt-3">
-              <Button
-                onClick={handleClose}
-                variant="secondary"
-                className="me-2"
-              >
-                Cancel
-              </Button>
-              <Button type="submit" variant="success">
-                Save
-              </Button>
-            </div>
-          </Form>
-        </div>
-      </Drawer> */}
-
       <Modal show={open} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title style={{ color: "#0a7e51" }}>Add Unit</Modal.Title>
@@ -212,6 +181,40 @@ export default function AllUnits() {
               required
               className="mb-3"
             />
+            {/* <Form.Group className="mb-3">
+              <Form.Label>Department</Form.Label>
+              <Form.Select
+                name="department_id"
+                value={formData.department_id}
+                onChange={handleChange}
+                required
+              >
+                <option value="">-- Select Department --</option>
+                {departments.map((dept) => (
+                  <option key={dept.id} value={dept.id}>
+                    {dept.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group> */}
+            <Form.Group className="mb-3">
+              <Form.Label>Department</Form.Label>
+              <Form.Select
+                name="department_id"
+                value={formData.department_id}
+                onChange={handleChange}
+                required
+              >
+                <option value="" disabled hidden>
+                  -- Select Department --
+                </option>
+                {departments.map((dept) => (
+                  <option key={dept.id} value={dept.id}>
+                    {dept.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
           </Modal.Body>
           <Modal.Footer>
             <Button

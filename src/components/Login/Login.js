@@ -1,10 +1,12 @@
 import React, { useContext, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "react-bootstrap";
+import Swal from 'sweetalert2';
 import * as custompagesswitcherdata from "../../data/Switcher/Custompagesswitcherdata";
 import { Context } from "../../context/Context";
 import endpoint from "../../context/endpoint";
-import { toast } from 'react-toastify';
+import 'sweetalert2'
+import "./style.css"
 
 export default function Login() {
   const emailRef = useRef()
@@ -12,15 +14,19 @@ export default function Login() {
   const { dispatch, isFetching } = useContext(Context)
   const [loading, setLoading] = useState(false)
 
-  const errorAlert = () => {
-    toast.error("Incorrect email or password", {
-      position: "top-center",
-      autoClose: 10000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
+  const showErrorAlert = (message = "Incorrect email or password") => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Login Failed',
+      text: message,
+      confirmButtonColor: '#0A7E51',
+      confirmButtonText: 'Try Again',
+      customClass: {
+        popup: 'sweet-alert-popup',
+        title: 'sweet-alert-title',
+        content: 'sweet-alert-content',
+        confirmButton: 'sweet-alert-confirm-btn'
+      }
     });
   }
 
@@ -44,7 +50,8 @@ export default function Login() {
 
     } catch (error) {
         dispatch({ type: "LOGIN_FAILURE" });
-        errorAlert(error.response.data.message)
+        const errorMsg = error.response?.data?.message || "Incorrect email or password";
+        showErrorAlert(errorMsg);
         setLoading(false)
     }
   }
@@ -208,35 +215,7 @@ export default function Login() {
         </div>
       </div>
 
-      <style>{`
-        .login-card {
-          transition: transform 0.3s ease;
-        }
-        
-        .login-card:hover {
-          transform: translateY(-5px);
-        }
-        
-        .form-control:focus {
-          box-shadow: none;
-          border-color: #0A7E51;
-        }
-        
-        .input-group-text {
-          border-radius: 8px 0 0 8px !important;
-        }
-        
-        .btn-loading {
-          opacity: 0.8;
-          pointer-events: none;
-        }
-        
-        @media (max-width: 768px) {
-          .login-card {
-            margin-top: 40px;
-          }
-        }
-      `}</style>
+     
     </div>
   );
 }

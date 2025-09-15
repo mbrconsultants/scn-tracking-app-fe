@@ -200,7 +200,7 @@ export const Tracking = ({ refreshKey }) => {
 
    const onReject = (row) => {
         // setOpen(false);
-        setIdToReject(row.id);
+        setIdToReject(row.file?.id);
         setnameToReject(row.file_Name);
         setRejectOpen(true);
     };
@@ -214,18 +214,16 @@ export const Tracking = ({ refreshKey }) => {
 const handleReject = async () => {
   setLoading(true);
   try {
-    // Use the correct endpoint and send data in the correct format
     await endpoint.post(`/file-track/reject-file-tracking`, { 
       tracking_id: idToReject, 
       remark: rejectRemark 
     });
     
     SuccessAlert(`File has been rejected successfully!`);
-    // SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
     setLoading(false);
     setRejectOpen(false);
     getTrackingList();
-    setRejectRemark(""); // Reset remark after successful rejection
+    setRejectRemark("");
   } catch (err) {
     console.error("Reject error:", err.response);
     ErrorAlert(err.response?.data?.message || "Failed to reject file");

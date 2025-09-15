@@ -5,111 +5,391 @@ import { Context } from "../../context/Context";
 import { ErrorAlert, SuccessAlert } from "../../data/Toast/toast";
 import { useParams } from "react-router-dom";
 
+// export default function FileForwordCard() {
+//   const { file_Number } = useParams();
+//   // const { user } = useContext(Context);
+//   // ⬇️ Add this line here
+//   const loginUserId = JSON.parse(localStorage.getItem("user"))?.id || null;
+//   const [showModal, setShowModal] = useState(false);
+//   const [users, setUsers] = useState([]);
+//   const [openDrawer, setOpenDrawer] = useState(false);
+//   const [selectedUser, setSelectedUser] = useState("");
+//   const [usersList, setUsersList] = useState([]);
+//   const [isForwarded, setIsForwarded] = useState(false);
+//   const [isRejected, setIsRejected] = useState(false);
+//   const [isLoading, setLoading] = useState(false);
+//   const [selectedFile, setSelectedFile] = useState(null);
+//   const [forwardData, setForwardData] = useState({
+//     loginUser: loginUserId,
+//     to_user_id: "",
+
+//     remark: "",
+//   });
+
+//   // 🔹 fetch file by file_number
+//   useEffect(() => {
+//     const fetchFile = async () => {
+//       try {
+//         const res = await endpoint.get(`/file/file-number/${file_Number}`);
+//         console.log("File fetched:", res.data.data);
+
+//         setSelectedFile(res.data.data);
+//       } catch (err) {
+//         console.error(err);
+//         ErrorAlert("Failed to load file");
+//       }
+//     };
+
+//     if (file_Number) fetchFile();
+//   }, [file_Number]);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         // Fetch users
+//         const usersRes = await endpoint.get("/user/list");
+//         setUsersList(usersRes.data.data);
+//         console.log("Users fetched:", usersRes.data.data);
+//       } catch (err) {
+//         console.error("Error fetching users:", err);
+//       }
+//     };
+
+//     fetchData();
+//   }, []);
+
+//   const handleDrawerOpen = () => {
+//     // setSelectedFile(file);
+//     setForwardData({ ...forwardData, loginUser: loginUserId });
+//     setOpenDrawer(true);
+//   };
+
+//   const handleDrawerClose = () => {
+//     setOpenDrawer(false);
+//     setForwardData({
+//       // loginUser: user?.id,
+//       loginUser: loginUserId,
+//       to_user_id: "",
+
+//       remark: "",
+//     });
+//   };
+
+//   const handleForwardSubmit = async () => {
+//     if (!forwardData.user_id) {
+//       return ErrorAlert("Please select a user");
+//     }
+
+//     if (!selectedFile.id) {
+//       return ErrorAlert("File ID is missing");
+//     }
+
+//     setLoading(true);
+//     try {
+//       const payload = {
+//         file_id: selectedFile.id, // required
+//         // from_user_id: forwardData.loginUser,
+//         from_user_id: loginUserId,
+//         to_user_id: forwardData.user_id, // 👈 recipient
+//         remark: forwardData.remark || "",
+//       };
+
+//       console.log("Submitting payload:", payload); // debug
+
+//       const res = await endpoint.post(
+//         `/file-track/create-file-tracking`,
+//         payload
+//       );
+
+//       SuccessAlert(res.data.message || "File forwarded successfully!");
+//       setIsForwarded(true);
+
+//       handleDrawerClose();
+//     } catch (err) {
+//       console.error("Forward error:", err.response?.data || err);
+//       ErrorAlert(err.response?.data?.message || "Forward failed!");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleReject = async () => {
+//     console.log("Reject response:", selectedFile?.id);
+//     if (!selectedFile?.id) {
+//       return ErrorAlert("File ID is missing");
+//     }
+
+//     setLoading(true);
+//     try {
+//       const res = await endpoint.post(`/file-track/reject-file-tracking`, {
+//         tracking_id: selectedFile?.id,
+//         // user_id: user?.id,
+//         user_id: loginUserId,
+//       });
+
+//       SuccessAlert(res.data.message || "File rejected successfully!");
+
+//       setIsRejected(true); // ✅ disable Reject button
+//       setIsForwarded(true);
+//     } catch (err) {
+//       console.error("Reject error:", err.response?.data || err);
+//       ErrorAlert(err.response?.data?.message || "Reject failed!");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="d-flex justify-content-center mt-5">
+//       <Card style={{ width: "24rem" }} className="shadow-sm py-5">
+//         <Card.Body className="text-center">
+//           <Card.Title style={{ color: "#0A7E51" }} className="py-3">
+//             Forward File
+//           </Card.Title>
+//           <Card.Text className="py-3">
+//             {selectedFile
+//               ? `File: ${selectedFile.file_Number}`
+//               : "Loading file..."}
+//           </Card.Text>
+
+//           <button
+//             onClick={handleReject}
+//             disabled={isRejected} // ✅ disable after reject
+//             className="btn btn-sm"
+//             style={{
+//               backgroundColor: "#C82333",
+//               color: "#fff",
+//               borderColor: "#C82333",
+
+//               opacity: isRejected ? 0.6 : 1,
+//               cursor: isRejected ? "not-allowed" : "pointer",
+//             }}
+//             title="Reject"
+//           >
+//             Reject
+//           </button>
+
+//           <button
+//             onClick={() => handleDrawerOpen()}
+//             disabled={isForwarded}
+//             className="btn btn-sm"
+//             style={{
+//               backgroundColor: "#0A7E51",
+//               color: "#fff",
+//               borderColor: "#0A7E51",
+//               marginLeft: "10px",
+//               opacity: isForwarded ? 0.6 : 1,
+//               cursor: isForwarded ? "not-allowed" : "pointer",
+//             }}
+//             title="Forward"
+//           >
+//             Forward
+//           </button>
+//         </Card.Body>
+//       </Card>
+
+//       {/* Forward Modal */}
+
+//       <Modal
+//         show={openDrawer}
+//         onHide={handleDrawerClose}
+//         className="file-modal-wrapper"
+//         centered
+//       >
+//         <Modal.Header closeButton className="file-modal-header">
+//           <Modal.Title className="file-modal-title">Forward File</Modal.Title>
+//         </Modal.Header>
+
+//         <Modal.Body className="file-modal-body">
+//           {/* Hidden loginUser */}
+//           <input type="hidden" value={forwardData.loginUser} />
+
+//           {/* User Select */}
+
+//           <Form.Group className="mb-3">
+//             <Form.Label>User</Form.Label>
+//             <Form.Select
+//               value={forwardData.user_id || ""}
+//               onChange={(e) =>
+//                 setForwardData({
+//                   ...forwardData,
+//                   user_id: e.target.value,
+//                 })
+//               }
+//             >
+//               <option value="" disabled hidden>
+//                 -- Select User --
+//               </option>
+//               {usersList.map((u) => (
+//                 <option key={u.id} value={u.id}>
+//                   {`${u.surname} ${u.first_name}${
+//                     u.middle_name ? ` ${u.middle_name}` : ""
+//                   }`}
+//                 </option>
+//               ))}
+//             </Form.Select>
+//           </Form.Group>
+
+//           {/* Remark */}
+//           <Form.Group className="mb-3">
+//             <Form.Label>Remark</Form.Label>
+//             <Form.Control
+//               as="textarea"
+//               rows={3}
+//               value={forwardData.remark}
+//               onChange={(e) =>
+//                 setForwardData({ ...forwardData, remark: e.target.value })
+//               }
+//             />
+//           </Form.Group>
+//         </Modal.Body>
+
+//         <Modal.Footer className="file-modal-footer">
+//           <Button
+//             variant="danger"
+//             className="file-btn-cancel"
+//             onClick={handleDrawerClose}
+//           >
+//             Close
+//           </Button>
+//           <Button
+//             variant="success"
+//             className="file-btn-update"
+//             onClick={handleForwardSubmit}
+//           >
+//             Forward
+//           </Button>
+//         </Modal.Footer>
+//       </Modal>
+//     </div>
+//   );
+// }
+
 export default function FileForwordCard() {
   const { file_Number } = useParams();
-  const { user } = useContext(Context);
-  const [showModal, setShowModal] = useState(false);
-  const [users, setUsers] = useState([]);
+  const loginUserId = JSON.parse(localStorage.getItem("user"))?.id || null;
+
   const [openDrawer, setOpenDrawer] = useState(false);
-  const [selectedUser, setSelectedUser] = useState("");
   const [usersList, setUsersList] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const [isAccepted, setIsAccepted] = useState(false);
   const [isForwarded, setIsForwarded] = useState(false);
   const [isRejected, setIsRejected] = useState(false);
   const [isLoading, setLoading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [forwardData, setForwardData] = useState({
-    loginUser: user?.id,
-    to_user_id: "",
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectRemark, setRejectRemark] = useState("");
 
+  const [forwardData, setForwardData] = useState({
+    loginUser: loginUserId,
+    to_user_id: "",
     remark: "",
   });
 
-  // 🔹 fetch file by file_number
+  // fetch file
   useEffect(() => {
     const fetchFile = async () => {
       try {
         const res = await endpoint.get(`/file/file-number/${file_Number}`);
-        console.log("File fetched:", res.data.data);
-
         setSelectedFile(res.data.data);
-      } catch (err) {
-        console.error(err);
+      } catch {
         ErrorAlert("Failed to load file");
       }
     };
-
     if (file_Number) fetchFile();
   }, [file_Number]);
 
+  // fetch users
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch users
         const usersRes = await endpoint.get("/user/list");
         setUsersList(usersRes.data.data);
-        console.log("Users fetched:", usersRes.data.data);
       } catch (err) {
         console.error("Error fetching users:", err);
       }
     };
-
     fetchData();
   }, []);
 
-  const handleDrawerOpen = () => {
-    // setSelectedFile(file);
-    setForwardData({ ...forwardData, loginUser: user?.id });
-    setOpenDrawer(true);
+  // 🔹 Accept
+  const handleAccept = async () => {
+    if (!selectedFile?.id) return ErrorAlert("File ID is missing");
+
+    setLoading(true);
+    try {
+      const res = await endpoint.post(`/file-track/accept-file-tracking`, {
+        tracking_id: selectedFile.id, // ✅ send file_id instead of tracking_id
+        user_id: loginUserId, // who accepted
+        remark: "Accepted", // optional
+      });
+
+      SuccessAlert(res.data.message || "File accepted successfully!");
+      setIsAccepted(true);
+      setIsRejected(false); // hide reject after accept
+    } catch (err) {
+      ErrorAlert(err.response?.data?.message || "Accept failed!");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDrawerClose = () => {
-    setOpenDrawer(false);
-    setForwardData({
-      loginUser: user?.id,
-      to_user_id: "",
+  // 🔹 Reject
+  // const handleReject = async () => {
+  //   if (!selectedFile?.id) return ErrorAlert("File ID is missing");
 
-      remark: "",
-    });
+  //   setLoading(true);
+  //   try {
+  //     const res = await endpoint.post(`/file-track/reject-file-tracking`, {
+  //       file_id: selectedFile.id,
+  //       user_id: loginUserId,
+  //     });
+
+  //     SuccessAlert(res.data.message || "File rejected successfully!");
+  //     setIsRejected(true);
+  //     setIsAccepted(false); // hide accept after reject
+  //   } catch (err) {
+  //     ErrorAlert(err.response?.data?.message || "Reject failed!");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleReject = async () => {
+    if (!selectedFile?.id) return ErrorAlert("File ID is missing");
+
+    setLoading(true);
+    try {
+      const res = await endpoint.post(`/file-track/reject-file-tracking`, {
+        tracking_id: selectedFile.id,
+        user_id: loginUserId,
+        remark: rejectRemark, // ✅ include remark
+      });
+
+      SuccessAlert(res.data.message || "File rejected successfully!");
+      setIsRejected(true);
+      setIsAccepted(false);
+      setRejectRemark(""); // reset field
+    } catch (err) {
+      ErrorAlert(err.response?.data?.message || "Reject failed!");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  //   const handleForward = async () => {
-  //     if (!selectedUser) {
-  //       ErrorAlert("Please select a user to forward to");
-  //       return;
-  //     }
-  //     try {
-  //       await endpoint.post("/file/forward", {
-  //         user_id: selectedUser,
-  //         file_id: 123, // 🔹 replace with your file id
-  //       });
-  //       SuccessAlert("File forwarded successfully!");
-  //       setShowModal(false);
-  //       setSelectedUser("");
-  //     } catch (err) {
-  //       console.error(err);
-  //       ErrorAlert(err.response?.data?.message || "Failed to forward file");
-  //     }
-  //   };
-
+  // 🔹 Forward
   const handleForwardSubmit = async () => {
-    if (!forwardData.user_id) {
-      return ErrorAlert("Please select a user");
-    }
-
-    if (!selectedFile.id) {
-      return ErrorAlert("File ID is missing");
-    }
+    if (!forwardData.user_id) return ErrorAlert("Please select a user");
+    if (!selectedFile?.id) return ErrorAlert("File ID is missing");
 
     setLoading(true);
     try {
       const payload = {
-        file_id: selectedFile.id, // required
-        from_user_id: forwardData.loginUser, // 👈 logged-in user
-        to_user_id: forwardData.user_id, // 👈 recipient
+        file_id: selectedFile.id,
+        from_user_id: loginUserId,
+        to_user_id: forwardData.user_id,
         remark: forwardData.remark || "",
       };
-
-      console.log("Submitting payload:", payload); // debug
 
       const res = await endpoint.post(
         `/file-track/create-file-tracking`,
@@ -118,34 +398,9 @@ export default function FileForwordCard() {
 
       SuccessAlert(res.data.message || "File forwarded successfully!");
       setIsForwarded(true);
-
-      handleDrawerClose();
+      setOpenDrawer(false);
     } catch (err) {
-      console.error("Forward error:", err.response?.data || err);
       ErrorAlert(err.response?.data?.message || "Forward failed!");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleReject = async () => {
-    if (!selectedFile?.id) {
-      return ErrorAlert("File ID is missing");
-    }
-
-    setLoading(true);
-    try {
-      const res = await endpoint.post(`/file-track/reject-file-tracking`, {
-        file_id: selectedFile.id,
-        user_id: user?.id,
-      });
-
-      SuccessAlert(res.data.message || "File rejected successfully!");
-      setIsRejected(true); // ✅ disable Reject button
-      setIsForwarded(true);
-    } catch (err) {
-      console.error("Reject error:", err.response?.data || err);
-      ErrorAlert(err.response?.data?.message || "Reject failed!");
     } finally {
       setLoading(false);
     }
@@ -164,74 +419,89 @@ export default function FileForwordCard() {
               : "Loading file..."}
           </Card.Text>
 
-          <button
-            onClick={handleReject}
-            disabled={isRejected} // ✅ disable after reject
-            className="btn btn-sm"
-            style={{
-              backgroundColor: "#C82333",
-              color: "#fff",
-              borderColor: "#C82333",
+          {/* Accept button - only visible if not accepted/rejected */}
+          {!isAccepted && !isRejected && (
+            <button
+              onClick={handleAccept}
+              className="btn btn-sm"
+              style={{
+                backgroundColor: "#007bff",
+                color: "#fff",
+                borderColor: "#007bff",
+                marginRight: "10px",
+              }}
+            >
+              Accept
+            </button>
+          )}
 
-              opacity: isRejected ? 0.6 : 1,
-              cursor: isRejected ? "not-allowed" : "pointer",
-            }}
-            title="Reject"
-          >
-            Reject
-          </button>
+          {/* Reject button - hidden after accept */}
+          {!isAccepted && (
+            // <button
+            //   onClick={handleReject}
+            //   disabled={isRejected}
+            //   className="btn btn-sm"
+            //   style={{
+            //     backgroundColor: "#C82333",
+            //     color: "#fff",
+            //     borderColor: "#C82333",
+            //     marginRight: "10px",
+            //     opacity: isRejected ? 0.6 : 1,
+            //     cursor: isRejected ? "not-allowed" : "pointer",
+            //   }}
+            // >
+            //   Reject
+            // </button>
 
-          <button
-            onClick={() => handleDrawerOpen()}
-            disabled={isForwarded}
-            className="btn btn-sm"
-            // style={{
-            //   backgroundColor: "#0A7E51",
-            //   color: "#fff",
-            //   borderColor: "#0A7E51",
-            // }}
-            style={{
-              backgroundColor: "#0A7E51",
-              color: "#fff",
-              borderColor: "#0A7E51",
-              marginLeft: "10px",
-              opacity: isForwarded ? 0.6 : 1,
-              cursor: isForwarded ? "not-allowed" : "pointer",
-            }}
-            title="Forward"
-          >
-            Forward
-          </button>
+            <button
+              onClick={() => setShowRejectModal(true)}
+              disabled={isRejected}
+              className="btn btn-sm"
+              style={{
+                backgroundColor: "#C82333",
+                color: "#fff",
+                borderColor: "#C82333",
+                marginRight: "10px",
+                opacity: isRejected ? 0.6 : 1,
+                cursor: isRejected ? "not-allowed" : "pointer",
+              }}
+            >
+              Reject
+            </button>
+          )}
+
+          {/* Forward button - only visible after accept */}
+          {isAccepted && (
+            <button
+              onClick={() => setOpenDrawer(true)}
+              disabled={isForwarded}
+              className="btn btn-sm"
+              style={{
+                backgroundColor: "#0A7E51",
+                color: "#fff",
+                borderColor: "#0A7E51",
+                opacity: isForwarded ? 0.6 : 1,
+                cursor: isForwarded ? "not-allowed" : "pointer",
+              }}
+            >
+              Forward
+            </button>
+          )}
         </Card.Body>
       </Card>
 
       {/* Forward Modal */}
-
-      <Modal
-        show={openDrawer}
-        onHide={handleDrawerClose}
-        className="file-modal-wrapper"
-        centered
-      >
-        <Modal.Header closeButton className="file-modal-header">
-          <Modal.Title className="file-modal-title">Forward File</Modal.Title>
+      <Modal show={openDrawer} onHide={() => setOpenDrawer(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Forward File</Modal.Title>
         </Modal.Header>
-
-        <Modal.Body className="file-modal-body">
-          {/* Hidden loginUser */}
-          <input type="hidden" value={forwardData.loginUser} />
-
-          {/* User Select */}
-
+        <Modal.Body>
           <Form.Group className="mb-3">
             <Form.Label>User</Form.Label>
             <Form.Select
               value={forwardData.user_id || ""}
               onChange={(e) =>
-                setForwardData({
-                  ...forwardData,
-                  user_id: e.target.value,
-                })
+                setForwardData({ ...forwardData, user_id: e.target.value })
               }
             >
               <option value="" disabled hidden>
@@ -239,15 +509,12 @@ export default function FileForwordCard() {
               </option>
               {usersList.map((u) => (
                 <option key={u.id} value={u.id}>
-                  {`${u.surname} ${u.first_name}${
-                    u.middle_name ? ` ${u.middle_name}` : ""
-                  }`}
+                  {`${u.surname} ${u.first_name} ${u.middle_name || ""}`}
                 </option>
               ))}
             </Form.Select>
           </Form.Group>
 
-          {/* Remark */}
           <Form.Group className="mb-3">
             <Form.Label>Remark</Form.Label>
             <Form.Control
@@ -260,21 +527,56 @@ export default function FileForwordCard() {
             />
           </Form.Group>
         </Modal.Body>
-
-        <Modal.Footer className="file-modal-footer">
-          <Button
-            variant="danger"
-            className="file-btn-cancel"
-            onClick={handleDrawerClose}
-          >
+        <Modal.Footer>
+          <Button variant="danger" onClick={() => setOpenDrawer(false)}>
             Close
           </Button>
           <Button
             variant="success"
-            className="file-btn-update"
             onClick={handleForwardSubmit}
+            disabled={isForwarded}
           >
             Forward
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        show={showRejectModal}
+        onHide={() => setShowRejectModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Reject File</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <Form.Group className="mb-3">
+            <Form.Label>Remark</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={rejectRemark}
+              onChange={(e) => setRejectRemark(e.target.value)}
+            />
+          </Form.Group>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowRejectModal(false)}>
+            Cancel
+          </Button>
+          <Button
+            variant="danger"
+            onClick={async () => {
+              if (!rejectRemark.trim()) {
+                return ErrorAlert("Remark is required to reject");
+              }
+              await handleReject();
+              setShowRejectModal(false);
+            }}
+            disabled={isRejected || isLoading}
+          >
+            {isLoading ? "Rejecting..." : "Reject"}
           </Button>
         </Modal.Footer>
       </Modal>

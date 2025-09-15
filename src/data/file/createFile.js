@@ -189,12 +189,12 @@ export const CreateFile = ({ datas, getAllData }) => {
         }
     };
 
-    const onReject = (row) => {
-        setOpen(false);
-        setIdToReject(row.id);
-        setnameToReject(row.file_Name);
-        setRejectOpen(true);
-    };
+    // const onReject = (row) => {
+    //     setOpen(false);
+    //     setIdToReject(row.id);
+    //     setnameToReject(row.file_Name);
+    //     setRejectOpen(true);
+    // };
 
     const reset = () => {
         setNewFile({
@@ -246,7 +246,7 @@ export const CreateFile = ({ datas, getAllData }) => {
         name: "File Name",
         selector: (row) => row.file_Name,
         sortable: true,
-        width: "180px",
+        width: "200px",
         cell: (row) => <h6 className="fs-12 fw-semibold">{row.file_Name}</h6>,
     },
     {
@@ -260,7 +260,7 @@ export const CreateFile = ({ datas, getAllData }) => {
         name: "Description",
         selector: (row) => row.description,
         sortable: true,
-        width: "170px",
+        width: "220px",
         cell: (row) => <h6 className="fs-12 fw-semibold">{row.description}</h6>,
     },
     {
@@ -315,7 +315,7 @@ export const CreateFile = ({ datas, getAllData }) => {
                     <i className="fa fa-forward me-1"></i>
                     Forward
                 </button>
-                <Button
+                {/* <Button
                     className="btn btn-sm btn-danger"
                     onClick={(e) => {
                         onReject(row);
@@ -325,7 +325,7 @@ export const CreateFile = ({ datas, getAllData }) => {
                     size="sm">
                     <i className="fa fa-times me-1"></i>
                     Reject
-                </Button>
+                </Button> */}
             </div>
         ),
     }

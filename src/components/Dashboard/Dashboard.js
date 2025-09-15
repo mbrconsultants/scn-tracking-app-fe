@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import CountUp from "react-countup";
 import ReactApexChart from "react-apexcharts";
 import { Breadcrumb, Col, Row, Card, Table, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { Context } from "../../context/Context";
+import endpoint from "../../context/endpoint";
+
 
 export default function Dashboard() {
+
+  const { user } = useContext(Context);
+  // const userRole = user.user.role_id;
+
   // State for chart data and file tracking data
   const [chartData, setChartData] = useState({
     series: [{
@@ -80,30 +87,31 @@ export default function Dashboard() {
   };
 
   return (
-    <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', padding: '15px' }}>
-      <div className="page-header" style={{ marginBottom: '15px' }}>
+    <div>
+      <div className="page-header" style={{ marginBottom: '5px' }}>
         <div>
           <h1 className="page-title text-center" style={{ fontSize: '1.8rem', marginBottom: '5px' }}>SCN FILE TRACKING SYSTEM</h1>
           <Breadcrumb className="justify-content-center">
             <Breadcrumb.Item href="#">
-              Home/
+              Home /
             </Breadcrumb.Item>
             <Breadcrumb.Item active>
-              Dashboard 
+              {/* Dashboard  */}
+               {`${user.user.first_name} ${user.user.middle_name} ${user.user.surname}`}
             </Breadcrumb.Item>
           </Breadcrumb>
         </div>
       </div>
       
-      {/* First Row - Two Stats Cards */}
-      <Row className="mb-3">
-        <Col lg={6} md={6} sm={12} className="mb-3">
-          <Card className="overflow-hidden" style={{ backgroundColor: '#d1e7ff', border: 'none', borderRadius: '12px' }}>
+          {/* First Row - Two Stats Cards */}
+      <Row className="mb-1">
+        <Col lg={6} md={6} sm={12} className="mb-1">
+          <Card className="overflow-hidden" style={{ backgroundColor: '#4e8de6', border: 'none', borderRadius: '6px' }}> {/* Even darker blue */}
             <Card.Body className="card-body">
               <Row>
                 <div className="col">
-                  <h6 className="">Total Files</h6>
-                  <h3 className="mb-2 number-font">
+                  <h6 className="" style={{ color: 'white' }}>Total Files</h6>
+                  <h3 className="mb-2 number-font" style={{ color: 'white' }}>
                     <CountUp
                       end={systemStats.totalFiles}
                       separator=","
@@ -111,16 +119,9 @@ export default function Dashboard() {
                       duration={2.5}
                     />
                   </h3>
-                  <p className="text-muted mb-0">
-                    <span className="text-primary me-1">
-                      <i className="fa fa-chevron-circle-up text-primary me-1"></i>
-                      <span>12% </span>
-                    </span>
-                    this month
-                  </p>
                 </div>
                 <div className="col col-auto">
-                  <div className="counter-icon bg-primary box-shadow-primary brround ms-auto" style={{ backgroundColor: '#4e73df', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="counter-icon bg-primary box-shadow-primary brround ms-auto" style={{ backgroundColor: '#3a67c9', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <i className="fa fa-file text-white"></i>
                   </div>
                 </div>
@@ -129,13 +130,13 @@ export default function Dashboard() {
           </Card>
         </Col>
         
-        <Col lg={6} md={6} sm={12} className="mb-3">
-          <Card className="overflow-hidden" style={{ backgroundColor: '#c3f1d6', border: 'none', borderRadius: '12px' }}>
+        <Col lg={6} md={6} sm={12} className="mb-1">
+          <Card className="overflow-hidden" style={{ backgroundColor: '#3cb878', border: 'none', borderRadius: '6px' }}> {/* Even darker green */}
             <Card.Body className="card-body">
               <Row>
                 <div className="col">
-                  <h6 className="">Processed Files</h6>
-                  <h3 className="mb-2 number-font">
+                  <h6 className="" style={{ color: 'white' }}>Processed Files</h6>
+                  <h3 className="mb-2 number-font" style={{ color: 'white' }}>
                     <CountUp
                       end={systemStats.processedFiles}
                       separator=","
@@ -143,16 +144,9 @@ export default function Dashboard() {
                       duration={2.5}
                     />
                   </h3>
-                  <p className="text-muted mb-0">
-                    <span className="text-success me-1">
-                      <i className="fa fa-chevron-circle-up text-success me-1"></i>
-                      <span>8% </span>
-                    </span>
-                    this month
-                  </p>
                 </div>
                 <div className="col col-auto">
-                  <div className="counter-icon bg-success box-shadow-success brround ms-auto" style={{ backgroundColor: '#1cc88a', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="counter-icon bg-success box-shadow-success brround ms-auto" style={{ backgroundColor: '#2a9d5f', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <i className="fa fa-check-circle text-white"></i>
                   </div>
                 </div>
@@ -161,16 +155,16 @@ export default function Dashboard() {
           </Card>
         </Col>
       </Row>
-      
+
       {/* Second Row - Two Stats Cards */}
-      <Row className="mb-3">
-        <Col lg={6} md={6} sm={12} className="mb-3">
-          <Card className="overflow-hidden" style={{ backgroundColor: '#ffeccc', border: 'none', borderRadius: '12px' }}>
+      <Row className="mb-1">
+        <Col lg={6} md={6} sm={12} className="mb-1">
+          <Card className="overflow-hidden" style={{ backgroundColor: '#e6a532', border: 'none', borderRadius: '6px' }}> {/* Even darker yellow/orange */}
             <Card.Body className="card-body">
               <Row>
                 <div className="col">
-                  <h6 className="">Pending Files</h6>
-                  <h3 className="mb-2 number-font">
+                  <h6 className="" style={{ color: 'white' }}>Pending Files</h6>
+                  <h3 className="mb-2 number-font" style={{ color: 'white' }}>
                     <CountUp
                       end={systemStats.pendingFiles}
                       separator=","
@@ -178,16 +172,9 @@ export default function Dashboard() {
                       duration={2.5}
                     />
                   </h3>
-                  <p className="text-muted mb-0">
-                    <span className="text-warning me-1">
-                      <i className="fa fa-chevron-circle-down text-warning me-1"></i>
-                      <span>3% </span>
-                    </span>
-                    this month
-                  </p>
                 </div>
                 <div className="col col-auto">
-                  <div className="counter-icon bg-warning box-shadow-warning brround ms-auto" style={{ backgroundColor: '#f6c23e', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="counter-icon bg-warning box-shadow-warning brround ms-auto" style={{ backgroundColor: '#cc8c1d', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <i className="fa fa-bar-chart text-white"></i>
                   </div>
                 </div>
@@ -196,13 +183,13 @@ export default function Dashboard() {
           </Card>
         </Col>
         
-        <Col lg={6} md={6} sm={12} className="mb-3">
-          <Card className="overflow-hidden" style={{ backgroundColor: '#c7eeff', border: 'none', borderRadius: '12px' }}>
+        <Col lg={6} md={6} sm={12} className="mb-1">
+          <Card className="overflow-hidden" style={{ backgroundColor: '#3a9dd9', border: 'none', borderRadius: '6px' }}> {/* Even darker light blue */}
             <Card.Body className="card-body">
               <Row>
                 <div className="col">
-                  <h6 className="">Active Users</h6>
-                  <h3 className="mb-2 number-font">
+                  <h6 className="" style={{ color: 'white' }}>Active Users</h6>
+                  <h3 className="mb-2 number-font" style={{ color: 'white' }}>
                     <CountUp
                       end={systemStats.users}
                       separator=","
@@ -210,16 +197,9 @@ export default function Dashboard() {
                       duration={2.5}
                     />
                   </h3>
-                  <p className="text-muted mb-0">
-                    <span className="text-info me-1">
-                      <i className="fa fa-chevron-circle-up text-info me-1"></i>
-                      <span>5% </span>
-                    </span>
-                    this month
-                  </p>
                 </div>
                 <div className="col col-auto">
-                  <div className="counter-icon bg-info box-shadow-info brround ms-auto" style={{ backgroundColor: '#36b9cc', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="counter-icon bg-info box-shadow-info brround ms-auto" style={{ backgroundColor: '#2980b9', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <i className="fa fa-users text-white"></i>
                   </div>
                 </div>
@@ -231,7 +211,7 @@ export default function Dashboard() {
       
       {/* Third Row - Chart and Recent Files */}
       <Row className="mb-3">
-        <Col lg={8} md={12} sm={12} className="mb-3">
+        <Col lg={12} md={12} sm={12} className="mb-3">
           <Card style={{ backgroundColor: '#ffffff', border: 'none', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
             <Card.Header className="card-header" style={{ backgroundColor: 'transparent', borderBottom: '1px solid #e3e6f0' }}>
               <h3 className="card-title" style={{ color: '#5a5c69' }}>Files Processed Overview</h3>
@@ -249,7 +229,7 @@ export default function Dashboard() {
           </Card>
         </Col>
         
-        <Col lg={4} md={12} sm={12} className="mb-3">
+        {/* <Col lg={4} md={12} sm={12} className="mb-3">
           <Card style={{ backgroundColor: '#e9ecef', border: 'none', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
             <Card.Header className="card-header" style={{ backgroundColor: 'transparent', borderBottom: '1px solid #ced4da' }}>
               <h3 className="card-title" style={{ color: '#5a5c69' }}>Recent Files</h3>
@@ -277,96 +257,10 @@ export default function Dashboard() {
               </div>
             </Card.Body>
           </Card>
-        </Col>
+        </Col> */}
       </Row>
       
-      {/* Fourth Row - File Actions and Quick Stats */}
-      <Row>
-        <Col lg={6} md={12} sm={12} className="mb-3">
-          <Card style={{ backgroundColor: '#e9ecef', border: 'none', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-            <Card.Header className="card-header" style={{ backgroundColor: 'transparent', borderBottom: '1px solid #ced4da' }}>
-              <h3 className="card-title" style={{ color: '#5a5c69' }}>Quick Actions</h3>
-            </Card.Header>
-            <Card.Body className="card-body">
-              <Row>
-                <Col sm={6} className="text-center mb-3">
-                  <div className="action-item p-3 border rounded" style={{ backgroundColor: '#ffffff', borderColor: '#ced4da' }}>
-                    <div className="action-icon text-primary mb-2">
-                      <i className="fa fa-upload fa-2x"></i>
-                    </div>
-                    <h6 style={{ color: '#5a5c69' }}>Upload File</h6>
-                    <small className="text-muted">Add new files to the system</small>
-                  </div>
-                </Col>
-                <Col sm={6} className="text-center mb-3">
-                  <div className="action-item p-3 border rounded" style={{ backgroundColor: '#ffffff', borderColor: '#ced4da' }}>
-                    <div className="action-icon text-success mb-2">
-                      <i className="fa fa-search fa-2x"></i>
-                    </div>
-                    <h6 style={{ color: '#5a5c69' }}>Search Files</h6>
-                    <small className="text-muted">Find files by name or content</small>
-                  </div>
-                </Col>
-                <Col sm={6} className="text-center mb-3">
-                  <div className="action-item p-3 border rounded" style={{ backgroundColor: '#ffffff', borderColor: '#ced4da' }}>
-                    <div className="action-icon text-info mb-2">
-                      <i className="fa fa-share-alt fa-2x"></i>
-                    </div>
-                    <h6 style={{ color: '#5a5c69' }}>Share Files</h6>
-                    <small className="text-muted">Share files with team members</small>
-                  </div>
-                </Col>
-                <Col sm={6} className="text-center mb-3">
-                  <div className="action-item p-3 border rounded" style={{ backgroundColor: '#ffffff', borderColor: '#ced4da' }}>
-                    <div className="action-icon text-warning mb-2">
-                      <i className="fa fa-chart-pie fa-2x"></i>
-                    </div>
-                    <h6 style={{ color: '#5a5c69' }}>Reports</h6>
-                    <small className="text-muted">Generate system reports</small>
-                  </div>
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
-        </Col>
-        
-        <Col lg={6} md={12} sm={12} className="mb-3">
-          <Card style={{ backgroundColor: '#e9ecef', border: 'none', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-            <Card.Header className="card-header" style={{ backgroundColor: 'transparent', borderBottom: '1px solid #ced4da' }}>
-              <h3 className="card-title" style={{ color: '#5a5c69' }}>File Statistics</h3>
-            </Card.Header>
-            <Card.Body className="card-body">
-              <div className="stats-container">
-                <div className="stat-row d-flex justify-content-between align-items-center py-2 border-bottom" style={{ borderColor: '#ced4da' }}>
-                  <div className="stat-label" style={{ color: '#5a5c69' }}>PDF Files</div>
-                  <div className="stat-value" style={{ color: '#4e73df' }}>642</div>
-                  <div className="stat-percent text-success">58%</div>
-                </div>
-                <div className="stat-row d-flex justify-content-between align-items-center py-2 border-bottom" style={{ borderColor: '#ced4da' }}>
-                  <div className="stat-label" style={{ color: '#5a5c69' }}>Word Documents</div>
-                  <div className="stat-value" style={{ color: '#4e73df' }}>384</div>
-                  <div className="stat-percent text-success">32%</div>
-                </div>
-                <div className="stat-row d-flex justify-content-between align-items-center py-2 border-bottom" style={{ borderColor: '#ced4da' }}>
-                  <div className="stat-label" style={{ color: '#5a5c69' }}>Excel Sheets</div>
-                  <div className="stat-value" style={{ color: '#4e73df' }}>218</div>
-                  <div className="stat-percent text-success">18%</div>
-                </div>
-                <div className="stat-row d-flex justify-content-between align-items-center py-2 border-bottom" style={{ borderColor: '#ced4da' }}>
-                  <div className="stat-label" style={{ color: '#5a5c69' }}>Image Files</div>
-                  <div className="stat-value" style={{ color: '#4e73df' }}>156</div>
-                  <div className="stat-percent text-success">12%</div>
-                </div>
-                <div className="stat-row d-flex justify-content-between align-items-center py-2">
-                  <div className="stat-label" style={{ color: '#5a5c69' }}>Other Formats</div>
-                  <div className="stat-value" style={{ color: '#4e73df' }}>162</div>
-                  <div className="stat-percent text-success">14%</div>
-                </div>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+      
     </div>
   );
 }

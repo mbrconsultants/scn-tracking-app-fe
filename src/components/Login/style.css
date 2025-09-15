@@ -1,0 +1,49 @@
+.login-card {
+    transition: transform 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #0A7E51;
+}
+
+.input-group-text {
+    border-radius: 8px 0 0 8px !important;
+}
+
+.btn-loading {
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+/* SweetAlert Custom Styles */
+.sweet-alert-popup {
+    border-radius: 16px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.sweet-alert-title {
+    color: #721c24;
+    font-weight: bold;
+}
+
+.sweet-alert-content {
+    color: #721c24;
+    font-size: 1.1rem;
+}
+
+.sweet-alert-confirm-btn {
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .login-card {
+    margin-top: 40px;
+    }
+}

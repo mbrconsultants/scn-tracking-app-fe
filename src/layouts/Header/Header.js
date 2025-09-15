@@ -1,8 +1,29 @@
-import React from "react";
-import { Dropdown, Navbar, Container,Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Dropdown, Navbar, Container } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { Context } from "../../context/Context";
+import endpoint from "../../context/endpoint";
 
 export function Header() {
+
+  const { user, dispatch } = useContext(Context);
+  const currentUser = user?.user;
+  const [data, setData] = useState();
+  const [passport, setPassport] = useState();
+
+   const handleSignout = async () => {
+        try {
+            await endpoint.get(`/auth/logout`);
+            dispatch({ type: "LOGOUT" });
+            localStorage.removeItem("modules");
+            localStorage.removeItem("user");
+            window.location.reload();
+            // window.location.replace('/login')
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
   //full screen
   function Fullscreen() {
     if (
@@ -50,6 +71,9 @@ export function Header() {
     document.querySelector(".demo_changer").classList.toggle("active");
     document.querySelector(".demo_changer").style.right = "0px";
   };
+
+
+
   return (
     <Navbar expand="md" className="app-header header sticky">
       <Container fluid className="main-container">
@@ -172,24 +196,22 @@ export function Header() {
                       className="dropdown-menu-end dropdown-menu-arrow"
                       style={{ margin: 0 }}
                     >
-                      <div className="drop-heading">
-                        <div className="text-center">
-                          <h5 className="text-dark mb-0">John Doe</h5>
-                          <small className="text-muted">Administrator</small>
-                        </div>
+                      <div className='drop-heading'>
+                          <div className='text-center'>
+                              <h5 className='text-dark mb-0'>{currentUser?.first_name + " " + currentUser?.surname}</h5>
+                              <small className='text-muted'>{currentUser?.Role.role_name}</small>
+                          </div>
                       </div>
                       <div className="dropdown-divider m-0"></div>
-                      <Dropdown.Item
+                      {/* <Dropdown.Item
                         href={`${process.env.PUBLIC_URL}/pages/profile/`}
                       >
                         <i className="dropdown-icon fe fe-user"></i> Profile
-                      </Dropdown.Item>
+                      </Dropdown.Item> */}
                      
-                      <Dropdown.Item
-                        href={`${process.env.PUBLIC_URL}/custompages/login/`}
-                      >
-                        <i className="dropdown-icon fe fe-alert-circle"></i>
-                        Sign out
+                      <Dropdown.Item onClick={handleSignout}>
+                          <i className='dropdown-icon fe fe-alert-circle'></i>
+                          Sign out
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>

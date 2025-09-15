@@ -189,19 +189,9 @@ export const Tracking = ({ refreshKey }) => {
     }
   };
 
-  // const handleReject = async (row) => {
-  //   try {
-  //     await endpoint.post(`/file-track/reject/${row.id}`);
-  //     SuccessAlert("File rejected successfully");
-  //     getTrackingList();
-  //   } catch (err) {
-  //     ErrorAlert("Failed to reject file");
-  //   }
-  // };
-
   const onReject = (row) => {
     // setOpen(false);
-    setIdToReject(row.file?.id);
+    setIdToReject(row.id);
     setnameToReject(row.file_Name);
     setRejectOpen(true);
   };
@@ -215,95 +205,24 @@ export const Tracking = ({ refreshKey }) => {
   const handleReject = async () => {
     setLoading(true);
     try {
+      // Use the correct endpoint and send data in the correct format
       await endpoint.post(`/file-track/reject-file-tracking`, {
         tracking_id: idToReject,
         remark: rejectRemark,
       });
 
       SuccessAlert(`File has been rejected successfully!`);
+      // SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
       setLoading(false);
       setRejectOpen(false);
       getTrackingList();
-      setRejectRemark("");
+      setRejectRemark(""); // Reset remark after successful rejection
     } catch (err) {
       console.error("Reject error:", err.response);
       ErrorAlert(err.response?.data?.message || "Failed to reject file");
       setLoading(false);
     }
   };
-
-  // const handleForwardSubmit = async (row) => {
-  //   if (!user?.user?.id) {
-  //     return ErrorAlert("Logged-in user is missing");
-  //   }
-
-  //   if (!row.file?.id) {
-  //     return ErrorAlert("File ID is missing");
-  //   }
-
-  //   try {
-  //     const payload = {
-  //       file_id: row.file.id,
-  //       from_user_id: user.user.id,
-  //       to_user_id: row.to_user_id,
-  //       remark: "Forwarded",
-  //     };
-
-  //     console.log("Forward payload:", payload);
-
-  //     const res = await endpoint.post(
-  //       "/file-track/create-file-tracking",
-  //       payload,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-
-  //     SuccessAlert(res.data.message || "File forwarded successfully!");
-  //     getTrackingList();
-  //   } catch (err) {
-  //     console.error("Forward error:", err.response?.data || err);
-  //     ErrorAlert(err.response?.data?.message || "Forward failed!");
-  //   }
-  // };
-
-  // const handleForwardSubmit = async () => {
-  //   if (!user?.id) {
-  //     return ErrorAlert("Logged-in user is missing");
-  //   }
-
-  //   if (!selectedFile?.file?.id) {
-  //     return ErrorAlert("File ID is missing");
-  //   }
-
-  //   try {
-  //     const payload = {
-  //       file_id: selectedFile.file.id, // 👈 use selectedFile
-  //       from_user_id: user?.user?.id, // 👈 your auth user
-  //       to_user_id: forwardData.user_id, // 👈 selected from modal
-  //       remark: forwardData.remark || "Forwarded",
-  //     };
-
-  //     console.log("Forward payload:", payload);
-
-  //     const res = await endpoint.post(
-  //       "/file-track/create-file-tracking",
-  //       payload,
-  //       {
-  //         headers: { "Content-Type": "application/json" },
-  //       }
-  //     );
-
-  //     SuccessAlert(res.data.message || "File forwarded successfully!");
-  //     getTrackingList();
-  //     handleDrawerClose(); // 👈 close modal after success
-  //   } catch (err) {
-  //     console.error("Forward error:", err.response?.data || err);
-  //     ErrorAlert(err.response?.data?.message || "Forward failed!");
-  //   }
-  // };
 
   const handleForwardSubmit = async () => {
     if (!user?.user?.id) {

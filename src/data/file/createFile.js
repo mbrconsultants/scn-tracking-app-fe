@@ -307,14 +307,16 @@ export const CreateFile = ({ datas, getAllData }) => {
                     <i className="fa fa-edit me-1"></i>
                     Edit
                 </button>
-                <button
-                    onClick={() => handleDrawerOpen(row)}
-                    className="btn btn-sm"
-                    style={{backgroundColor: "#0d0c22", color: "#fff", borderColor: "#0d0c22"}}
-                    title="Forward">
-                    <i className="fa fa-forward me-1"></i>
-                    Forward
-                </button>
+                {/* {row.status === 1 && ( */}
+                    <button
+                        onClick={() => handleDrawerOpen(row)}
+                        className="btn btn-sm"
+                        style={{backgroundColor: "#0d0c22", color: "#fff", borderColor: "#0d0c22"}}
+                        title="Forward">
+                        <i className="fa fa-forward me-1"></i>
+                        Forward
+                    </button>
+                 {/* )} */}
                 {/* <Button
                     className="btn btn-sm btn-danger"
                     onClick={(e) => {

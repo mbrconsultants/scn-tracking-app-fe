@@ -182,7 +182,7 @@ export const Users = ({ refreshKey }) => {
       name: "Department",
       selector: (row) => row.department?.name ?? row.department, // 👈 adjust based on API structure
       sortable: true,
-      width: "200px",
+      width: "140px",
       cell: (row) => (
         <div className="fs-12">
           {row.department?.name ?? row.department ?? ""}
@@ -194,7 +194,7 @@ export const Users = ({ refreshKey }) => {
       name: "Unit",
       selector: (row) => row.unit?.name ?? row.unit, // 👈 adjust based on API structure
       sortable: true,
-      width: "200px",
+      width: "100px",
       cell: (row) => (
         <div className="fs-12">{row.unit?.name ?? row.unit ?? ""}</div>
       ),
@@ -203,7 +203,7 @@ export const Users = ({ refreshKey }) => {
     {
       name: "Signature",
       selector: (row) => row.signature_url,
-      width: "200px",
+      width: "150px",
       cell: (row) =>
         row.signature_url ? (
           <img

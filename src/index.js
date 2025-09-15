@@ -15,6 +15,10 @@ const Switcherlayout = React.lazy(() => import("./components/switcherlayout"));
 //App
 const App = React.lazy(() => import("./components/app"));
 const Custompages = React.lazy(() => import("./components/custompages"));
+//File Forword Card
+const FileForwordCard = React.lazy(() =>
+  import("./components/FileForwordCard/FileForwordCard")
+);
 
 //Dashboard
 const Dashboard = React.lazy(() => import("./components/Dashboard/Dashboard"));
@@ -439,6 +443,17 @@ const Root = () => {
                     path={`${process.env.PUBLIC_URL}/units`}
                     element={<AllUnits />}
                   />
+
+                  {/* <Route
+                    path={`${process.env.PUBLIC_URL}/file-forward-card`}
+                    element={<FileForwordCard />}
+                  /> */}
+
+                  <Route
+                    path={`${process.env.PUBLIC_URL}/file-forward-card/:file_Number`}
+                    element={<FileForwordCard />}
+                  />
+
                   <Route
                     path={`${process.env.PUBLIC_URL}/depertments`}
                     element={<AllDepertments />}
@@ -451,6 +466,7 @@ const Root = () => {
                     path={`${process.env.PUBLIC_URL}/create-user`}
                     element={<CreateUser />}
                   />
+
                   <Route
                     path={`${process.env.PUBLIC_URL}/module-list`}
                     element={<CreateModule />}

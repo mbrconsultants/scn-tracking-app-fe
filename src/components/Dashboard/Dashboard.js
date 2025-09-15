@@ -103,15 +103,15 @@ export default function Dashboard() {
         </div>
       </div>
       
-      {/* First Row - Two Stats Cards */}
+          {/* First Row - Two Stats Cards */}
       <Row className="mb-1">
         <Col lg={6} md={6} sm={12} className="mb-1">
-          <Card className="overflow-hidden" style={{ backgroundColor: '#7ab6ff', border: 'none', borderRadius: '6px' }}> {/* Much darker blue */}
+          <Card className="overflow-hidden" style={{ backgroundColor: '#4e8de6', border: 'none', borderRadius: '6px' }}> {/* Even darker blue */}
             <Card.Body className="card-body">
               <Row>
                 <div className="col">
-                  <h6 className="">Total Files</h6>
-                  <h3 className="mb-2 number-font">
+                  <h6 className="" style={{ color: 'white' }}>Total Files</h6>
+                  <h3 className="mb-2 number-font" style={{ color: 'white' }}>
                     <CountUp
                       end={systemStats.totalFiles}
                       separator=","
@@ -121,7 +121,7 @@ export default function Dashboard() {
                   </h3>
                 </div>
                 <div className="col col-auto">
-                  <div className="counter-icon bg-primary box-shadow-primary brround ms-auto" style={{ backgroundColor: '#4e73df', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="counter-icon bg-primary box-shadow-primary brround ms-auto" style={{ backgroundColor: '#3a67c9', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <i className="fa fa-file text-white"></i>
                   </div>
                 </div>
@@ -131,12 +131,12 @@ export default function Dashboard() {
         </Col>
         
         <Col lg={6} md={6} sm={12} className="mb-1">
-          <Card className="overflow-hidden" style={{ backgroundColor: '#6ed1a0', border: 'none', borderRadius: '6px' }}> {/* Much darker green */}
+          <Card className="overflow-hidden" style={{ backgroundColor: '#3cb878', border: 'none', borderRadius: '6px' }}> {/* Even darker green */}
             <Card.Body className="card-body">
               <Row>
                 <div className="col">
-                  <h6 className="">Processed Files</h6>
-                  <h3 className="mb-2 number-font">
+                  <h6 className="" style={{ color: 'white' }}>Processed Files</h6>
+                  <h3 className="mb-2 number-font" style={{ color: 'white' }}>
                     <CountUp
                       end={systemStats.processedFiles}
                       separator=","
@@ -146,7 +146,7 @@ export default function Dashboard() {
                   </h3>
                 </div>
                 <div className="col col-auto">
-                  <div className="counter-icon bg-success box-shadow-success brround ms-auto" style={{ backgroundColor: '#1cc88a', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="counter-icon bg-success box-shadow-success brround ms-auto" style={{ backgroundColor: '#2a9d5f', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <i className="fa fa-check-circle text-white"></i>
                   </div>
                 </div>
@@ -159,12 +159,12 @@ export default function Dashboard() {
       {/* Second Row - Two Stats Cards */}
       <Row className="mb-1">
         <Col lg={6} md={6} sm={12} className="mb-1">
-          <Card className="overflow-hidden" style={{ backgroundColor: '#ffcc73', border: 'none', borderRadius: '6px' }}> {/* Much darker yellow/orange */}
+          <Card className="overflow-hidden" style={{ backgroundColor: '#e6a532', border: 'none', borderRadius: '6px' }}> {/* Even darker yellow/orange */}
             <Card.Body className="card-body">
               <Row>
                 <div className="col">
-                  <h6 className="">Pending Files</h6>
-                  <h3 className="mb-2 number-font">
+                  <h6 className="" style={{ color: 'white' }}>Pending Files</h6>
+                  <h3 className="mb-2 number-font" style={{ color: 'white' }}>
                     <CountUp
                       end={systemStats.pendingFiles}
                       separator=","
@@ -174,7 +174,7 @@ export default function Dashboard() {
                   </h3>
                 </div>
                 <div className="col col-auto">
-                  <div className="counter-icon bg-warning box-shadow-warning brround ms-auto" style={{ backgroundColor: '#f6c23e', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="counter-icon bg-warning box-shadow-warning brround ms-auto" style={{ backgroundColor: '#cc8c1d', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <i className="fa fa-bar-chart text-white"></i>
                   </div>
                 </div>
@@ -184,12 +184,12 @@ export default function Dashboard() {
         </Col>
         
         <Col lg={6} md={6} sm={12} className="mb-1">
-          <Card className="overflow-hidden" style={{ backgroundColor: '#66c2ff', border: 'none', borderRadius: '6px' }}> {/* Much darker light blue */}
+          <Card className="overflow-hidden" style={{ backgroundColor: '#3a9dd9', border: 'none', borderRadius: '6px' }}> {/* Even darker light blue */}
             <Card.Body className="card-body">
               <Row>
                 <div className="col">
-                  <h6 className="">Active Users</h6>
-                  <h3 className="mb-2 number-font">
+                  <h6 className="" style={{ color: 'white' }}>Active Users</h6>
+                  <h3 className="mb-2 number-font" style={{ color: 'white' }}>
                     <CountUp
                       end={systemStats.users}
                       separator=","
@@ -199,7 +199,7 @@ export default function Dashboard() {
                   </h3>
                 </div>
                 <div className="col col-auto">
-                  <div className="counter-icon bg-info box-shadow-info brround ms-auto" style={{ backgroundColor: '#36b9cc', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="counter-icon bg-info box-shadow-info brround ms-auto" style={{ backgroundColor: '#2980b9', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <i className="fa fa-users text-white"></i>
                   </div>
                 </div>

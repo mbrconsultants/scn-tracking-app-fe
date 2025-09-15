@@ -163,40 +163,6 @@ export default function AllTracking() {
         </Col>
       </Row>
 
-      {/* Drawer on the left */}
-
-      {/* <Drawer anchor="left" open={open} onClose={handleClose}>
-        <div style={{ width: 400, padding: "20px" }}>
-          <h4 className="mb-3" style={{ color: "#0a7e51" }}>
-            Add Unit
-          </h4>
-          <Form onSubmit={handleSubmit}>
-            <TextField
-              label="Unit Name"
-              name="name"
-              value={formData.name || ""}
-              onChange={handleChange}
-              fullWidth
-              required
-              className="mb-3"
-            />
-
-            <div className="d-flex justify-content-end mt-3">
-              <Button
-                onClick={handleClose}
-                variant="secondary"
-                className="me-2"
-              >
-                Cancel
-              </Button>
-              <Button type="submit" variant="success">
-                Save
-              </Button>
-            </div>
-          </Form>
-        </div>
-      </Drawer> */}
-
       <Modal show={open} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title style={{ color: "#0a7e51" }}>Add Unit</Modal.Title>

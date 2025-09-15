@@ -74,6 +74,7 @@ export const Tracking = ({ refreshKey }) => {
   const [idToReject, setIdToReject] = useState("");
   const [nameToReject, setnameToReject] = useState("");
   const [rejectRemark, setRejectRemark] = useState(""); // New state for reject remark
+  const [isForwarded, setIsForwarded] = useState(false);
 
   const [forwardData, setForwardData] = useState({
     loginUser: user?.user?.id, // 👈 fix here
@@ -188,123 +189,40 @@ export const Tracking = ({ refreshKey }) => {
     }
   };
 
-  // const handleReject = async (row) => {
-  //   try {
-  //     await endpoint.post(`/file-track/reject/${row.id}`);
-  //     SuccessAlert("File rejected successfully");
-  //     getTrackingList();
-  //   } catch (err) {
-  //     ErrorAlert("Failed to reject file");
-  //   }
-  // };
-
-   const onReject = (row) => {
-        // setOpen(false);
-        setIdToReject(row.id);
-        setnameToReject(row.file_Name);
-        setRejectOpen(true);
-    };
+  const onReject = (row) => {
+    // setOpen(false);
+    setIdToReject(row.id);
+    setnameToReject(row.file_Name);
+    setRejectOpen(true);
+  };
 
   const onClose = () => {
-        reset();
-        // setOpen(false);
-        setRejectOpen(false);
-    };
-
-const handleReject = async () => {
-  setLoading(true);
-  try {
-    // Use the correct endpoint and send data in the correct format
-    await endpoint.post(`/file-track/reject-file-tracking`, { 
-      tracking_id: idToReject, 
-      remark: rejectRemark 
-    });
-    
-    SuccessAlert(`File has been rejected successfully!`);
-    // SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
-    setLoading(false);
+    reset();
+    // setOpen(false);
     setRejectOpen(false);
-    getTrackingList();
-    setRejectRemark(""); // Reset remark after successful rejection
-  } catch (err) {
-    console.error("Reject error:", err.response);
-    ErrorAlert(err.response?.data?.message || "Failed to reject file");
-    setLoading(false);
-  }
-};
+  };
 
-  // const handleForwardSubmit = async (row) => {
-  //   if (!user?.user?.id) {
-  //     return ErrorAlert("Logged-in user is missing");
-  //   }
+  const handleReject = async () => {
+    setLoading(true);
+    try {
+      // Use the correct endpoint and send data in the correct format
+      await endpoint.post(`/file-track/reject-file-tracking`, {
+        tracking_id: idToReject,
+        remark: rejectRemark,
+      });
 
-  //   if (!row.file?.id) {
-  //     return ErrorAlert("File ID is missing");
-  //   }
-
-  //   try {
-  //     const payload = {
-  //       file_id: row.file.id,
-  //       from_user_id: user.user.id,
-  //       to_user_id: row.to_user_id,
-  //       remark: "Forwarded",
-  //     };
-
-  //     console.log("Forward payload:", payload);
-
-  //     const res = await endpoint.post(
-  //       "/file-track/create-file-tracking",
-  //       payload,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-
-  //     SuccessAlert(res.data.message || "File forwarded successfully!");
-  //     getTrackingList();
-  //   } catch (err) {
-  //     console.error("Forward error:", err.response?.data || err);
-  //     ErrorAlert(err.response?.data?.message || "Forward failed!");
-  //   }
-  // };
-
-  // const handleForwardSubmit = async () => {
-  //   if (!user?.id) {
-  //     return ErrorAlert("Logged-in user is missing");
-  //   }
-
-  //   if (!selectedFile?.file?.id) {
-  //     return ErrorAlert("File ID is missing");
-  //   }
-
-  //   try {
-  //     const payload = {
-  //       file_id: selectedFile.file.id, // 👈 use selectedFile
-  //       from_user_id: user?.user?.id, // 👈 your auth user
-  //       to_user_id: forwardData.user_id, // 👈 selected from modal
-  //       remark: forwardData.remark || "Forwarded",
-  //     };
-
-  //     console.log("Forward payload:", payload);
-
-  //     const res = await endpoint.post(
-  //       "/file-track/create-file-tracking",
-  //       payload,
-  //       {
-  //         headers: { "Content-Type": "application/json" },
-  //       }
-  //     );
-
-  //     SuccessAlert(res.data.message || "File forwarded successfully!");
-  //     getTrackingList();
-  //     handleDrawerClose(); // 👈 close modal after success
-  //   } catch (err) {
-  //     console.error("Forward error:", err.response?.data || err);
-  //     ErrorAlert(err.response?.data?.message || "Forward failed!");
-  //   }
-  // };
+      SuccessAlert(`File has been rejected successfully!`);
+      // SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
+      setLoading(false);
+      setRejectOpen(false);
+      getTrackingList();
+      setRejectRemark(""); // Reset remark after successful rejection
+    } catch (err) {
+      console.error("Reject error:", err.response);
+      ErrorAlert(err.response?.data?.message || "Failed to reject file");
+      setLoading(false);
+    }
+  };
 
   const handleForwardSubmit = async () => {
     if (!user?.user?.id) {
@@ -332,6 +250,8 @@ const handleReject = async () => {
       );
 
       SuccessAlert(res.data.message || "File forwarded successfully!");
+
+      setIsForwarded(true);
       getTrackingList();
       handleDrawerClose();
     } catch (err) {
@@ -443,17 +363,18 @@ const handleReject = async () => {
           )} */}
 
           {!row.date_received && !row.date_rejected && (
-          <Button
+            <Button
               className="btn btn-sm btn-danger"
               onClick={(e) => {
-                  onReject(row);
+                onReject(row);
               }}
               variant="danger"
               title="Reject"
-              size="sm">
+              size="sm"
+            >
               <i className="fa fa-times me-1"></i>
               Reject
-          </Button>
+            </Button>
           )}
 
           {/* Forward - only shows if accepted */}
@@ -468,7 +389,7 @@ const handleReject = async () => {
               }}
               title="Forward"
             >
-              Forward
+              {isForwarded ? "Forwarded" : "Forward"}
             </button>
           )}
         </div>
@@ -514,74 +435,6 @@ const handleReject = async () => {
         </DataTableExtensions>
       }
 
-      {/* <Modal show={showEditModal}>
-        <Modal.Header>
-          <Button
-            onClick={() => setShowEditModal(false)}
-            className="btn-close"
-            variant=""
-          >
-            x
-          </Button>
-        </Modal.Header>
-        <CForm
-          onSubmit={handleSubmit(modifyUser)}
-          className="row g-3 needs-validation"
-        >
-          <Modal.Body>
-            <Card>
-              <Card.Header>
-                <Card.Title as="h3">Edit Unit</Card.Title>
-              </Card.Header>
-              <Card.Body>
-                <Col lg={12} md={12}>
-                  <FormGroup>
-                    <label htmlFor="unitName">Unit Name</label>
-                    <Form.Control
-                      type="text"
-                      name="name"
-                      value={value.name}
-                      onChange={(e) => {
-                        setValue({ ...value, name: e.target.value });
-                      }}
-                      className="form-control"
-                    />
-                  </FormGroup>
-                </Col>
-              </Card.Body>
-            </Card>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="warning"
-              className="me-1"
-              onClick={() => setShowEditModal(false)}
-            >
-              Close
-            </Button>
-            <Button variant="primary" type="submit" className="me-1">
-              <span className="fe fe-arrow-right"></span> Save
-            </Button>
-          </Modal.Footer>
-        </CForm>
-      </Modal> */}
-      {/* <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="text-center text-bold">
-          Are you sure you want to delete this unit?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={() => handleDeleteUnit(deleteId)}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
-      {/* Forward Modal */}
       <Modal
         show={openDrawer}
         onHide={handleDrawerClose}
@@ -660,44 +513,38 @@ const handleReject = async () => {
         </Modal.Footer>
       </Modal>
 
-        {/* Reject Modal */}
-        <Modal show={rejectOpen} onHide={onClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>Reject File</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <p>
-                    Do you really want to reject{" "}
-                    <strong className="text-danger">'{nameToReject}'</strong> file?
-                </p>
-                <p>This process cannot be undone.</p>
-                
-                <Form.Group className="mb-3">
-                    <Form.Label>
-                        Reason for rejection (optional)
-                    </Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        rows={3}
-                        placeholder="Optionally provide a reason for rejecting this file..."
-                        value={rejectRemark}
-                        onChange={(e) => setRejectRemark(e.target.value)}
-                    />
-                    
-                </Form.Group>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>
-                    Cancel
-                </Button>
-                <Button 
-                    variant="danger" 
-                    onClick={handleReject}
-                >
-                    Reject File
-                </Button>
-            </Modal.Footer>
-        </Modal>
+      {/* Reject Modal */}
+      <Modal show={rejectOpen} onHide={onClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reject File</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            Do you really want to reject{" "}
+            <strong className="text-danger">'{nameToReject}'</strong> file?
+          </p>
+          <p>This process cannot be undone.</p>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Reason for rejection (optional)</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="Optionally provide a reason for rejecting this file..."
+              value={rejectRemark}
+              onChange={(e) => setRejectRemark(e.target.value)}
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleReject}>
+            Reject File
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

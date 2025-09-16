@@ -302,11 +302,15 @@ export const Users = ({ refreshKey }) => {
         </DataTableExtensions>
       }
       <Modal show={showEditModal}>
-        <Modal.Header>
+        <Modal.Header style={{ backgroundColor: "#0a7148", color: "#fff" }}>
+          <Card.Title as="h3" style={{ color: "#fff" }}>
+            Update User{" "}
+          </Card.Title>
           <Button
             onClick={() => setShowEditModal(false)}
             className="btn-close"
             variant=""
+            style={{ color: "#fff" }}
           >
             x
           </Button>
@@ -318,14 +322,14 @@ export const Users = ({ refreshKey }) => {
           <Modal.Body>
             <div>
               <Card>
-                <Card.Header>
+                {/* <Card.Header>
                   <Card.Title as="h3">Update User Password</Card.Title>
-                </Card.Header>
+                </Card.Header> */}
                 <Card.Body>
-                  <h5>
+                  {/* <h5>
                     pls input new passord for <span> {value.fullname} </span> to
                     change password
-                  </h5>
+                  </h5> */}
                   <Col lg={12} md={12}>
                     <FormGroup>
                       <label htmlFor="exampleInputname">Full Name</label>
@@ -393,7 +397,7 @@ export const Users = ({ refreshKey }) => {
           </Modal.Body>
           <Modal.Footer>
             <Button
-              variant="warning"
+              variant="danger"
               className="me-1"
               onClick={() => setShowEditModal(false)}
             >

@@ -115,42 +115,43 @@ export default function AllTracking() {
 
   return (
     <div>
-      <div className="page-header ">
-        <div>
-          {/* <h1 className="page-title">Documentation </h1> */}
-
-          <Breadcrumb className="breadcrumb">
-            {/* <Breadcrumb.Item href="#">Home</Breadcrumb.Item> */}
-            <Breadcrumb.Item active>Tracking Files</Breadcrumb.Item>
-          </Breadcrumb>
-        </div>
-        <div className="ms-auto pageheader-btn">
-          {/* <Button
-            onClick={handleOpen}
-            className="btn btn-primary btn-icon text-white me-3"
-          >
-            <span>
-              <i className="fe fe-plus"></i>&nbsp;
-            </span>
-            Add Unit
-          </Button> */}
-
-          {/* <Button onClick={handleOpen} className="btn btn-green btn-icon me-3">
-            <span>
-              <i className="fe fe-plus"></i>&nbsp;
-            </span>
-            Add Unit
-          </Button> */}
-        </div>
-      </div>
-
       {/* <Search.SearchStaff handleSearch={handleSearch} data={data}/> */}
 
       <Row>
         <Col sm={12} className="col-12">
           <Card>
-            <Card.Header>
+            {/* <Card.Header>
               <Col className="card-title text-center mb-0"> Tracking Files</Col>
+            </Card.Header> */}
+            <Card.Header>
+              <Col className="text-beginning text-center">
+                <Card.Title
+                  as="h3"
+                  style={{ color: "#0A7E51", fontWeight: 120, fontSize: 20 }}
+                >
+                  Tracking Files
+                </Card.Title>
+              </Col>
+              {/* <Col className="text-end">
+                <Button
+                  className="btn btn-sm"
+                  type="button"
+                  variant=""
+                  // onClick={(e) => {
+                  //   handleAppellantModal();
+                  // }}
+                  onClick={handleOpen}
+                  style={{
+                    backgroundColor: "#0A7E51",
+                    borderColor: "#0A7E51",
+                    color: "white",
+                    fontWeight: 700,
+                  }}
+                >
+                  <span className="fa fa-plus"></span>
+                  Add Unit
+                </Button>
+              </Col> */}
             </Card.Header>
             <Card.Body>
               <div className="">

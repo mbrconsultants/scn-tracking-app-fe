@@ -425,7 +425,7 @@ export const Tracking = ({ refreshKey }) => {
           {!row.date_received && !row.date_rejected && (
             <Button
               size="sm"
-              variant="success"
+              // variant="success"
               onClick={() => handleAccept(row)}
             >
               Accept
@@ -596,8 +596,8 @@ export const Tracking = ({ refreshKey }) => {
 
       {/* Reject Modal */}
       <Modal show={rejectOpen} onHide={onClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Reject File</Modal.Title>
+        <Modal.Header closeButton style={{ backgroundColor: "#e25762ff" }}>
+          <Modal.Title style={{ color: "#fff" }}>Reject File</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>

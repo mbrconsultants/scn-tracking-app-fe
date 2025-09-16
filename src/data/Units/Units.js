@@ -271,7 +271,10 @@ export const Units = ({ refreshKey }) => {
       }
 
       <Modal show={showEditModal}>
-        <Modal.Header>
+        <Modal.Header style={{ backgroundColor: "#0a7148", color: "#fff" }}>
+          <Card.Title as="h3" style={{ color: "#fff" }}>
+            Edit Unit
+          </Card.Title>
           <Button
             onClick={() => setShowEditModal(false)}
             className="btn-close"
@@ -286,11 +289,11 @@ export const Units = ({ refreshKey }) => {
         >
           <Modal.Body>
             <Card>
-              <Card.Header>
-                <Card.Title as="h3" style={{ color: "#0a7148" }}>
+              {/* <Card.Header>
+                <Card.Title as="h3" style={{ color: "#fff" }}>
                   Edit Unit
                 </Card.Title>
-              </Card.Header>
+              </Card.Header> */}
               <Card.Body>
                 <Col lg={12} md={12}>
                   <FormGroup>
@@ -324,8 +327,8 @@ export const Units = ({ refreshKey }) => {
         </CForm>
       </Modal>
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title style={{ color: "#d62640" }}>Confirm Delete</Modal.Title>
+        <Modal.Header closeButton style={{ backgroundColor: "#d62640" }}>
+          <Modal.Title style={{ color: "#fff" }}>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body className="text-center text-bold">
           Are you sure you want to delete this unit?

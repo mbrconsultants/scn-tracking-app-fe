@@ -167,8 +167,11 @@ export default function AllUnits() {
       </Row>
 
       <Modal show={open} onHide={handleClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title style={{ color: "#0a7e51" }}>Add Unit</Modal.Title>
+        <Modal.Header
+          closeButton
+          style={{ backgroundColor: "#0a7148", color: "#fff" }}
+        >
+          <Modal.Title style={{ color: "#fff" }}>Add Unit</Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>

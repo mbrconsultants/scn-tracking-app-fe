@@ -408,12 +408,30 @@ export default function FileForwordCard() {
 
   return (
     <div className="d-flex justify-content-center mt-5">
-      <Card style={{ width: "24rem" }} className="shadow-sm py-5">
-        <Card.Body className="text-center">
-          <Card.Title style={{ color: "#0A7E51" }} className="py-3">
-            Forward File
+      <Card style={{ width: "20rem" }} className="shadow-sm ">
+        <Card.Header
+          style={{ backgroundColor: "#0A7E51", color: "#fff" }}
+          className="pb-3"
+        >
+          <Card.Title
+            style={{ backgroundColor: "#0A7E51", color: "#fff" }}
+            className="py-3"
+          >
+            File Number :{" "}
+            {selectedFile ? ` ${selectedFile.file_Number}` : "Loading file..."}
           </Card.Title>
-          <Card.Text className="py-3">
+        </Card.Header>
+        <Card.Body className="text-center">
+          {/* <Card.Title style={{ color: "#0A7E51" }} className="py-3">
+            Forward File
+          </Card.Title> */}
+          {/* <Card.Title
+            style={{ backgroundColor: "#0A7E51", color: "#fff" }}
+            className="py-3"
+          >
+            Forward File
+          </Card.Title> */}
+          <Card.Text className="pb-3">
             {selectedFile
               ? `File: ${selectedFile.file_Number}`
               : "Loading file..."}
@@ -492,8 +510,16 @@ export default function FileForwordCard() {
 
       {/* Forward Modal */}
       <Modal show={openDrawer} onHide={() => setOpenDrawer(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Forward File</Modal.Title>
+        <Modal.Header
+          closeButton
+          style={{
+            backgroundColor: "#0A7E51",
+            color: "#fff",
+            borderColor: "#0A7E51",
+            textAlign: "center",
+          }}
+        >
+          <Modal.Title style={{ color: "#fff" }}>Forward File</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group className="mb-3">
@@ -531,11 +557,7 @@ export default function FileForwordCard() {
           <Button variant="danger" onClick={() => setOpenDrawer(false)}>
             Close
           </Button>
-          <Button
-            variant="success"
-            onClick={handleForwardSubmit}
-            disabled={isForwarded}
-          >
+          <Button onClick={handleForwardSubmit} disabled={isForwarded}>
             Forward
           </Button>
         </Modal.Footer>

@@ -112,31 +112,43 @@ export default function AllUsers() {
 
   return (
     <div>
-      <div className="page-header ">
-        <div>
-          {/* <h1 className="page-title">Documentation </h1> */}
-          <Breadcrumb className="breadcrumb">
-            {/* <Breadcrumb.Item href="#">Home</Breadcrumb.Item> */}
-            <Breadcrumb.Item active>Users List</Breadcrumb.Item>
-          </Breadcrumb>
-        </div>
-        <div className="ms-auto pageheader-btn">
-          <Button onClick={handleOpen} className="btn btn-green btn-icon me-3">
-            <span>
-              <i className="fe fe-plus"></i>&nbsp;
-            </span>
-            Add User
-          </Button>
-        </div>
-      </div>
-
       {/* <Search.SearchStaff handleSearch={handleSearch} data={data}/> */}
 
       <Row>
         <Col sm={12} className="col-12">
           <Card>
-            <Card.Header>
+            {/* <Card.Header>
               <Col className="card-title text-center mb-0"> USERS LIST </Col>
+            </Card.Header> */}
+            <Card.Header>
+              <Col className="text-beginning">
+                <Card.Title
+                  as="h3"
+                  style={{ color: "#0A7E51", fontWeight: 700 }}
+                >
+                  USERS LIST
+                </Card.Title>
+              </Col>
+              <Col className="text-end">
+                <Button
+                  className="btn btn-sm"
+                  type="button"
+                  variant=""
+                  // onClick={(e) => {
+                  //   handleAppellantModal();
+                  // }}
+                  onClick={handleOpen}
+                  style={{
+                    backgroundColor: "#0A7E51",
+                    borderColor: "#0A7E51",
+                    color: "white",
+                    fontWeight: 700,
+                  }}
+                >
+                  <span className="fa fa-plus"></span>
+                  Add User
+                </Button>
+              </Col>
             </Card.Header>
             <Card.Body>
               <div className="">
@@ -322,16 +334,10 @@ export default function AllUsers() {
             </Form.Group>
 
             <div className="d-flex justify-content-end mt-3">
-              <Button
-                onClick={handleClose}
-                variant="secondary"
-                className="me-2"
-              >
+              <Button onClick={handleClose} variant="danger" className="me-2">
                 Cancel
               </Button>
-              <Button type="submit" variant="success">
-                Save
-              </Button>
+              <Button type="submit">Save</Button>
             </div>
           </Form>
         </div>

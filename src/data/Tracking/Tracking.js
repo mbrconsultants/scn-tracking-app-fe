@@ -578,8 +578,8 @@ export const Tracking = ({ refreshKey }) => {
 
         <Modal.Footer className="file-modal-footer">
           <Button
-            variant="dark"
-            className="file-btn-cancel"
+            variant="danger"
+            // className="file-btn-cancel"
             onClick={handleDrawerClose}
           >
             Close

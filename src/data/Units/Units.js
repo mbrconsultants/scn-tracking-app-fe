@@ -278,6 +278,7 @@ export const Units = ({ refreshKey }) => {
           <Button
             onClick={() => setShowEditModal(false)}
             className="btn-close"
+            style={{ color: "#fff" }}
             variant=""
           >
             x

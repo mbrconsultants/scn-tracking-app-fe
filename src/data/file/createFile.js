@@ -33,6 +33,7 @@ export const CreateFile = ({ datas, getAllData }) => {
     process_Number: "",
     page_Number: "",
     parties: "",
+    location_id: "", // Add location_id to state
   });
   
   const [forwardData, setForwardData] = useState({
@@ -143,6 +144,7 @@ export const CreateFile = ({ datas, getAllData }) => {
       process_Number: row.process_Number,
       page_Number: row.page_Number,
       parties: row.parties,
+      location_id: row.location_id || "", // Set location_id from the row data
     });
     setOpen(true);
   };
@@ -162,31 +164,6 @@ export const CreateFile = ({ datas, getAllData }) => {
     }
   };
 
-//   const onReject = (row) => {
-//     setIdToReject(row.id);
-//     setnameToReject(row.file_Name);
-//     setRejectOpen(true);
-//   };
-
-//   const handleReject = async () => {
-//     setLoading(true);
-//     try {
-//       await endpoint.post(`/file/reject-file-tracking/${idToReject}`, {
-//         remark: rejectRemark,
-//       });
-
-//       SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
-//       setLoading(false);
-//       setRejectOpen(false);
-//       getAllData();
-//       setRejectRemark("");
-//     } catch (err) {
-//       console.error("Reject error:", err.response);
-//       ErrorAlert(err.response?.data?.message || "Failed to reject file");
-//       setLoading(false);
-//     }
-//   };
-
   const reset = () => {
     setNewFile({
       file_id: "",
@@ -196,6 +173,7 @@ export const CreateFile = ({ datas, getAllData }) => {
       process_Number: "",
       page_Number: "",
       parties: "",
+      location_id: "", // Reset location_id
     });
     setRejectRemark("");
   };
@@ -232,8 +210,15 @@ export const CreateFile = ({ datas, getAllData }) => {
       name: "Description",
       selector: (row) => row.description,
       sortable: true,
-      width: "220px",
+      width: "200px",
       cell: (row) => <h6 className="fs-12 fw-semibold">{row.description}</h6>,
+    },
+    {
+      name: "Current Location",
+      selector: (row) => row.location_id,
+      sortable: true,
+      width: "160px",
+      cell: (row) => <h6 className="fs-12 fw-semibold">{row.location ? row.location.name : ""}</h6>
     },
     {
       name: "QRCode",
@@ -287,14 +272,6 @@ export const CreateFile = ({ datas, getAllData }) => {
             <i className="fa fa-forward me-1"></i>
             Forward
           </button>
-          {/* <button
-            className="btn btn-sm btn-danger"
-            onClick={() => onReject(row)}
-            title="Reject"
-          >
-            <i className="fa fa-times me-1"></i>
-            Reject
-          </button> */}
         </div>
       ),
     }
@@ -414,6 +391,54 @@ export const CreateFile = ({ datas, getAllData }) => {
             </Row>
             
             <Row>
+              <Col md={6}>
+                <div className="file-form-group mb-3">
+                  <label className="file-form-label">
+                    Current Location <span className="file-required-asterisk">*</span>
+                  </label>
+                  <Form.Select
+                    className="form-control file-form-control"
+                    value={newFile.location_id}
+                    onChange={(e) =>
+                      setNewFile({
+                        ...newFile,
+                        location_id: e.target.value,
+                      })
+                    }
+                    required
+                    style={{ height: "45px" }} 
+                  >
+                    <option value="" disabled>-- Select Location --</option>
+                    {locations.map((location) => (
+                      <option key={location.id} value={location.id}>
+                        {location.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </div>
+              </Col>
+              <Col md={6}>
+                <div className="file-form-group mb-3">
+                  <label className="file-form-label">
+                    Parties <span className="file-required-asterisk">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control file-form-control"
+                    value={newFile.parties}
+                    onChange={(e) =>
+                      setNewFile({
+                        ...newFile,
+                        parties: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </Col>
+            </Row>
+            
+            <Row>
               <Col md={12}>
                 <div className="file-form-group mb-3">
                   <label className="file-form-label">
@@ -427,28 +452,6 @@ export const CreateFile = ({ datas, getAllData }) => {
                       setNewFile({
                         ...newFile,
                         description: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </div>
-              </Col>
-            </Row>
-            
-            <Row>
-              <Col md={12}>
-                <div className="file-form-group mb-3">
-                  <label className="file-form-label">
-                    Parties <span className="file-required-asterisk">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control file-form-control"
-                    value={newFile.parties}
-                    onChange={(e) =>
-                      setNewFile({
-                        ...newFile,
-                        parties: e.target.value,
                       })
                     }
                     required
@@ -479,45 +482,6 @@ export const CreateFile = ({ datas, getAllData }) => {
         </Modal.Footer>
       </Modal>
 
-      {/* Reject Modal */}
-      {/* <Modal show={rejectOpen} onHide={onClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Reject File</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            Do you really want to reject{" "}
-            <strong className="text-danger">'{nameToReject}'</strong> file?
-          </p>
-          <p>This process cannot be undone.</p>
-          
-          <Form.Group className="mb-3">
-            <Form.Label>
-              Reason for rejection (optional)
-            </Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              placeholder="Optionally provide a reason for rejecting this file..."
-              value={rejectRemark}
-              onChange={(e) => setRejectRemark(e.target.value)}
-            />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button 
-            variant="danger" 
-            onClick={handleReject}
-            disabled={isLoading}
-          >
-            {isLoading ? "Rejecting..." : "Reject File"}
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
-
       {/* Forward Modal */}
       <Modal
         show={openDrawer}
@@ -546,6 +510,7 @@ export const CreateFile = ({ datas, getAllData }) => {
                   user_id: e.target.value,
                 })
               }
+              style={{ height: "45px" }} // Increased height
             >
               <option value="" disabled hidden>
                 -- Select User --
@@ -571,6 +536,7 @@ export const CreateFile = ({ datas, getAllData }) => {
                   location_id: e.target.value,
                 })
               }
+              style={{ height: "45px" }} // Increased height
             >
               <option value="" disabled hidden>
                 -- Select Location --

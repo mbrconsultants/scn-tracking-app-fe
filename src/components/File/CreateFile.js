@@ -28,19 +28,20 @@ export default function CreateFile() {
   const [process_Number, setProcessNumber] = useState("");
   const [page_Number, setPageNumber] = useState("");
   const [parties, setParties] = useState("");
+  const [location_id, setLocationId] = useState(""); // Add state for location
   const [datas, setDatas] = useState([]);
+  const [locations, setLocation] = useState([]);
 
-  // Show location modal
+  
   const handleFileModal = () => {
     setShowFileModal(true);
     setFileModalHeading("Add New File");
   };
 
-  // Create location
+  
   const handleCreateFile = async () => {
     setLoading(true);
 
-    // Create form data
     const data = new FormData();
     data.append("file_Name", file_Name);
     data.append("description", description);
@@ -48,11 +49,11 @@ export default function CreateFile() {
     data.append("process_Number", process_Number);
     data.append("page_Number", page_Number);
     data.append("parties", parties);
+    data.append("location_id", location_id);
 
     try {
       const res = await endpoint.post(`/file/createfile/`, data);
 
-      // Check if response has message
       if (res.data.message) {
         SuccessAlert(res.data.message);
       } else {
@@ -86,8 +87,19 @@ export default function CreateFile() {
     }
   };
 
+  const getLocations = async () => {
+    try {
+      const res = await endpoint.get(`/location/getAllLocations`);
+      console.log("all locations", res.data.data);
+      setLocation(res.data.data);
+    } catch (err) {
+      console.error("Error fetching locations:", err);
+    }
+  };
+
   useEffect(() => {
     getAllData();
+    getLocations();
   }, []);
 
   const resetForm = () => {
@@ -97,6 +109,7 @@ export default function CreateFile() {
     setProcessNumber("");
     setPageNumber("");
     setParties("");
+    setLocationId(""); // Reset location ID
     resetFormHook();
   };
 
@@ -235,6 +248,50 @@ export default function CreateFile() {
                       <Col lg={12} md={12}>
                         <FormGroup className="form-group-custom mb-3">
                           <label htmlFor="name" className="form-label-custom">
+                            Current Location
+                            <span className="required-asterisk">*</span>
+                          </label>
+                          <Form.Select
+                            name="location_id"
+                            value={location_id}
+                            onChange={(e) => setLocationId(e.target.value)}
+                            className="form-control-custom"
+                            required
+                            style={{ height: "45px" }}
+                          >
+                            <option value="" disabled>
+                              -- Select Location --
+                            </option>
+                            {locations.map((location) => (
+                              <option key={location.id} value={location.id}>
+                                {location.name}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg={12} md={12}>
+                       <FormGroup className="form-group-custom mb-3">
+                          <label htmlFor="name" className="form-label-custom">
+                            Parties <span className="required-asterisk">*</span>
+                          </label>
+                          <Form.Control
+                            type="text"
+                            name="parties"
+                            value={parties}
+                            onChange={(e) => setParties(e.target.value)}
+                            className="form-control-custom"
+                            required
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg={12} md={12}>
+                        <FormGroup className="form-group-custom mb-3">
+                          <label htmlFor="name" className="form-label-custom">
                             Description{" "}
                             <span className="required-asterisk">*</span>
                           </label>
@@ -243,27 +300,6 @@ export default function CreateFile() {
                             name="description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            className="form-control-custom"
-                            required
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-
-                    <Row>
-                      <Col lg={12} md={12}>
-                        <FormGroup className="form-group-custom mb-3">
-                          <label
-                            htmlFor="description"
-                            className="form-label-custom"
-                          >
-                            Parties <span className="required-asterisk">*</span>
-                          </label>
-                          <Form.Control
-                            type="text"
-                            name="parties"
-                            value={parties}
-                            onChange={(e) => setParties(e.target.value)}
                             className="form-control-custom"
                             required
                           />

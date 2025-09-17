@@ -2,7 +2,6 @@ import React from "react";
 import { useState, useContext, useEffect } from "react";
 import { Card, Row, Col, Modal, Button, Form } from "react-bootstrap";
 import DataTable from "react-data-table-component";
-import DataTableExtensions from "react-data-table-component-extensions"
 import endpoint from "../../context/endpoint";
 import { Context } from "../../context/Context";
 import { ErrorAlert, SuccessAlert } from "../Toast/toast";
@@ -138,6 +137,25 @@ export const CreateFile = ({ datas, getAllData }) => {
         window.open(qrCodeUrl, '_blank', 'noopener,noreferrer');
     };
 
+    // Function to download QR code
+    // const downloadQRCode = (qrCodeUrl, fileName) => {
+    //     // Create a temporary anchor element
+    //     const link = document.createElement('a');
+    //     link.href = qrCodeUrl;
+        
+    //     // Set the download attribute with a proper filename
+    //     link.setAttribute('download', fileName ? `${fileName}_qrcode.png` : 'qrcode.png');
+        
+    //     // Append to the document
+    //     document.body.appendChild(link);
+        
+    //     // Trigger the download
+    //     link.click();
+        
+    //     // Clean up
+    //     document.body.removeChild(link);
+    // };
+
     const onEdit = (row) => {
         console.log("file to edit", row);
         setNewFile({
@@ -171,6 +189,12 @@ export const CreateFile = ({ datas, getAllData }) => {
         }
     };
 
+    // const onReject = (row) => {
+    //     setOpen(false);
+    //     setIdToReject(row.id);
+    //     setnameToReject(row.file_Name);
+    //     setRejectOpen(true);
+    // };
 
     const reset = () => {
         setNewFile({
@@ -182,7 +206,7 @@ export const CreateFile = ({ datas, getAllData }) => {
             page_Number: "",
             parties: "",
         });
-        setRejectRemark(""); 
+        setRejectRemark(""); // Reset reject remark when closing modal
     };
 
     const onClose = () => {
@@ -191,18 +215,18 @@ export const CreateFile = ({ datas, getAllData }) => {
         setRejectOpen(false);
     };
 
-    
+    // Handle reject action
     const handleReject = async () => {
         setLoading(true);
         try {
-           
+            // Add your reject API call here
             await endpoint.post(`/file/reject-file-tracking/${idToReject}`, { remark: rejectRemark });
             
             SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
             setLoading(false);
             setRejectOpen(false);
             getAllData();
-            setRejectRemark(""); 
+            setRejectRemark(""); // Reset remark after successful rejection
         } catch (err) {
             console.error("Reject error:", err.response);
             ErrorAlert(err.response?.data?.message || "Failed to reject file");
@@ -296,38 +320,27 @@ export const CreateFile = ({ datas, getAllData }) => {
             </div>
         ),
     }
-];
- const tableDatas = {
-    columns,
-    data,
-  };
-
+]
     return (
         <>
-            {/* {isLoading && <Loader />}
+            {isLoading && <Loader />}
             <div>
                 <Row>
-                    <Col md={12}> */}
-                       
-
-                        <DataTableExtensions {...tableDatas}>
-                            {isLoading ? (
-                            <Loader />
-                            ) : (
-                            <DataTable
-                                fixedHeader
-                                columns={columns}
-                                data={data}
-                                persistTableHead
-                                defaultSortField="id"
-                                defaultSortAsc={false}
-                                striped
-                                highlightOnHover
-                                pagination
-                                paginationRowsPerPageOptions={[10, 15, 20, 25, 30, 50, 100]}
-                            />
-                            )}
-                        </DataTableExtensions>
+                    <Col md={12}>
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            defaultSortField="id"
+                            defaultSortAsc={false}
+                            striped={true}
+                            center={true}
+                            pagination
+                            paginationComponentOptions={{
+                                noRowsPerPage: true 
+                            }}
+                            onChangePage={handlePageChange}
+                            highlightOnHover
+                        />
 
                        {/* Edit Modal */}
                         <Modal show={open} onHide={onClose} className="file-modal-wrapper" centered>
@@ -597,9 +610,9 @@ export const CreateFile = ({ datas, getAllData }) => {
                         </Modal.Footer>
                         </Modal>
 
-                    {/* </Col>
+                    </Col>
                 </Row>
-            </div> */}
+            </div>
         </>
     );
 };

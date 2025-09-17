@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useContext, useEffect } from "react";
 import { Card, Row, Col, Modal, Button, Form } from "react-bootstrap";
 import DataTable from "react-data-table-component";
+import DataTableExtensions from "react-data-table-component-extensions";
 import endpoint from "../../context/endpoint";
 import { Context } from "../../context/Context";
 import { ErrorAlert, SuccessAlert } from "../Toast/toast";
@@ -14,11 +15,9 @@ export const CreateFile = ({ datas, getAllData }) => {
   const [isLoading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
   const [idToReject, setIdToReject] = useState("");
   const [nameToReject, setnameToReject] = useState("");
-  const [rejectRemark, setRejectRemark] = useState(""); // New state for reject remark
+  const [rejectRemark, setRejectRemark] = useState("");
   const [usersList, setUsersList] = useState([]);
   const [departmentsList, setDepartmentsList] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -35,17 +34,13 @@ export const CreateFile = ({ datas, getAllData }) => {
     page_Number: "",
     parties: "",
   });
+  
   const [forwardData, setForwardData] = useState({
     loginUser: user?.id,
     location_id: "",
     to_user_id: "",
-
     remark: "",
   });
-
-  const handlePageChange = (page) => {
-    setPage(page);
-  };
 
   useEffect(() => {
     setData(datas);
@@ -57,18 +52,16 @@ export const CreateFile = ({ datas, getAllData }) => {
         // Fetch users
         const usersRes = await endpoint.get("/user/list");
         setUsersList(usersRes.data.data);
-        console.log("Users fetched:", usersRes.data.data);
 
         // Fetch departments
         const deptRes = await endpoint.get("/department/get-all-departments");
         setDepartmentsList(deptRes.data.data);
 
-        //Fetch locations
+        // Fetch locations
         const locationRes = await endpoint.get(`/location/getAllLocations`);
-        console.log("all locations", locationRes.data.data);
         setLocation(locationRes.data.data);
       } catch (err) {
-        console.error("Error fetching users or departments:", err);
+        console.error("Error fetching data:", err);
       }
     };
 
@@ -87,7 +80,6 @@ export const CreateFile = ({ datas, getAllData }) => {
       loginUser: user?.id,
       location_id: "",
       to_user_id: "",
-
       remark: "",
     });
     setFilteredUnits([]);
@@ -114,14 +106,12 @@ export const CreateFile = ({ datas, getAllData }) => {
     setLoading(true);
     try {
       const payload = {
-        file_id: selectedFile.id, // required
-        from_user_id: forwardData.loginUser, // 👈 logged-in user
-        to_user_id: forwardData.user_id, // 👈 recipient
+        file_id: selectedFile.id,
+        from_user_id: forwardData.loginUser,
+        to_user_id: forwardData.user_id,
         location_id: forwardData.location_id,
         remark: forwardData.remark || "",
       };
-
-      console.log("Submitting payload:", payload); // debug
 
       const res = await endpoint.post(
         `/file-track/create-file-tracking`,
@@ -129,7 +119,7 @@ export const CreateFile = ({ datas, getAllData }) => {
       );
 
       SuccessAlert(res.data.message || "File forwarded successfully!");
-      getAllData(); // refresh after forwarding
+      getAllData();
       handleDrawerClose();
     } catch (err) {
       console.error("Forward error:", err.response?.data || err);
@@ -144,27 +134,7 @@ export const CreateFile = ({ datas, getAllData }) => {
     window.open(qrCodeUrl, "_blank", "noopener,noreferrer");
   };
 
-  // Function to download QR code
-  // const downloadQRCode = (qrCodeUrl, fileName) => {
-  //     // Create a temporary anchor element
-  //     const link = document.createElement('a');
-  //     link.href = qrCodeUrl;
-
-  //     // Set the download attribute with a proper filename
-  //     link.setAttribute('download', fileName ? `${fileName}_qrcode.png` : 'qrcode.png');
-
-  //     // Append to the document
-  //     document.body.appendChild(link);
-
-  //     // Trigger the download
-  //     link.click();
-
-  //     // Clean up
-  //     document.body.removeChild(link);
-  // };
-
   const onEdit = (row) => {
-    console.log("file to edit", row);
     setNewFile({
       file_id: row.id,
       file_Name: row.file_Name,
@@ -179,36 +149,43 @@ export const CreateFile = ({ datas, getAllData }) => {
 
   const handleEdit = async () => {
     setLoading(true);
-    console.log("Updating file with ID:", newFile.file_id);
-    console.log("Data being sent:", newFile);
-
     try {
-      const res = await endpoint.put(
-        `/file/update/${newFile.file_id}`,
-        newFile
-      );
-      console.log("Update successful:", res.data);
+      const res = await endpoint.put(`/file/update/${newFile.file_id}`, newFile);
       SuccessAlert(res.data.message || "File updated successfully!");
       setLoading(false);
       setOpen(false);
       getAllData();
     } catch (err) {
       console.error("Update error:", err.response);
-      ErrorAlert(
-        err.response?.data?.message ||
-          err.response?.data?.description ||
-          "Failed to update location"
-      );
+      ErrorAlert(err.response?.data?.message || err.response?.data?.description || "Failed to update file");
       setLoading(false);
     }
   };
 
-  // const onReject = (row) => {
-  //     setOpen(false);
-  //     setIdToReject(row.id);
-  //     setnameToReject(row.file_Name);
-  //     setRejectOpen(true);
-  // };
+//   const onReject = (row) => {
+//     setIdToReject(row.id);
+//     setnameToReject(row.file_Name);
+//     setRejectOpen(true);
+//   };
+
+//   const handleReject = async () => {
+//     setLoading(true);
+//     try {
+//       await endpoint.post(`/file/reject-file-tracking/${idToReject}`, {
+//         remark: rejectRemark,
+//       });
+
+//       SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
+//       setLoading(false);
+//       setRejectOpen(false);
+//       getAllData();
+//       setRejectRemark("");
+//     } catch (err) {
+//       console.error("Reject error:", err.response);
+//       ErrorAlert(err.response?.data?.message || "Failed to reject file");
+//       setLoading(false);
+//     }
+//   };
 
   const reset = () => {
     setNewFile({
@@ -220,34 +197,13 @@ export const CreateFile = ({ datas, getAllData }) => {
       page_Number: "",
       parties: "",
     });
-    setRejectRemark(""); // Reset reject remark when closing modal
+    setRejectRemark("");
   };
 
   const onClose = () => {
     reset();
     setOpen(false);
     setRejectOpen(false);
-  };
-
-  // Handle reject action
-  const handleReject = async () => {
-    setLoading(true);
-    try {
-      // Add your reject API call here
-      await endpoint.post(`/file/reject-file-tracking/${idToReject}`, {
-        remark: rejectRemark,
-      });
-
-      SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
-      setLoading(false);
-      setRejectOpen(false);
-      getAllData();
-      setRejectRemark(""); // Reset remark after successful rejection
-    } catch (err) {
-      console.error("Reject error:", err.response);
-      ErrorAlert(err.response?.data?.message || "Failed to reject file");
-      setLoading(false);
-    }
   };
 
   const columns = [
@@ -308,7 +264,6 @@ export const CreateFile = ({ datas, getAllData }) => {
         </div>
       ),
     },
-
     {
       name: "Actions",
       width: "180px",
@@ -317,377 +272,349 @@ export const CreateFile = ({ datas, getAllData }) => {
           <button
             className="btn btn-sm"
             onClick={() => onEdit(row)}
-            style={{
-              backgroundColor: "#0A7E51",
-              color: "#fff",
-              borderColor: "#0A7E51",
-            }}
+            style={{ backgroundColor: "#0A7E51", color: "#fff", borderColor: "#0A7E51" }}
             title="Edit"
           >
             <i className="fa fa-edit me-1"></i>
             Edit
           </button>
-          {/* {row.status === 1 && ( */}
           <button
             onClick={() => handleDrawerOpen(row)}
             className="btn btn-sm"
-            style={{
-              backgroundColor: "#0d0c22",
-              color: "#fff",
-              borderColor: "#0d0c22",
-            }}
+            style={{ backgroundColor: "#0d0c22", color: "#fff", borderColor: "#0d0c22" }}
             title="Forward"
           >
             <i className="fa fa-forward me-1"></i>
             Forward
           </button>
-          {/* )} */}
-          {/* <Button
-                    className="btn btn-sm btn-danger"
-                    onClick={(e) => {
-                        onReject(row);
-                    }}
-                    variant="danger"
-                    title="Reject"
-                    size="sm">
-                    <i className="fa fa-times me-1"></i>
-                    Reject
-                </Button> */}
+          {/* <button
+            className="btn btn-sm btn-danger"
+            onClick={() => onReject(row)}
+            title="Reject"
+          >
+            <i className="fa fa-times me-1"></i>
+            Reject
+          </button> */}
         </div>
       ),
-    },
+    }
   ];
+
+  const tableDatas = {
+    columns,
+    data,
+  };
+
   return (
     <>
       {isLoading && <Loader />}
-      <div>
-        <Row>
-          <Col md={12}>
-            <DataTable
-              columns={columns}
-              data={data}
-              defaultSortField="id"
-              defaultSortAsc={false}
-              striped={true}
-              center={true}
-              pagination
-              paginationComponentOptions={{
-                noRowsPerPage: true,
-              }}
-              onChangePage={handlePageChange}
-              highlightOnHover
+      
+      <DataTableExtensions {...tableDatas}>
+        <DataTable
+          fixedHeader
+          columns={columns}
+          data={data}
+          persistTableHead
+          defaultSortField="id"
+          defaultSortAsc={false}
+          striped
+          highlightOnHover
+          pagination
+          paginationRowsPerPageOptions={[10, 15, 20, 25, 30, 50, 100]}
+        />
+      </DataTableExtensions>
+
+      {/* Edit Modal */}
+      <Modal show={open} onHide={onClose} className="file-modal-wrapper" centered>
+        <Modal.Header closeButton className="file-modal-header">
+          <Modal.Title className="file-modal-title">Edit File</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="file-modal-body">
+          <form className="file-form-wrapper">
+            <Row>
+              <Col md={6}>
+                <div className="file-form-group mb-3">
+                  <label className="file-form-label">
+                    File Name <span className="file-required-asterisk">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control file-form-control"
+                    value={newFile.file_Name}
+                    onChange={(e) =>
+                      setNewFile({
+                        ...newFile,
+                        file_Name: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </Col>
+              <Col md={6}>
+                <div className="file-form-group mb-3">
+                  <label className="file-form-label">
+                    Process Number <span className="file-required-asterisk">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control file-form-control"
+                    value={newFile.process_Number}
+                    onChange={(e) =>
+                      setNewFile({
+                        ...newFile,
+                        process_Number: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </Col>
+            </Row>
+            
+            <Row>
+              <Col md={6}>
+                <div className="file-form-group mb-3">
+                  <label className="file-form-label">
+                    File Number <span className="file-required-asterisk">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control file-form-control"
+                    value={newFile.file_Number}
+                    onChange={(e) =>
+                      setNewFile({
+                        ...newFile,
+                        file_Number: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </Col>
+              <Col md={6}>
+                <div className="file-form-group mb-3">
+                  <label className="file-form-label">
+                    Page Number <span className="file-required-asterisk">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control file-form-control"
+                    value={newFile.page_Number}
+                    onChange={(e) =>
+                      setNewFile({
+                        ...newFile,
+                        page_Number: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </Col>
+            </Row>
+            
+            <Row>
+              <Col md={12}>
+                <div className="file-form-group mb-3">
+                  <label className="file-form-label">
+                    Description <span className="file-required-asterisk">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control file-form-control"
+                    value={newFile.description}
+                    onChange={(e) =>
+                      setNewFile({
+                        ...newFile,
+                        description: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </Col>
+            </Row>
+            
+            <Row>
+              <Col md={12}>
+                <div className="file-form-group mb-3">
+                  <label className="file-form-label">
+                    Parties <span className="file-required-asterisk">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control file-form-control"
+                    value={newFile.parties}
+                    onChange={(e) =>
+                      setNewFile({
+                        ...newFile,
+                        parties: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </Col>
+            </Row>
+          </form>
+        </Modal.Body>
+        <Modal.Footer className="file-modal-footer">
+          <Button variant="secondary" onClick={onClose} className="file-btn-cancel">
+            Close
+          </Button>
+          <Button 
+            className="file-btn-update"
+            onClick={handleEdit}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Updating...
+              </>
+            ) : (
+              "Update File"
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Reject Modal */}
+      {/* <Modal show={rejectOpen} onHide={onClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reject File</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            Do you really want to reject{" "}
+            <strong className="text-danger">'{nameToReject}'</strong> file?
+          </p>
+          <p>This process cannot be undone.</p>
+          
+          <Form.Group className="mb-3">
+            <Form.Label>
+              Reason for rejection (optional)
+            </Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="Optionally provide a reason for rejecting this file..."
+              value={rejectRemark}
+              onChange={(e) => setRejectRemark(e.target.value)}
             />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button 
+            variant="danger" 
+            onClick={handleReject}
+            disabled={isLoading}
+          >
+            {isLoading ? "Rejecting..." : "Reject File"}
+          </Button>
+        </Modal.Footer>
+      </Modal> */}
 
-            {/* Edit Modal */}
-            <Modal
-              show={open}
-              onHide={onClose}
-              className="file-modal-wrapper"
-              centered
+      {/* Forward Modal */}
+      <Modal
+        show={openDrawer}
+        onHide={handleDrawerClose}
+        className="file-modal-wrapper"
+        centered
+      >
+        <Modal.Header closeButton className="file-modal-header">
+          <Modal.Title className="file-modal-title">
+            Forward File
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body className="file-modal-body">
+          {/* Hidden loginUser */}
+          <input type="hidden" value={forwardData.loginUser} />
+
+          {/* User Select */}
+          <Form.Group className="mb-3">
+            <Form.Label>User</Form.Label>
+            <Form.Select
+              value={forwardData.user_id || ""}
+              onChange={(e) =>
+                setForwardData({
+                  ...forwardData,
+                  user_id: e.target.value,
+                })
+              }
             >
-              <Modal.Header closeButton className="file-modal-header">
-                <Modal.Title className="file-modal-title">
-                  Edit File
-                </Modal.Title>
-              </Modal.Header>
-              <Modal.Body className="file-modal-body">
-                <form className="file-form-wrapper">
-                  <Row>
-                    <Col md={6}>
-                      <div className="file-form-group mb-3">
-                        <label className="file-form-label">
-                          File Name{" "}
-                          <span className="file-required-asterisk">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control file-form-control"
-                          value={newFile.file_Name}
-                          onChange={(e) =>
-                            setNewFile({
-                              ...newFile,
-                              file_Name: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className="file-form-group mb-3">
-                        <label className="file-form-label">
-                          Process Number{" "}
-                          <span className="file-required-asterisk">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control file-form-control"
-                          value={newFile.process_Number}
-                          onChange={(e) =>
-                            setNewFile({
-                              ...newFile,
-                              process_Number: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                    </Col>
-                  </Row>
+              <option value="" disabled hidden>
+                -- Select User --
+              </option>
+              {usersList.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {`${u.surname} ${u.first_name}${
+                    u.middle_name ? ` ${u.middle_name}` : ""
+                  }`}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
 
-                  <Row>
-                    <Col md={6}>
-                      <div className="file-form-group mb-3">
-                        <label className="file-form-label">
-                          File Number{" "}
-                          <span className="file-required-asterisk">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control file-form-control"
-                          value={newFile.file_Number}
-                          onChange={(e) =>
-                            setNewFile({
-                              ...newFile,
-                              file_Number: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className="file-form-group mb-3">
-                        <label className="file-form-label">
-                          Page Number{" "}
-                          <span className="file-required-asterisk">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control file-form-control"
-                          value={newFile.page_Number}
-                          onChange={(e) =>
-                            setNewFile({
-                              ...newFile,
-                              page_Number: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                    </Col>
-                  </Row>
-
-                  <Row>
-                    <Col md={12}>
-                      <div className="file-form-group mb-3">
-                        <label className="file-form-label">
-                          Description{" "}
-                          <span className="file-required-asterisk">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control file-form-control"
-                          value={newFile.description}
-                          onChange={(e) =>
-                            setNewFile({
-                              ...newFile,
-                              description: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                    </Col>
-                  </Row>
-
-                  <Row>
-                    <Col md={12}>
-                      <div className="file-form-group mb-3">
-                        <label className="file-form-label">
-                          Parties{" "}
-                          <span className="file-required-asterisk">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control file-form-control"
-                          value={newFile.parties}
-                          onChange={(e) =>
-                            setNewFile({
-                              ...newFile,
-                              parties: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                    </Col>
-                  </Row>
-                </form>
-              </Modal.Body>
-              <Modal.Footer className="file-modal-footer">
-                <Button
-                  variant="secondary"
-                  onClick={onClose}
-                  className="file-btn-cancel"
-                >
-                  Close
-                </Button>
-                <Button
-                  className="file-btn-update"
-                  onClick={handleEdit}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <span
-                        className="spinner-border spinner-border-sm me-2"
-                        role="status"
-                        aria-hidden="true"
-                      ></span>
-                      Updating...
-                    </>
-                  ) : (
-                    "Update File"
-                  )}
-                </Button>
-              </Modal.Footer>
-            </Modal>
-
-            {/* Reject Modal */}
-            <Modal show={rejectOpen} onHide={onClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Reject File</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <p>
-                  Do you really want to reject{" "}
-                  <strong className="text-danger">'{nameToReject}'</strong>{" "}
-                  file?
-                </p>
-                <p>This process cannot be undone.</p>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Reason for rejection (optional)</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    placeholder="Optionally provide a reason for rejecting this file..."
-                    value={rejectRemark}
-                    onChange={(e) => setRejectRemark(e.target.value)}
-                  />
-                </Form.Group>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button variant="danger" onClick={handleReject}>
-                  Reject File
-                </Button>
-              </Modal.Footer>
-            </Modal>
-
-            {/* Forword Modal */}
-            <Modal
-              show={openDrawer}
-              onHide={handleDrawerClose}
-              className="file-modal-wrapper"
-              centered
+          {/* Location Select */}
+          <Form.Group className="mb-3">
+            <Form.Label>Location</Form.Label>
+            <Form.Select
+              value={forwardData.location_id || ""}
+              onChange={(e) =>
+                setForwardData({
+                  ...forwardData,
+                  location_id: e.target.value,
+                })
+              }
             >
-              <Modal.Header closeButton className="file-modal-header">
-                <Modal.Title className="file-modal-title">
-                  Forward File
-                </Modal.Title>
-              </Modal.Header>
+              <option value="" disabled hidden>
+                -- Select Location --
+              </option>
+              {locations.map((location) => (
+                <option key={location.id} value={location.id}>
+                  {location.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
 
-              <Modal.Body className="file-modal-body">
-                {/* Hidden loginUser */}
-                <input type="hidden" value={forwardData.loginUser} />
+          {/* Remark */}
+          <Form.Group className="mb-3">
+            <Form.Label>Remark</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={forwardData.remark}
+              onChange={(e) =>
+                setForwardData({ ...forwardData, remark: e.target.value })
+              }
+            />
+          </Form.Group>
+        </Modal.Body>
 
-                {/* User Select */}
-
-                <Form.Group className="mb-3">
-                  <Form.Label>User</Form.Label>
-                  <Form.Select
-                    value={forwardData.user_id || ""}
-                    onChange={(e) =>
-                      setForwardData({
-                        ...forwardData,
-                        user_id: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="" disabled hidden>
-                      -- Select User --
-                    </option>
-                    {usersList.map((u) => (
-                      <option key={u.id} value={u.id}>
-                        {`${u.surname} ${u.first_name}${
-                          u.middle_name ? ` ${u.middle_name}` : ""
-                        }`}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-
-                {/* Location Select */}
-                <Form.Group className="mb-3">
-                  <Form.Label>Location</Form.Label>
-                  <Form.Select
-                    value={forwardData.location_id || ""}
-                    onChange={(e) =>
-                      setForwardData({
-                        ...forwardData,
-                        location_id: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="" disabled hidden>
-                      -- Select Location --
-                    </option>
-                    {locations.map((loc) => (
-                      <option key={loc.id} value={loc.id}>
-                        {loc.name}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-
-                {/* Remark */}
-                <Form.Group className="mb-3">
-                  <Form.Label>Remark</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    value={forwardData.remark}
-                    onChange={(e) =>
-                      setForwardData({ ...forwardData, remark: e.target.value })
-                    }
-                  />
-                </Form.Group>
-              </Modal.Body>
-
-              <Modal.Footer className="file-modal-footer">
-                <Button
-                  variant="danger"
-                  className="file-btn-cancel"
-                  onClick={handleDrawerClose}
-                >
-                  Close
-                </Button>
-                <Button
-                  variant="success"
-                  className="file-btn-update"
-                  onClick={handleForwardSubmit}
-                >
-                  Forward
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </Col>
-        </Row>
-      </div>
+        <Modal.Footer className="file-modal-footer">
+          <Button
+            variant="danger"
+            className="file-btn-cancel"
+            onClick={handleDrawerClose}
+          >
+            Close
+          </Button>
+          <Button
+            variant="success"
+            className="file-btn-update"
+            onClick={handleForwardSubmit}
+            disabled={isLoading}
+          >
+            {isLoading ? "Forwarding..." : "Forward"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

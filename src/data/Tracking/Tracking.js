@@ -57,7 +57,7 @@ export const Tracking = ({ refreshKey }) => {
     formState: { errors },
     reset,
   } = useForm();
-  const [data, setTrackingList] = useState([]);
+  // const [data, setTrackingList] = useState([]);
   const [roles, setUsersRoles] = useState([]);
 
   const [isLoading, setLoading] = useState(false);
@@ -75,19 +75,25 @@ export const Tracking = ({ refreshKey }) => {
   const [nameToReject, setnameToReject] = useState("");
   const [rejectRemark, setRejectRemark] = useState(""); // New state for reject remark
   const [isForwarded, setIsForwarded] = useState(false);
+  // const [acceptOpen, setAcceptOpen] = useState(false);
+  // const [idToAccept, setIdToAccept] = useState("");
+  // const [acceptRemark, setAcceptRemark] = useState("");
+  const [acceptFile, setAcceptFile] = useState(null);
+  const [acceptOpen, setAcceptOpen] = useState(false);
+  const [acceptRemark, setAcceptRemark] = useState("");
+  const [rejectFile, setRejectFile] = useState(null);
+  const [trackingList, setTrackingList] = useState([]);
+  const [locations, setLocation] = useState([]);
+
+  // const [rejectRemark, setRejectRemark] = useState("");
 
   const [forwardData, setForwardData] = useState({
     loginUser: user?.user?.id, // 👈 fix here
+    location_id: "",
     to_user_id: "",
     remark: "",
   });
 
-  // const [value, setValue] = useState({
-  //   fullname: "",
-  //   email: "",
-  //   password: "",
-  //   role_id: "",
-  // });
   const [value, setValue] = useState({
     id: "",
     name: "",
@@ -96,6 +102,7 @@ export const Tracking = ({ refreshKey }) => {
   useEffect(() => {
     getTrackingList();
     getUsersroles();
+    getAllLocations();
   }, [refreshKey]);
 
   useEffect(() => {
@@ -117,6 +124,16 @@ export const Tracking = ({ refreshKey }) => {
     fetchData();
   }, []);
 
+  const getAllLocations = async () => {
+    try {
+      const res = await endpoint.get(`/location/getAllLocations`);
+      console.log("all locations", res.data.data);
+      setLocation(res.data.data);
+    } catch (err) {
+      console.error("Error fetching locations:", err);
+    }
+  };
+
   //get all tracking list
   const getTrackingList = async () => {
     setLoading(true);
@@ -125,7 +142,7 @@ export const Tracking = ({ refreshKey }) => {
       .then((res) => {
         setTrackingList(res.data.data);
         setLoading(false);
-        console.log(res.data.data);
+        console.log("Tracking List:", res.data.data);
       })
       .catch((err) => {
         setLoading(false);
@@ -156,6 +173,7 @@ export const Tracking = ({ refreshKey }) => {
     setOpenDrawer(false);
     setForwardData({
       loginUser: user?.id,
+      location_id: "",
       to_user_id: "",
 
       remark: "",
@@ -163,41 +181,31 @@ export const Tracking = ({ refreshKey }) => {
     setFilteredUnits([]);
   };
 
-  const handleAccept = async (row) => {
-    try {
-      // 👇 Debug log
-      console.log("Payload:", { tracking_id: row.id, remark: "Accepted" });
+  const handleAccept = async () => {
+    if (!acceptFile) return;
 
+    try {
       await endpoint.post(
         "/file-track/accept-file-tracking",
         {
-          tracking_id: row.file.id,
-          remark: "Accepted",
+          tracking_id: acceptFile.id,
+          remark: acceptRemark || "Accepted",
         },
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
 
-      SuccessAlert("File accepted successfully");
+      SuccessAlert("File accepted successfully!");
       getTrackingList();
+      setAcceptOpen(false);
+      setAcceptRemark("");
+      setAcceptFile(null);
     } catch (err) {
-      console.log("Accept Error:", err.response?.data || err.message);
-      ErrorAlert("Failed to accept file");
+      console.error("Accept Error:", err.response?.data || err.message);
+      ErrorAlert(err.response?.data?.message || "Failed to accept file");
     }
   };
-
-  // const handleReject = async (row) => {
-  //   try {
-  //     await endpoint.post(`/file-track/reject/${row.id}`);
-  //     SuccessAlert("File rejected successfully");
-  //     getTrackingList();
-  //   } catch (err) {
-  //     ErrorAlert("Failed to reject file");
-  //   }
-  // };
 
   const onReject = (row) => {
     // setOpen(false);
@@ -213,64 +221,30 @@ export const Tracking = ({ refreshKey }) => {
   };
 
   const handleReject = async () => {
+    if (!rejectFile) return;
+
     setLoading(true);
     try {
       await endpoint.post(`/file-track/reject-file-tracking`, {
-        tracking_id: idToReject,
+        tracking_id: rejectFile.id, // use rejectFile.id
         remark: rejectRemark,
       });
 
-      SuccessAlert(`File has been rejected successfully!`);
-      setLoading(false);
+      SuccessAlert("File has been rejected successfully!");
       setRejectOpen(false);
-      getTrackingList();
       setRejectRemark("");
+      setRejectFile(null);
+      getTrackingList();
     } catch (err) {
       console.error("Reject error:", err.response);
       ErrorAlert(err.response?.data?.message || "Failed to reject file");
+    } finally {
       setLoading(false);
     }
   };
 
-  // const handleForwardSubmit = async (row) => {
-  //   if (!user?.user?.id) {
-  //     return ErrorAlert("Logged-in user is missing");
-  //   }
-
-  //   if (!row.file?.id) {
-  //     return ErrorAlert("File ID is missing");
-  //   }
-
-  //   try {
-  //     const payload = {
-  //       file_id: row.file.id,
-  //       from_user_id: user.user.id,
-  //       to_user_id: row.to_user_id,
-  //       remark: "Forwarded",
-  //     };
-
-  //     console.log("Forward payload:", payload);
-
-  //     const res = await endpoint.post(
-  //       "/file-track/create-file-tracking",
-  //       payload,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-
-  //     SuccessAlert(res.data.message || "File forwarded successfully!");
-  //     getTrackingList();
-  //   } catch (err) {
-  //     console.error("Forward error:", err.response?.data || err);
-  //     ErrorAlert(err.response?.data?.message || "Forward failed!");
-  //   }
-  // };
-
   // const handleForwardSubmit = async () => {
-  //   if (!user?.id) {
+  //   if (!user?.user?.id) {
   //     return ErrorAlert("Logged-in user is missing");
   //   }
 
@@ -280,25 +254,26 @@ export const Tracking = ({ refreshKey }) => {
 
   //   try {
   //     const payload = {
-  //       file_id: selectedFile.file.id, // 👈 use selectedFile
-  //       from_user_id: user?.user?.id, // 👈 your auth user
-  //       to_user_id: forwardData.user_id, // 👈 selected from modal
+  //       file_id: selectedFile.file.id,
+  //       from_user_id: user.user.id,
+  //       to_user_id: forwardData.user_id,
   //       remark: forwardData.remark || "Forwarded",
   //     };
-
-  //     console.log("Forward payload:", payload);
 
   //     const res = await endpoint.post(
   //       "/file-track/create-file-tracking",
   //       payload,
-  //       {
-  //         headers: { "Content-Type": "application/json" },
-  //       }
+  //       { headers: { "Content-Type": "application/json" } }
   //     );
 
   //     SuccessAlert(res.data.message || "File forwarded successfully!");
-  //     getTrackingList();
-  //     handleDrawerClose(); // 👈 close modal after success
+
+  //     // 👇 remove this row from state instantly
+  //     setTrackingList((prev) =>
+  //       prev.filter((item) => item.file.id !== selectedFile.file.id)
+  //     );
+
+  //     handleDrawerClose();
   //   } catch (err) {
   //     console.error("Forward error:", err.response?.data || err);
   //     ErrorAlert(err.response?.data?.message || "Forward failed!");
@@ -317,8 +292,9 @@ export const Tracking = ({ refreshKey }) => {
     try {
       const payload = {
         file_id: selectedFile.file.id,
-        from_user_id: user.user.id, // 👈 fix here
+        from_user_id: user.user.id,
         to_user_id: forwardData.user_id,
+        location_id: forwardData.location_id, // 👈 added
         remark: forwardData.remark || "Forwarded",
       };
 
@@ -332,8 +308,11 @@ export const Tracking = ({ refreshKey }) => {
 
       SuccessAlert(res.data.message || "File forwarded successfully!");
 
-      setIsForwarded(true);
-      getTrackingList();
+      // 👇 instantly remove row
+      setTrackingList((prev) =>
+        prev.filter((item) => item.file.id !== selectedFile.file.id)
+      );
+
       handleDrawerClose();
     } catch (err) {
       console.error("Forward error:", err.response?.data || err);
@@ -361,28 +340,28 @@ export const Tracking = ({ refreshKey }) => {
       width: "115px",
     },
 
-    {
-      name: "Recipient",
-      selector: () => user?.user?.surname, // 👈 always authenticated user
-      cell: () => (
-        <span>
-          {`${user?.user?.surname} ${user?.user?.first_name}` || "N/A"}
-        </span>
-      ),
-      width: "120px",
-    },
-    {
-      name: "Unit",
-      selector: (row) => row?.unit_name,
-      cell: (row) => <span>{row.unit_name || "N/A"}</span>,
-      width: "80px",
-    },
-    {
-      name: "Department",
-      selector: (row) => row.department_name,
-      cell: (row) => <span>{row.department_name || "N/A"}</span>,
-      width: "120px",
-    },
+    // {
+    //   name: "Recipient",
+    //   selector: () => user?.user?.surname, // 👈 always authenticated user
+    //   cell: () => (
+    //     <span>
+    //       {`${user?.user?.surname} ${user?.user?.first_name}` || "N/A"}
+    //     </span>
+    //   ),
+    //   width: "120px",
+    // },
+    // {
+    //   name: "Unit",
+    //   selector: (row) => row?.unit_name,
+    //   cell: (row) => <span>{row.unit_name || "N/A"}</span>,
+    //   width: "80px",
+    // },
+    // {
+    //   name: "Department",
+    //   selector: (row) => row.department_name,
+    //   cell: (row) => <span>{row.department_name || "N/A"}</span>,
+    //   width: "120px",
+    // },
     {
       name: "Date Sent",
       selector: (row) => row.date_sent,
@@ -417,49 +396,104 @@ export const Tracking = ({ refreshKey }) => {
       ),
       width: "125px",
     },
+
+    // {
+    //   name: "Action",
+    //   cell: (row) => (
+    //     <div className="d-flex gap-2">
+    //       {/* Accept button: only show when status = 1 (forwarded) */}
+    //       {row.status === 1 && (
+    //         <Button
+    //           size="sm"
+    //           onClick={() => {
+    //             setAcceptFile(row.file); // store file object
+    //             setAcceptOpen(true);
+    //           }}
+    //         >
+    //           Accept
+    //         </Button>
+    //       )}
+
+    //       {/* Reject button: only show when status = 1 (forwarded) */}
+    //       {row.status === 1 && (
+    //         // <Button
+    //         //   className="btn btn-sm btn-danger"
+    //         //   onClick={() => onReject(row)}
+    //         //   variant="danger"
+    //         //   title="Reject"
+    //         //   size="sm"
+    //         // >
+    //         //   <i className="fa fa-times me-1"></i>
+    //         //   Reject
+    //         // </Button>
+    //         <Button
+    //           variant="danger"
+    //           size="sm"
+    //           onClick={() => {
+    //             setRejectFile(row.file); // store full file object
+    //             setRejectOpen(true);
+    //           }}
+    //         >
+    //           Reject
+    //         </Button>
+    //       )}
+
+    //       {/* Forward button: only show when status = 2 (accepted) */}
+    //       {row.status === 2 && (
+    //         <button
+    //           onClick={() => handleDrawerOpen(row)}
+    //           className="btn btn-sm"
+    //           style={{
+    //             backgroundColor: "#0A7E51",
+    //             color: "#fff",
+    //             borderColor: "#0A7E51",
+    //           }}
+    //           title="Forward"
+    //         >
+    //           {isForwarded ? "Forwarded" : "Forward"}
+    //         </button>
+    //       )}
+
+    //       {/* You can also show a disabled label when rejected */}
+    //       {row.status === 3 && <Badge bg="danger">Rejected</Badge>}
+    //     </div>
+    //   ),
+    //   width: "170px",
+    // },
+
     {
       name: "Action",
       cell: (row) => (
         <div className="d-flex gap-2">
-          {/* Accept */}
-          {!row.date_received && !row.date_rejected && (
+          {/* Accept button: only show when status_id = 1 (forwarded) */}
+          {row.status_id === 1 && (
             <Button
               size="sm"
-              // variant="success"
-              onClick={() => handleAccept(row)}
+              onClick={() => {
+                setAcceptFile(row.file); // store file object
+                setAcceptOpen(true);
+              }}
             >
               Accept
             </Button>
           )}
 
-          {/* Reject */}
-          {/* {!row.date_received && !row.date_rejected && (
+          {/* Reject button: only show when status_id = 1 (forwarded) */}
+          {row.status_id === 1 && (
             <Button
-              size="sm"
               variant="danger"
-              onClick={() => handleReject(row)}
-            >
-              Reject
-            </Button>
-          )} */}
-
-          {!row.date_received && !row.date_rejected && (
-            <Button
-              className="btn btn-sm btn-danger"
-              onClick={(e) => {
-                onReject(row);
+              size="sm"
+              onClick={() => {
+                setRejectFile(row.file); // store full file object
+                setRejectOpen(true);
               }}
-              variant="danger"
-              title="Reject"
-              size="sm"
             >
-              <i className="fa fa-times me-1"></i>
               Reject
             </Button>
           )}
 
-          {/* Forward - only shows if accepted */}
-          {row.date_received && !row.date_rejected && (
+          {/* Forward button: only show when status_id = 2 (accepted) */}
+          {row.status_id === 2 && (
             <button
               onClick={() => handleDrawerOpen(row)}
               className="btn btn-sm"
@@ -473,6 +507,9 @@ export const Tracking = ({ refreshKey }) => {
               {isForwarded ? "Forwarded" : "Forward"}
             </button>
           )}
+
+          {/* Show rejected status */}
+          {row.status_id === 3 && <Badge bg="danger">Rejected</Badge>}
         </div>
       ),
       width: "170px",
@@ -481,7 +518,7 @@ export const Tracking = ({ refreshKey }) => {
 
   const tableDatas = {
     columns,
-    data,
+    data: trackingList,
   };
 
   return (
@@ -495,7 +532,8 @@ export const Tracking = ({ refreshKey }) => {
               fixedHeader
               columns={columns}
               // selectableRows
-              data={data}
+              // data={data}
+              data={trackingList}
               // customStyles={customStyles}
               persistTableHead
               defaultSortField="id"
@@ -561,6 +599,29 @@ export const Tracking = ({ refreshKey }) => {
             </Form.Select>
           </Form.Group>
 
+          {/* Location Select */}
+          <Form.Group className="mb-3">
+            <Form.Label>Location</Form.Label>
+            <Form.Select
+              value={forwardData.location_id || ""}
+              onChange={(e) =>
+                setForwardData({
+                  ...forwardData,
+                  location_id: e.target.value,
+                })
+              }
+            >
+              <option value="" disabled hidden>
+                -- Select Location --
+              </option>
+              {locations.map((loc) => (
+                <option key={loc.id} value={loc.id}>
+                  {loc.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+
           {/* Remark */}
           <Form.Group className="mb-3">
             <Form.Label>Remark</Form.Label>
@@ -595,7 +656,7 @@ export const Tracking = ({ refreshKey }) => {
       </Modal>
 
       {/* Reject Modal */}
-      <Modal show={rejectOpen} onHide={onClose}>
+      {/* <Modal show={rejectOpen} onHide={onClose}>
         <Modal.Header closeButton style={{ backgroundColor: "#e25762ff" }}>
           <Modal.Title style={{ color: "#fff" }}>Reject File</Modal.Title>
         </Modal.Header>
@@ -623,6 +684,91 @@ export const Tracking = ({ refreshKey }) => {
           </Button>
           <Button variant="danger" onClick={handleReject}>
             Reject File
+          </Button>
+        </Modal.Footer>
+      </Modal> */}
+      {/* Reject Modal */}
+      <Modal show={rejectOpen} onHide={onClose}>
+        <Modal.Header closeButton style={{ backgroundColor: "#e25762ff" }}>
+          <Modal.Title style={{ color: "#fff" }}>Reject File</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {rejectFile && (
+            <div className="mb-3">
+              <p>
+                <strong>File Number:</strong> {rejectFile.file_Number}
+              </p>
+
+              <p>
+                <strong>Parties:</strong> {rejectFile.file_Name}
+              </p>
+              <p>
+                <strong>Number of Pages:</strong> {rejectFile.page_Number}
+              </p>
+            </div>
+          )}
+
+          <Form.Group className="mb-3">
+            <Form.Label>Reason for rejection</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="Optionally provide a reason for rejecting this file..."
+              value={rejectRemark}
+              onChange={(e) => setRejectRemark(e.target.value)}
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleReject}>
+            Reject File
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Accept Modal */}
+      <Modal show={acceptOpen} onHide={() => setAcceptOpen(false)}>
+        <Modal.Header closeButton style={{ backgroundColor: "#0a7148" }}>
+          <Modal.Title style={{ color: "#fff" }}>Accept File</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {acceptFile && (
+            <div className="mb-3">
+              <p>
+                <strong>File Number:</strong> {acceptFile.file_Number}
+              </p>
+              <p>
+                <strong>Parties:</strong> {acceptFile.file_Name}
+              </p>
+              <p>
+                <strong>Pages:</strong> {acceptFile.page_Number}
+              </p>
+            </div>
+          )}
+
+          <Form.Group className="mb-3">
+            <Form.Label>Remark (optional)</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="Add a remark for accepting this file..."
+              value={acceptRemark}
+              onChange={(e) => setAcceptRemark(e.target.value)}
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setAcceptOpen(false)}>
+            Cancel
+          </Button>
+          <Button
+            style={{ backgroundColor: "#0a7148", color: "#fff" }}
+            onClick={handleAccept}
+          >
+            Accept File
           </Button>
         </Modal.Footer>
       </Modal>

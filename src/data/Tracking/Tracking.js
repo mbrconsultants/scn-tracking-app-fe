@@ -243,43 +243,6 @@ export const Tracking = ({ refreshKey }) => {
     }
   };
 
-  // const handleForwardSubmit = async () => {
-  //   if (!user?.user?.id) {
-  //     return ErrorAlert("Logged-in user is missing");
-  //   }
-
-  //   if (!selectedFile?.file?.id) {
-  //     return ErrorAlert("File ID is missing");
-  //   }
-
-  //   try {
-  //     const payload = {
-  //       file_id: selectedFile.file.id,
-  //       from_user_id: user.user.id,
-  //       to_user_id: forwardData.user_id,
-  //       remark: forwardData.remark || "Forwarded",
-  //     };
-
-  //     const res = await endpoint.post(
-  //       "/file-track/create-file-tracking",
-  //       payload,
-  //       { headers: { "Content-Type": "application/json" } }
-  //     );
-
-  //     SuccessAlert(res.data.message || "File forwarded successfully!");
-
-  //     // 👇 remove this row from state instantly
-  //     setTrackingList((prev) =>
-  //       prev.filter((item) => item.file.id !== selectedFile.file.id)
-  //     );
-
-  //     handleDrawerClose();
-  //   } catch (err) {
-  //     console.error("Forward error:", err.response?.data || err);
-  //     ErrorAlert(err.response?.data?.message || "Forward failed!");
-  //   }
-  // };
-
   const handleForwardSubmit = async () => {
     if (!user?.user?.id) {
       return ErrorAlert("Logged-in user is missing");

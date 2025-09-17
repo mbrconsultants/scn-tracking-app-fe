@@ -162,30 +162,30 @@ export const CreateFile = ({ datas, getAllData }) => {
     }
   };
 
-  const onReject = (row) => {
-    setIdToReject(row.id);
-    setnameToReject(row.file_Name);
-    setRejectOpen(true);
-  };
+//   const onReject = (row) => {
+//     setIdToReject(row.id);
+//     setnameToReject(row.file_Name);
+//     setRejectOpen(true);
+//   };
 
-  const handleReject = async () => {
-    setLoading(true);
-    try {
-      await endpoint.post(`/file/reject-file-tracking/${idToReject}`, {
-        remark: rejectRemark,
-      });
+//   const handleReject = async () => {
+//     setLoading(true);
+//     try {
+//       await endpoint.post(`/file/reject-file-tracking/${idToReject}`, {
+//         remark: rejectRemark,
+//       });
 
-      SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
-      setLoading(false);
-      setRejectOpen(false);
-      getAllData();
-      setRejectRemark("");
-    } catch (err) {
-      console.error("Reject error:", err.response);
-      ErrorAlert(err.response?.data?.message || "Failed to reject file");
-      setLoading(false);
-    }
-  };
+//       SuccessAlert(`File "${nameToReject}" has been rejected successfully!`);
+//       setLoading(false);
+//       setRejectOpen(false);
+//       getAllData();
+//       setRejectRemark("");
+//     } catch (err) {
+//       console.error("Reject error:", err.response);
+//       ErrorAlert(err.response?.data?.message || "Failed to reject file");
+//       setLoading(false);
+//     }
+//   };
 
   const reset = () => {
     setNewFile({
@@ -287,14 +287,14 @@ export const CreateFile = ({ datas, getAllData }) => {
             <i className="fa fa-forward me-1"></i>
             Forward
           </button>
-          <button
+          {/* <button
             className="btn btn-sm btn-danger"
             onClick={() => onReject(row)}
             title="Reject"
           >
             <i className="fa fa-times me-1"></i>
             Reject
-          </button>
+          </button> */}
         </div>
       ),
     }
@@ -480,7 +480,7 @@ export const CreateFile = ({ datas, getAllData }) => {
       </Modal>
 
       {/* Reject Modal */}
-      <Modal show={rejectOpen} onHide={onClose}>
+      {/* <Modal show={rejectOpen} onHide={onClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject File</Modal.Title>
         </Modal.Header>
@@ -516,7 +516,7 @@ export const CreateFile = ({ datas, getAllData }) => {
             {isLoading ? "Rejecting..." : "Reject File"}
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
 
       {/* Forward Modal */}
       <Modal

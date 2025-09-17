@@ -25,6 +25,7 @@ export default function FileForwardCard() {
 
   const [forwardData, setForwardData] = useState({
     loginUser: loginUserId,
+
     to_user_id: "",
     remark: "",
   });

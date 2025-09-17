@@ -62,6 +62,7 @@ export default function AllTracking() {
 
     // getRoles();
     geTrackings();
+    // getAllLocations();
     // getDepartments();
   }, []);
 

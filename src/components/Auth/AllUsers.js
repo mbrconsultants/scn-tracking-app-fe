@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CountUp from "react-countup";
 import ReactApexChart from "react-apexcharts";
 import { Breadcrumb, Col, Row, Card, Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form"; // <-- add this
 import * as Users from "../../data/Users/Users";
 import { Link, useNavigate } from "react-router-dom";
+import SignatureCanvas from "react-signature-canvas";
 import endpoint from "../../context/endpoint";
 import { useForm } from "react-hook-form";
 import { ErrorAlert, SuccessAlert } from "../../data/Toast/toast";
@@ -17,6 +18,7 @@ export default function AllUsers() {
   const [units, setUnits] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
+  const sigPadRef = useRef(null);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -29,7 +31,20 @@ export default function AllUsers() {
     department_id: "",
     role_id: "",
     signature_url: null,
+    // signature_drawn: null,
   });
+
+  const clearSignature = () => {
+    sigPadRef.current.clear();
+    setFormData({ ...formData, signature_drawn: null });
+  };
+
+  const saveSignature = () => {
+    if (!sigPadRef.current.isEmpty()) {
+      const dataUrl = sigPadRef.current.toDataURL("image/png");
+      setFormData({ ...formData, signature_drawn: dataUrl });
+    }
+  };
 
   // drawer controls
   const handleOpen = () => setOpen(true);
@@ -46,6 +61,7 @@ export default function AllUsers() {
       department_id: "",
       role_id: "",
       signature_url: null,
+      // signature_drawn: null,
     });
   };
 
@@ -88,14 +104,58 @@ export default function AllUsers() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const data = new FormData();
+  //   Object.keys(formData).forEach((key) => {
+  //     if (formData[key]) {
+  //       data.append(key, formData[key]);
+  //     }
+  //   });
+
+  //   try {
+  //     const res = await endpoint.post("/user/create", data, {
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //     });
+
+  //     SuccessAlert("✅ User added successfully!");
+  //     setRefreshKey((prev) => prev + 1); // 👈 trigger reload in Users
+  //     handleClose();
+  //   } catch (err) {
+  //     ErrorAlert(err.response?.data?.description || "Upload failed");
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const data = new FormData();
-    Object.keys(formData).forEach((key) => {
+
+    for (const key in formData) {
       if (formData[key]) {
-        data.append(key, formData[key]);
+        if (
+          key === "signature_url" &&
+          typeof formData[key] === "string" &&
+          formData[key].startsWith("data:image")
+        ) {
+          // convert base64 string to Blob
+          const byteString = atob(formData[key].split(",")[1]);
+          const mimeString = formData[key]
+            .split(",")[0]
+            .split(":")[1]
+            .split(";")[0];
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          const blob = new Blob([ab], { type: mimeString });
+          data.append("signature_url", blob, "signature.png");
+        } else {
+          data.append(key, formData[key]);
+        }
       }
-    });
+    }
 
     try {
       const res = await endpoint.post("/user/create", data, {
@@ -103,7 +163,7 @@ export default function AllUsers() {
       });
 
       SuccessAlert("✅ User added successfully!");
-      setRefreshKey((prev) => prev + 1); // 👈 trigger reload in Users
+      setRefreshKey((prev) => prev + 1);
       handleClose();
     } catch (err) {
       ErrorAlert(err.response?.data?.description || "Upload failed");
@@ -229,38 +289,6 @@ export default function AllUsers() {
               className="mb-3"
             />
 
-            {/* <Form.Group className="mb-3">
-              <Form.Label>Department</Form.Label>
-              <Form.Select
-                name="department_id"
-                value={formData.department_id}
-                onChange={handleChange}
-              >
-                <option value="">-- select department --</option>
-                {departments.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Unit</Form.Label>
-              <Form.Select
-                name="unit_id"
-                value={formData.unit_id}
-                onChange={handleChange}
-              >
-                <option value="">-- select unit --</option>
-                {units.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group> */}
-
             <Form.Group className="mb-3">
               <Form.Label>Department</Form.Label>
               <Form.Select
@@ -318,7 +346,7 @@ export default function AllUsers() {
                 ))}
               </Form.Select>
             </Form.Group>
-            <Form.Group className="mb-3">
+            {/* <Form.Group className="mb-3">
               <Form.Label>Signature</Form.Label>
               <Form.Control
                 type="file"
@@ -331,6 +359,112 @@ export default function AllUsers() {
                   }
                 }}
               />
+            </Form.Group> */}
+            {/* --- Signature Upload --- */}
+            <Form.Group className="mb-3">
+              <Form.Label>Upload Signature (optional)</Form.Label>
+              <Form.Control
+                type="file"
+                name="signature_url"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    setFormData({ ...formData, signature_url: file });
+                  }
+                }}
+              />
+            </Form.Group>
+
+            {/* --- Signature Canvas --- */}
+            {/* <Form.Group className="mb-3">
+              <Form.Label> Draw Signature</Form.Label>
+              <div
+                style={{
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  width: "100%",
+                  height: "100px",
+                }}
+              >
+                <SignatureCanvas
+                  ref={sigPadRef}
+                  penColor="black"
+                  canvasProps={{
+                    width: 350,
+                    height: 150,
+                    className: "sigCanvas",
+                  }}
+                  // onEnd={saveSignature}
+                  onEnd={() => {
+                    if (!sigPadRef.current.isEmpty()) {
+                      const dataUrl = sigPadRef.current.toDataURL("image/png");
+                      setFormData({ ...formData, signature_url: dataUrl }); // 👈 overwrite signature_url
+                    }
+                  }}
+                />
+              </div>
+              <div className="d-flex justify-content-between mt-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={clearSignature}
+                  type="button"
+                >
+                  Clear
+                </Button>
+                <Button
+                  variant="success"
+                  size="sm"
+                  onClick={saveSignature}
+                  type="button"
+                >
+                  Save Signature
+                </Button>
+              </div>
+            </Form.Group> */}
+
+            <Form.Group className="mb-3">
+              <Form.Label> Draw Signature</Form.Label>
+              <div
+                style={{
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  width: "100%",
+                  backgroundColor: "#f8f9fa3a",
+                  height: "100px",
+                }}
+              >
+                <SignatureCanvas
+                  ref={sigPadRef}
+                  penColor="black"
+                  canvasProps={{
+                    width: 360,
+                    height: 100,
+                    className: "sigCanvas",
+                    style: {
+                      backgroundColor: "#e9ecefd0",
+                      // borderRadius: "5px",
+                    },
+                  }}
+                  onEnd={() => {
+                    if (!sigPadRef.current.isEmpty()) {
+                      const dataUrl = sigPadRef.current.toDataURL("image/png");
+                      setFormData({ ...formData, signature_url: dataUrl });
+                    }
+                  }}
+                />
+              </div>
+              <div className="d-flex justify-content-between mt-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={clearSignature}
+                  type="button"
+                >
+                  Clear
+                </Button>
+              </div>
             </Form.Group>
 
             <div className="d-flex justify-content-end mt-3">

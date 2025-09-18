@@ -214,11 +214,18 @@ export const CreateFile = ({ datas, getAllData }) => {
       cell: (row) => <h6 className="fs-12 fw-semibold">{row.description}</h6>,
     },
     {
-      name: "Current Location",
+      name: "Previous Location",
       selector: (row) => row.location_id,
       sortable: true,
       width: "160px",
       cell: (row) => <h6 className="fs-12 fw-semibold">{row.location ? row.location.name : ""}</h6>
+    },
+    {
+      name: "Current Location",
+      selector: (row) => row.current_location_id,
+      sortable: true,
+      width: "160px",
+      cell: (row) => <h6 className="fs-12 fw-semibold">{row.currentLocation ? row.currentLocation.name : ""}</h6>
     },
     {
       name: "QRCode",

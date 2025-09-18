@@ -240,18 +240,21 @@ export default function FileForwardCard() {
                   
                   <hr />
                   
-                <div className="text-center mt-4">
-                  {/* Show Accept/Reject buttons if tracking exists AND status_id is 1 */}
-                  {selectedFile?.lastTracking?.id && selectedFile?.lastTracking?.status_id === 1 ? (
+               <div className="text-center mt-4">
+                  {/* Show Accept/Reject buttons if tracking exists */}
+                  {selectedFile?.lastTracking?.id ? (
                     <>
-                      <Button
-                        onClick={handleAccept}
-                        className="me-3"
-                        style={{ minWidth: "100px" }}
-                        disabled={isLoading || isAccepted}
-                      >
-                        {isLoading ? "Processing..." : "Accept"}
-                      </Button>
+                      {/* Show Accept button only if status_id is 1 */}
+                      {selectedFile?.lastTracking?.status_id === 1 && (
+                        <Button
+                          onClick={handleAccept}
+                          className="me-3"
+                          style={{ minWidth: "100px" }}
+                          disabled={isLoading || isAccepted}
+                        >
+                          {isLoading ? "Processing..." : "Accept"}
+                        </Button>
+                      )}
 
                       <Button
                         onClick={() => setShowRejectModal(true)}
@@ -259,11 +262,11 @@ export default function FileForwardCard() {
                         style={{ minWidth: "100px" }}
                         disabled={isRejected || isLoading}
                       >
-                        Reject 
+                        Reject
                       </Button>
                     </>
                   ) : (
-                    /* Show Forward button if no tracking exists OR status_id is not 1 */
+                    /* Show Forward button if no tracking exists */
                     <Button
                       onClick={() => setOpenDrawer(true)}
                       style={{ 
@@ -273,7 +276,7 @@ export default function FileForwardCard() {
                       }}
                       disabled={isForwarded || isLoading}
                     >
-                      {isForwarded ? "Forwarded" : "Forward"}
+                      {isForwarded ? "Forwarded" : "Forward Here"}
                     </Button>
                   )}
                 </div>

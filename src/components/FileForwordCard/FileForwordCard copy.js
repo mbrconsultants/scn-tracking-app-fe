@@ -240,43 +240,46 @@ export default function FileForwardCard() {
                   
                   <hr />
                   
-                <div className="text-center mt-4">
-                  {/* Show Accept/Reject buttons if tracking exists AND status_id is 1 */}
-                  {selectedFile?.lastTracking?.id && selectedFile?.lastTracking?.status_id === 1 ? (
-                    <>
+                  <div className="text-center mt-4">
+                    {/* Accept button - only visible if not accepted/rejected */}
+                    {!isAccepted && !isRejected && (
                       <Button
                         onClick={handleAccept}
                         className="me-3"
                         style={{ minWidth: "100px" }}
-                        disabled={isLoading || isAccepted}
+                        disabled={isLoading}
                       >
                         {isLoading ? "Processing..." : "Accept"}
                       </Button>
+                    )}
 
+                    {/* Reject button - hidden after accept */}
+                    {!isAccepted && (
                       <Button
                         onClick={() => setShowRejectModal(true)}
                         variant="danger"
                         style={{ minWidth: "100px" }}
                         disabled={isRejected || isLoading}
                       >
-                        Reject 
+                        Reject
                       </Button>
-                    </>
-                  ) : (
-                    /* Show Forward button if no tracking exists OR status_id is not 1 */
-                    <Button
-                      onClick={() => setOpenDrawer(true)}
-                      style={{ 
-                        backgroundColor: "#0A7E51", 
-                        borderColor: "#0A7E51",
-                        minWidth: "100px"
-                      }}
-                      disabled={isForwarded || isLoading}
-                    >
-                      {isForwarded ? "Forwarded" : "Forward"}
-                    </Button>
-                  )}
-                </div>
+                    )}
+
+                    {/* Forward button - only visible after accept */}
+                    {isAccepted && (
+                      <Button
+                        onClick={() => setOpenDrawer(true)}
+                        style={{ 
+                          backgroundColor: "#0A7E51", 
+                          borderColor: "#0A7E51",
+                          minWidth: "100px"
+                        }}
+                        disabled={isForwarded || isLoading}
+                      >
+                        {isForwarded ? "Forwarded" : "Forward"}
+                      </Button>
+                    )}
+                  </div>
                 </>
               ) : (
                 <div className="text-center">

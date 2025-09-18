@@ -73,6 +73,8 @@ export const Depertments = ({ refreshKey }) => {
       .get("/department/get-all-departments")
       .then((res) => {
         setDepartments(res.data.data);
+        console.log("departments:", res.data.data);
+
         setLoading(false);
       })
       .catch((err) => {

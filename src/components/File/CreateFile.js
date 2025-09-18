@@ -32,13 +32,11 @@ export default function CreateFile() {
   const [datas, setDatas] = useState([]);
   const [locations, setLocation] = useState([]);
 
-  
   const handleFileModal = () => {
     setShowFileModal(true);
     setFileModalHeading("Add New File");
   };
 
-  
   const handleCreateFile = async () => {
     setLoading(true);
 
@@ -273,7 +271,7 @@ export default function CreateFile() {
                     </Row>
                     <Row>
                       <Col lg={12} md={12}>
-                       <FormGroup className="form-group-custom mb-3">
+                        <FormGroup className="form-group-custom mb-3">
                           <label htmlFor="name" className="form-label-custom">
                             Parties <span className="required-asterisk">*</span>
                           </label>

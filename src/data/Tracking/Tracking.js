@@ -182,6 +182,49 @@ export const Tracking = () => {
     setFilteredUnits([]);
   };
 
+  // const handleAccept = async () => {
+  //   if (!acceptFile) return;
+
+  //   try {
+  //     await endpoint.post(
+  //       "/file-track/accept-file-tracking",
+  //       {
+  //         tracking_id: acceptFile.id,
+  //         remark: acceptRemark || "Accepted",
+  //       },
+  //       {
+  //         headers: { "Content-Type": "application/json" },
+  //       }
+  //     );
+
+  //     SuccessAlert("File accepted successfully!");
+
+  //     // 🔹 Update the row locally in trackingList
+  //     // setTrackingList((prev) =>
+  //     //   prev.map((item) =>
+  //     //     item.file.id === acceptFile.id
+  //     //       ? { ...item, status_id: 2, is_forwarded: 0 } // 👈 make sure it's marked correctly
+  //     //       : item
+  //     //   )
+  //     // );
+
+  //     setTrackingList((prev) =>
+  //       prev.map((item) =>
+  //         item.file.id === acceptFile.id
+  //           ? { ...item, status_id: 2, is_forwarded: item.is_forwarded } // or leave as-is
+  //           : item
+  //       )
+  //     );
+
+  //     setAcceptOpen(false);
+  //     setAcceptRemark("");
+  //     setAcceptFile(null);
+  //   } catch (err) {
+  //     console.error("Accept Error:", err.response?.data || err.message);
+  //     ErrorAlert(err.response?.data?.message || "Failed to accept file");
+  //   }
+  // };
+
   const handleAccept = async () => {
     if (!acceptFile) return;
 
@@ -198,7 +241,16 @@ export const Tracking = () => {
       );
 
       SuccessAlert("File accepted successfully!");
-      getTrackingList();
+
+      // Update tracking list for UI
+      setTrackingList((prev) =>
+        prev.map((item) =>
+          item.file.id === acceptFile.id
+            ? { ...item, status_id: 2, is_forwarded: 0 } // 👈 fix
+            : item
+        )
+      );
+
       setAcceptOpen(false);
       setAcceptRemark("");
       setAcceptFile(null);
@@ -220,37 +272,6 @@ export const Tracking = () => {
     // setOpen(false);
     setRejectOpen(false);
   };
-
-  // const handleReject = async () => {
-  //   if (!rejectFile) return;
-
-  //   setLoading(true);
-  //   try {
-  //     await endpoint.post(`/file-track/reject-file-tracking`, {
-  //       tracking_id: rejectFile.id,
-  //       remark: rejectRemark,
-  //     });
-
-  //     SuccessAlert("File has been rejected successfully!");
-  //     setRejectOpen(false);
-  //     setRejectRemark("");
-  //     setRejectFile(null);
-
-  //     // 👇 update UI instantly
-  //     setTrackingList((prev) =>
-  //       prev.map((item) =>
-  //         item.id === rejectFile.id
-  //           ? { ...item, status_id: 3, isRejected: true }
-  //           : item
-  //       )
-  //     );
-  //   } catch (err) {
-  //     console.error("Reject error:", err.response);
-  //     ErrorAlert(err.response?.data?.message || "Failed to reject file");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleReject = async () => {
     if (!rejectFile) return;
@@ -311,10 +332,18 @@ export const Tracking = () => {
 
       // ✅ mark forwarded instead of removing
 
+      // setTrackingList((prev) =>
+      //   prev.map((item) =>
+      //     item.file.id === selectedFile.file.id
+      //       ? { ...item, isForwarded: true }
+      //       : item
+      //   )
+      // );
+
       setTrackingList((prev) =>
         prev.map((item) =>
           item.file.id === selectedFile.file.id
-            ? { ...item, isForwarded: true }
+            ? { ...item, is_forwarded: 1 } // now Forward button disappears
             : item
         )
       );
@@ -337,22 +366,22 @@ export const Tracking = () => {
       selector: (row) => row.file?.file_Number,
       sortable: true,
       cell: (row) => <span>{row.file?.file_Number || "N/A"}</span>,
-      width: "135px",
+      width: "132px",
     },
     {
       name: "Sender",
       selector: (row) => row.sender?.first_name,
       cell: (row) => <span>{row.sender?.first_name || "N/A"}</span>,
-      width: "115px",
+      width: "105px",
     },
     {
-      name: "Previous Location",
+      name: "Prev. Location",
       selector: (row) => row.previous_location_of_the_file?.name, // backend should return location object
       cell: (row) => (
         <span>{row.previous_location_of_the_file?.name || "N/A"}</span>
       ),
       sortable: true,
-      width: "160px",
+      width: "140px",
     },
     {
       name: "Current Location",
@@ -421,16 +450,74 @@ export const Tracking = () => {
       width: "125px",
     },
 
+    // {
+    //   name: "Action",
+    //   cell: (row) => (
+    //     <div className="d-flex gap-2">
+    //       {/* Accept button: only when status_id = 1 */}
+    //       {row.status_id === 1 && (
+    //         <Button
+    //           size="sm"
+    //           onClick={() => {
+    //             setAcceptFile(row.file);
+    //             setAcceptOpen(true);
+    //           }}
+    //         >
+    //           Accept
+    //         </Button>
+    //       )}
+
+    //       {/* Reject button: only when status_id = 1 */}
+    //       {row.status_id === 1 && (
+    //         <Button
+    //           variant="danger"
+    //           size="sm"
+    //           onClick={() => {
+    //             setRejectFile(row);
+    //             setRejectOpen(true);
+    //           }}
+    //         >
+    //           Reject
+    //         </Button>
+    //       )}
+
+    //       {/* Show rejected badge */}
+    //       {row.status_id === 3 && <Badge bg="danger">Rejected</Badge>}
+
+    //       {/* Forward button: only when status_id = 2 (accepted) and not forwarded */}
+    //       {row.status_id === 2 && row.is_forwarded === 0 && (
+    //         <button
+    //           onClick={() => handleDrawerOpen(row)}
+    //           className="btn btn-sm"
+    //           style={{
+    //             backgroundColor: "#0A7E51",
+    //             color: "#fff",
+    //             borderColor: "#0A7E51",
+    //           }}
+    //         >
+    //           Forward
+    //         </button>
+    //       )}
+
+    //       {/* Show forwarded badge */}
+    //       {row.status_id === 2 && row.is_forwarded === 1 && (
+    //         <Badge bg="success">Forwarded</Badge>
+    //       )}
+    //     </div>
+    //   ),
+    //   width: "180px",
+    // },
+
     {
       name: "Action",
       cell: (row) => (
         <div className="d-flex gap-2">
-          {/* Accept button: only show when status_id = 1 (forwarded) */}
+          {/* Accept button: only when status_id = 1 */}
           {row.status_id === 1 && (
             <Button
               size="sm"
               onClick={() => {
-                setAcceptFile(row.file); // store file object
+                setAcceptFile(row.file);
                 setAcceptOpen(true);
               }}
             >
@@ -438,13 +525,13 @@ export const Tracking = () => {
             </Button>
           )}
 
-          {/* Reject button: only show when status_id = 1 (forwarded) */}
+          {/* Reject button: only when status_id = 1 */}
           {row.status_id === 1 && (
             <Button
               variant="danger"
               size="sm"
               onClick={() => {
-                setRejectFile(row); // store full row (tracking object)
+                setRejectFile(row);
                 setRejectOpen(true);
               }}
             >
@@ -452,11 +539,11 @@ export const Tracking = () => {
             </Button>
           )}
 
-          {/* Show rejected status badge */}
+          {/* Show rejected badge */}
           {row.status_id === 3 && <Badge bg="danger">Rejected</Badge>}
 
-          {/* Forward button: only show when status_id = 2 (accepted) and NOT forwarded yet */}
-          {row.status_id === 2 && !row.isForwarded && (
+          {/* Forward button: only when status_id = 2 (accepted) and NOT forwarded */}
+          {row.status_id === 2 && row.is_forwarded === false && (
             <button
               onClick={() => handleDrawerOpen(row)}
               className="btn btn-sm"
@@ -465,22 +552,18 @@ export const Tracking = () => {
                 color: "#fff",
                 borderColor: "#0A7E51",
               }}
-              title="Forward"
             >
               Forward
             </button>
           )}
 
-          {/* Show forwarded badge after forwarding */}
-          {row.status_id === 2 && row.isForwarded && (
+          {/* Show forwarded badge */}
+          {row.status_id === 2 && row.is_forwarded === true && (
             <Badge bg="success">Forwarded</Badge>
           )}
-
-          {/* Status_id = 3 (backend already marked as rejected) */}
-          {/* {row.status_id === 3 && <Badge bg="danger">Rejected</Badge>} */}
         </div>
       ),
-      width: "160px",
+      width: "180px",
     },
   ];
 

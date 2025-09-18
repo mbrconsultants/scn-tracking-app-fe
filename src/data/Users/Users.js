@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import "react-data-table-component-extensions/dist/index.css";
 import DataTable from "react-data-table-component";
@@ -6,6 +6,9 @@ import DataTableExtensions from "react-data-table-component-extensions";
 import { OverlayTrigger, Tooltip, Badge } from "react-bootstrap";
 import endpoint from "../../context/endpoint";
 import { Context } from "../../context/Context";
+import SignatureCanvas from "react-signature-canvas";
+import Drawer from "@mui/material/Drawer";
+import TextField from "@mui/material/TextField";
 import moment from "moment";
 import Loader from "../Loader/loader";
 import { Modal, FormGroup, Form } from "react-bootstrap";
@@ -45,40 +48,42 @@ export const Users = ({ refreshKey }) => {
   const [roles, setUsersRoles] = useState([]);
 
   const [isLoading, setLoading] = useState(false);
+  const [units, setUnits] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
+  const sigPadRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [value, setValue] = useState({
-    fullname: "",
+    // fullname: "",
+    surname: "",
+    first_name: "",
+    middle_name: "",
     email: "",
     password: "",
     role_id: "",
+    department_id: "",
+    unit_id: "",
+    signature_url: "",
   });
-
-  // useEffect(() => {
-  //   getUsersList();
-  //   getUsersroles();
-  // }, []);
 
   useEffect(() => {
     getUsersList();
     getUsersroles();
+    getUnits();
+    getDepartments();
   }, [refreshKey]);
 
-  //get users
-  // const getUsersList = async () => {
-  //   setLoading(true);
-  //   await endpoint
-  //     .get("/user/list")
-  //     .then((res) => {
-  //       console.log("Users API response:", res.data); // 👈 log full response
-  //       console.log("Users list:", res.data.data); // 👈 log only the users array
-  //       setUsersList(res.data.data);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       setLoading(false);
-  //       // console.log(err)
-  //     });
+  // const clearSignature = () => {
+  //   sigPadRef.current.clear();
+  //   setFormData({ ...formData, signature_drawn: null });
   // };
+
+  const clearSignature = () => {
+    if (sigPadRef.current) {
+      sigPadRef.current.clear();
+    }
+    setValue((prev) => ({ ...prev, signature_url: "" }));
+  };
 
   const getUsersList = async () => {
     setLoading(true);
@@ -117,26 +122,145 @@ export const Users = ({ refreshKey }) => {
       });
   };
 
-  const modifyUser = async (data) => {
-    await endpoint
-      .put(`/user/edit/${value.id}`, value)
-      .then((res) => {
-        setLoading(false);
-        SuccessAlert(res.data.message);
-        getUsersList();
-        setShowEditModal(false);
-        setLoading(false);
-      })
-      .catch((error) => {
-        if (error.response) {
-          ErrorAlert(error.response.data.description);
-        }
-      });
+  const getUnits = async () => {
+    try {
+      const res = await endpoint.get("/unit/get-all-units");
+      setUnits(res.data.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
+
+  const getDepartments = async () => {
+    try {
+      const res = await endpoint.get("/department/get-all-departments");
+      setDepartments(res.data.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // const modifyUser = async () => {
+  //   try {
+  //     const data = new FormData();
+
+  //     for (const key in value) {
+  //       if (value[key]) {
+  //         if (
+  //           key === "signature_url" &&
+  //           typeof value[key] === "string" &&
+  //           value[key].startsWith("data:image")
+  //         ) {
+  //           // convert base64 string (drawn signature) to Blob
+  //           const byteString = atob(value[key].split(",")[1]);
+  //           const mimeString = value[key]
+  //             .split(",")[0]
+  //             .split(":")[1]
+  //             .split(";")[0];
+  //           const ab = new ArrayBuffer(byteString.length);
+  //           const ia = new Uint8Array(ab);
+  //           for (let i = 0; i < byteString.length; i++) {
+  //             ia[i] = byteString.charCodeAt(i);
+  //           }
+  //           const blob = new Blob([ab], { type: mimeString });
+  //           data.append("signature_url", blob, "signature.png");
+  //         } else {
+  //           data.append(key, value[key]);
+  //         }
+  //       }
+  //     }
+
+  //     const res = await endpoint.put(`/user/update/${value.id}`, data, {
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //     });
+
+  //     SuccessAlert(res.data.message);
+  //     getUsersList();
+  //     setShowEditModal(false);
+  //   } catch (error) {
+  //     if (error.response) {
+  //       ErrorAlert(error.response.data.description);
+  //     }
+  //   }
+  // };
+
+  const modifyUser = async () => {
+    try {
+      const data = new FormData();
+
+      for (const key in value) {
+        if (value[key]) {
+          if (
+            key === "signature_url" &&
+            typeof value[key] === "string" &&
+            value[key].startsWith("data:image")
+          ) {
+            // convert base64 string to Blob (drawn signature)
+            const byteString = atob(value[key].split(",")[1]);
+            const mimeString = value[key]
+              .split(",")[0]
+              .split(":")[1]
+              .split(";")[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+              ia[i] = byteString.charCodeAt(i);
+            }
+            const blob = new Blob([ab], { type: mimeString });
+            data.append("signature_url", blob, "signature.png");
+          } else {
+            // handles normal file upload or text fields
+            data.append(key, value[key]);
+          }
+        }
+      }
+
+      const res = await endpoint.put(`/user/update/${value.id}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      SuccessAlert(res.data.message);
+      getUsersList();
+      setShowEditModal(false);
+    } catch (error) {
+      if (error.response) {
+        ErrorAlert(error.response.data.description);
+      }
+    }
+  };
+
+  // 🔹 For text fields
+  const handleChange = (e) => {
+    const { name, value: val } = e.target;
+    setValue((prev) => ({ ...prev, [name]: val }));
+  };
+
+  // 🔹 For file upload
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setValue((prev) => ({ ...prev, signature_url: file }));
+    }
+  };
+
+  // 🔹 For drawn signature
+  const handleDrawSignature = (dataUrl) => {
+    setValue((prev) => ({ ...prev, signature_url: dataUrl }));
+  };
+
   const handleShowEditModal = (row) => {
-    setValue(row);
+    setValue({
+      id: row.id,
+      surname: row.surname || "",
+      first_name: row.first_name || "",
+      middle_name: row.middle_name || "",
+      email: row.email || "",
+      role_id: row.role_id || "",
+      department_id: row.department_id || "",
+      unit_id: row.unit_id || "",
+      signature_url: row.signature_url || "",
+    });
     setShowEditModal(true);
-    // console.log("user:",row);
     reset();
   };
 
@@ -209,12 +333,6 @@ export const Users = ({ refreshKey }) => {
           <img
             src={row.signature_url}
             alt="signature"
-            // style={{
-            //   width: "100px",
-            //   height: "auto",
-            //   border: "1px solid #ddd",
-            //   borderRadius: "4px",
-            // }}
             style={{
               width: "100px", // fixed width
               height: "50px", // fixed height
@@ -231,21 +349,6 @@ export const Users = ({ refreshKey }) => {
           <span className="text-muted">No Signature</span>
         ),
     },
-
-    // {
-    //   name: "PHONE",
-    //   selector: (row) => [row.phone],
-
-    //   style: { textAlign: "right" },
-    //   sortable: true,
-
-    //   width: "200px",
-    //   cell: (row) => (
-    //     <div className="fs-12 fw-bold ">
-    //       {row.phone !== null ? row.phone : ""}
-    //     </div>
-    //   ),
-    // },
 
     {
       name: "Action",
@@ -301,7 +404,7 @@ export const Users = ({ refreshKey }) => {
           )}
         </DataTableExtensions>
       }
-      <Modal show={showEditModal}>
+      {/* <Modal show={showEditModal}>
         <Modal.Header style={{ backgroundColor: "#0a7148", color: "#fff" }}>
           <Card.Title as="h3" style={{ color: "#fff" }}>
             Update User{" "}
@@ -322,25 +425,40 @@ export const Users = ({ refreshKey }) => {
           <Modal.Body>
             <div>
               <Card>
-                {/* <Card.Header>
-                  <Card.Title as="h3">Update User Password</Card.Title>
-                </Card.Header> */}
                 <Card.Body>
-                  {/* <h5>
-                    pls input new passord for <span> {value.fullname} </span> to
-                    change password
-                  </h5> */}
                   <Col lg={12} md={12}>
                     <FormGroup>
-                      <label htmlFor="exampleInputname">Full Name</label>
+                      <label>Surname</label>
                       <Form.Control
                         type="text"
-                        name="fullname"
-                        defaultValue={value.fullname}
-                        onChange={(e) => {
-                          setValue({ ...value, fullname: e.target.value });
-                        }}
-                        className="form-control"
+                        value={value.surname}
+                        onChange={(e) =>
+                          setValue({ ...value, surname: e.target.value })
+                        }
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col lg={12} md={12}>
+                    <FormGroup>
+                      <label>First Name</label>
+                      <Form.Control
+                        type="text"
+                        value={value.first_name}
+                        onChange={(e) =>
+                          setValue({ ...value, first_name: e.target.value })
+                        }
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col lg={12} md={12}>
+                    <FormGroup>
+                      <label>Middle Name</label>
+                      <Form.Control
+                        type="text"
+                        value={value.middle_name}
+                        onChange={(e) =>
+                          setValue({ ...value, middle_name: e.target.value })
+                        }
                       />
                     </FormGroup>
                   </Col>
@@ -358,19 +476,7 @@ export const Users = ({ refreshKey }) => {
                       />
                     </FormGroup>
                   </Col>
-                  <Col lg={12} md={12}>
-                    <FormGroup>
-                      <label htmlFor="exampleInputname"> Password</label>
-                      <Form.Control
-                        type="password"
-                        name="password"
-                        className="form-control"
-                        onChange={(e) => {
-                          setValue({ ...value, password: e.target.value });
-                        }}
-                      />
-                    </FormGroup>
-                  </Col>
+
                   <Col lg={12} md={12}>
                     <FormGroup>
                       <label htmlFor="exampleInputname">Role</label>
@@ -391,6 +497,42 @@ export const Users = ({ refreshKey }) => {
                       </select>
                     </FormGroup>
                   </Col>
+                  <Col lg={12} md={12}>
+                    <FormGroup>
+                      <label>Department</label>
+                      <Form.Control
+                        type="text"
+                        value={value.department_id}
+                        onChange={(e) =>
+                          setValue({ ...value, department_id: e.target.value })
+                        }
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col lg={12} md={12}>
+                    <FormGroup>
+                      <label>Unit</label>
+                      <Form.Control
+                        type="text"
+                        value={value.unit_id}
+                        onChange={(e) =>
+                          setValue({ ...value, unit_id: e.target.value })
+                        }
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col lg={12} md={12}>
+                    <FormGroup>
+                      <label>Signature URL</label>
+                      <Form.Control
+                        type="text"
+                        value={value.signature_url}
+                        onChange={(e) =>
+                          setValue({ ...value, signature_url: e.target.value })
+                        }
+                      />
+                    </FormGroup>
+                  </Col>
                 </Card.Body>
               </Card>
             </div>
@@ -408,7 +550,239 @@ export const Users = ({ refreshKey }) => {
             </Button>
           </Modal.Footer>
         </CForm>
-      </Modal>
+      </Modal> */}
+      <Drawer
+        anchor="left"
+        open={showEditModal}
+        onClose={() => setShowEditModal(false)}
+      >
+        <div style={{ width: 400, padding: "20px" }}>
+          <h4 className="mb-3" style={{ color: "#0a7e51" }}>
+            Update User
+          </h4>
+          <Form onSubmit={handleSubmit(modifyUser)}>
+            <TextField
+              label="Email"
+              type="email"
+              name="email"
+              value={value.email}
+              onChange={(e) => setValue({ ...value, email: e.target.value })}
+              fullWidth
+              required
+              className="mb-3"
+            />
+
+            <TextField
+              label="Surname"
+              name="surname"
+              value={value.surname}
+              onChange={(e) => setValue({ ...value, surname: e.target.value })}
+              fullWidth
+              required
+              className="mb-3"
+            />
+
+            <TextField
+              label="First Name"
+              name="first_name"
+              value={value.first_name}
+              onChange={(e) =>
+                setValue({ ...value, first_name: e.target.value })
+              }
+              fullWidth
+              required
+              className="mb-3"
+            />
+
+            <TextField
+              label="Middle Name"
+              name="middle_name"
+              value={value.middle_name}
+              onChange={(e) =>
+                setValue({ ...value, middle_name: e.target.value })
+              }
+              fullWidth
+              className="mb-3"
+            />
+
+            {/* Department */}
+            <Form.Group className="mb-3">
+              <Form.Label>Department</Form.Label>
+              <Form.Select
+                name="department_id"
+                value={value.department_id}
+                onChange={(e) =>
+                  setValue({
+                    ...value,
+                    department_id: e.target.value,
+                    unit_id: "",
+                  })
+                }
+              >
+                <option value="">-- select department --</option>
+                {departments.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+            {/* Unit */}
+            <Form.Group className="mb-3">
+              <Form.Label>Unit</Form.Label>
+              <Form.Select
+                name="unit_id"
+                value={value.unit_id}
+                onChange={(e) =>
+                  setValue({ ...value, unit_id: e.target.value })
+                }
+                disabled={!value.department_id}
+              >
+                <option value="">-- select unit --</option>
+                {units
+                  .filter(
+                    (u) => u.department_id === parseInt(value.department_id)
+                  )
+                  .map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.name}
+                    </option>
+                  ))}
+              </Form.Select>
+            </Form.Group>
+
+            {/* Role */}
+            <Form.Group className="mb-3">
+              <Form.Label>Role</Form.Label>
+              <Form.Select
+                name="role_id"
+                value={value.role_id}
+                onChange={(e) =>
+                  setValue({ ...value, role_id: e.target.value })
+                }
+                required
+              >
+                <option value="">-- select role --</option>
+                {roles.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.role_name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+            {/* Signature */}
+            {/* <Form.Group className="mb-3">
+              <Form.Label>Upload Signature (optional)</Form.Label>
+              <Form.Control
+                type="file"
+                name="signature_url"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    setValue({ ...value, signature_url: file });
+                  }
+                }}
+              />
+            </Form.Group> */}
+            <Form.Group className="mb-3">
+              <Form.Label>Upload Signature (optional)</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange} // 👈 store as File
+              />
+            </Form.Group>
+
+            {/* <Form.Group className="mb-3">
+              <Form.Label>Draw Signature</Form.Label>
+              <div
+                style={{
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  height: "100px",
+                }}
+              >
+                <SignatureCanvas
+                  ref={sigPadRef}
+                  penColor="black"
+                  canvasProps={{
+                    width: 360,
+                    height: 100,
+                    className: "sigCanvas",
+                  }}
+                  onEnd={() => {
+                    if (!sigPadRef.current.isEmpty()) {
+                      const dataUrl = sigPadRef.current.toDataURL("image/png");
+                      handleDrawSignature(dataUrl); // 👈 store as base64
+                    }
+                  }}
+                />
+              </div>
+              <div className="d-flex justify-content-between mt-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={clearSignature}
+                  type="button"
+                >
+                  Clear
+                </Button>
+              </div>
+            </Form.Group> */}
+
+            <Form.Group className="mb-3">
+              <Form.Label>Draw Signature</Form.Label>
+              <div
+                style={{
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  height: "100px",
+                }}
+              >
+                <SignatureCanvas
+                  ref={sigPadRef}
+                  penColor="black"
+                  canvasProps={{
+                    width: 360,
+                    height: 100,
+                    className: "sigCanvas",
+                  }}
+                  onEnd={() => {
+                    if (!sigPadRef.current.isEmpty()) {
+                      const dataUrl = sigPadRef.current.toDataURL("image/png");
+                      setValue((prev) => ({ ...prev, signature_url: dataUrl }));
+                    }
+                  }}
+                />
+              </div>
+              <div className="d-flex justify-content-between mt-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={clearSignature}
+                  type="button"
+                >
+                  Clear
+                </Button>
+              </div>
+            </Form.Group>
+
+            <div className="d-flex justify-content-end mt-3">
+              <Button
+                onClick={() => setShowEditModal(false)}
+                variant="danger"
+                className="me-2"
+              >
+                Cancel
+              </Button>
+              <Button type="submit">Save</Button>
+            </div>
+          </Form>
+        </div>
+      </Drawer>
     </>
   );
 };

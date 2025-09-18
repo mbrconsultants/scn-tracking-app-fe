@@ -176,31 +176,6 @@ export default function AllUnits() {
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
-            <TextField
-              label="Unit Name"
-              name="name"
-              value={formData.name || ""}
-              onChange={handleChange}
-              fullWidth
-              required
-              className="mb-3"
-            />
-            {/* <Form.Group className="mb-3">
-              <Form.Label>Department</Form.Label>
-              <Form.Select
-                name="department_id"
-                value={formData.department_id}
-                onChange={handleChange}
-                required
-              >
-                <option value="">-- Select Department --</option>
-                {departments.map((dept) => (
-                  <option key={dept.id} value={dept.id}>
-                    {dept.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group> */}
             <Form.Group className="mb-3">
               <Form.Label>Department</Form.Label>
               <Form.Select
@@ -219,6 +194,15 @@ export default function AllUnits() {
                 ))}
               </Form.Select>
             </Form.Group>
+            <TextField
+              label="Unit Name"
+              name="name"
+              value={formData.name || ""}
+              onChange={handleChange}
+              fullWidth
+              required
+              className="mb-3"
+            />
           </Modal.Body>
           <Modal.Footer>
             <Button

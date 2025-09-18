@@ -346,11 +346,22 @@ export const Tracking = () => {
       width: "115px",
     },
     {
-      name: "Location",
-      selector: (row) => row.location?.name, // backend should return location object
-      cell: (row) => <span>{row.location?.name || "N/A"}</span>,
+      name: "Previous Location",
+      selector: (row) => row.previous_location_of_the_file?.name, // backend should return location object
+      cell: (row) => (
+        <span>{row.previous_location_of_the_file?.name || "N/A"}</span>
+      ),
       sortable: true,
-      width: "150px",
+      width: "160px",
+    },
+    {
+      name: "Current Location",
+      selector: (row) => row.current_location_of_the_file?.name, // backend should return location object
+      cell: (row) => (
+        <span>{row.current_location_of_the_file?.name || "N/A"}</span>
+      ),
+      sortable: true,
+      width: "160px",
     },
 
     // {
@@ -380,10 +391,10 @@ export const Tracking = () => {
       selector: (row) => row.date_sent,
       cell: (row) => (
         <span>
-          {row.date_sent ? moment(row.date_sent).format("DD-MM-YYYY") : ""}
+          {row.date_sent ? moment(row.date_sent).format("Do MMMM YYYY") : ""}
         </span>
       ),
-      width: "100px",
+      width: "120px",
     },
     {
       name: "Date Received",
@@ -391,11 +402,11 @@ export const Tracking = () => {
       cell: (row) => (
         <span>
           {row.date_received
-            ? moment(row.date_received).format("DD-MM-YYYY")
+            ? moment(row.date_received).format("Do MMMM YYYY")
             : ""}
         </span>
       ),
-      width: "130px",
+      width: "125px",
     },
     {
       name: "Date Rejected",
@@ -403,7 +414,7 @@ export const Tracking = () => {
       cell: (row) => (
         <span>
           {row.date_rejected
-            ? moment(row.date_rejected).format("DD-MM-YYYY")
+            ? moment(row.date_rejected).format("Do MMMM YYYY")
             : ""}
         </span>
       ),
@@ -469,7 +480,7 @@ export const Tracking = () => {
           {/* {row.status_id === 3 && <Badge bg="danger">Rejected</Badge>} */}
         </div>
       ),
-      width: "170px",
+      width: "160px",
     },
   ];
 
@@ -543,16 +554,17 @@ export const Tracking = () => {
                 })
               }
             >
-              <option value="" disabled hidden>
-                -- Select User --
-              </option>
-              {usersList.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {`${u.surname} ${u.first_name}${
-                    u.middle_name ? ` ${u.middle_name}` : ""
-                  }`}
-                </option>
-              ))}
+              <option value="" disabled hidden></option>
+
+              {usersList
+                .filter((u) => u.id !== user?.user?.id) // 👈 logged-in user won't appear
+                .map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {`${u.surname} ${u.first_name}${
+                      u.middle_name ? ` ${u.middle_name}` : ""
+                    }`}
+                  </option>
+                ))}
             </Form.Select>
           </Form.Group>
 
@@ -612,38 +624,6 @@ export const Tracking = () => {
         </Modal.Footer>
       </Modal>
 
-      {/* Reject Modal */}
-      {/* <Modal show={rejectOpen} onHide={onClose}>
-        <Modal.Header closeButton style={{ backgroundColor: "#e25762ff" }}>
-          <Modal.Title style={{ color: "#fff" }}>Reject File</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            Do you really want to reject{" "}
-            <strong className="text-danger">'{nameToReject}'</strong> file?
-          </p>
-          <p>This process cannot be undone.</p>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Reason for rejection (optional)</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              placeholder="Optionally provide a reason for rejecting this file..."
-              value={rejectRemark}
-              onChange={(e) => setRejectRemark(e.target.value)}
-            />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleReject}>
-            Reject File
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
       {/* Reject Modal */}
       <Modal show={rejectOpen} onHide={onClose}>
         <Modal.Header closeButton style={{ backgroundColor: "#e25762ff" }}>

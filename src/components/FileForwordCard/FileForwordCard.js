@@ -19,6 +19,8 @@ export default function FileForwardCard() {
   const { file_Number } = useParams();
   const loginUserId = JSON.parse(localStorage.getItem("user"))?.id || null;
   const { user, triggerRefresh } = useContext(Context);
+  console.log("login user", loginUserId);
+  console.log("login user2", user);
 
   const [openDrawer, setOpenDrawer] = useState(false);
   const [usersList, setUsersList] = useState([]);
@@ -36,7 +38,7 @@ export default function FileForwardCard() {
   const [acceptRemark, setAcceptRemark] = useState("");
 
   const [forwardData, setForwardData] = useState({
-    loginUser: loginUserId,
+    loginUser: user?.user?.id,
     location_id: "",
     to_user_id: "",
     remark: "",
@@ -124,7 +126,7 @@ export default function FileForwardCard() {
     try {
       const res = await endpoint.post(`/file-track/accept-file-tracking`, {
         tracking_id: selectedFile.id,
-        user_id: loginUserId,
+        user_id: user?.user?.id,
         remark: acceptRemark || "Accepted",
       });
 
@@ -150,7 +152,7 @@ export default function FileForwardCard() {
     try {
       const res = await endpoint.post(`/file-track/reject-file-tracking`, {
         tracking_id: selectedFile.id,
-        user_id: loginUserId,
+        user_id: user?.user?.id,
         remark: rejectRemark,
       });
 
@@ -178,7 +180,7 @@ export default function FileForwardCard() {
     try {
       const payload = {
         file_id: selectedFile.id,
-        from_user_id: loginUserId,
+        from_user_id: user?.user?.id,
         to_user_id: forwardData.user_id,
         location_id: forwardData.location_id,
         remark: forwardData.remark || "",
@@ -195,7 +197,7 @@ export default function FileForwardCard() {
 
       // Reset form
       setForwardData({
-        loginUser: loginUserId,
+        loginUser: user?.user?.id,
         to_user_id: "",
         location_id: "",
         remark: "",
@@ -392,14 +394,21 @@ export default function FileForwardCard() {
                 setForwardData({ ...forwardData, user_id: e.target.value })
               }
             >
-              <option value="" disabled>
-                Select a user
-              </option>
-              {usersList.map((u) => (
+              <option value="" disabled></option>
+              {/* {usersList.map((u) => (
                 <option key={u.id} value={u.id}>
                   {`${u.surname} ${u.first_name} ${u.middle_name || ""}`}
                 </option>
-              ))}
+              ))} */}
+              {usersList
+                .filter((u) => u.id !== user?.user?.id) // 👈 logged-in user won't appear
+                .map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {`${u.surname} ${u.first_name}${
+                      u.middle_name ? ` ${u.middle_name}` : ""
+                    }`}
+                  </option>
+                ))}
             </Form.Select>
           </Form.Group>
 

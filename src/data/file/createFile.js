@@ -24,6 +24,7 @@ export const CreateFile = ({ datas, getAllData }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [filteredUnits, setFilteredUnits] = useState([]);
   const [locations, setLocation] = useState([]);
+  console.log("login user", user);
 
   const [newFile, setNewFile] = useState({
     file_id: "",
@@ -35,9 +36,9 @@ export const CreateFile = ({ datas, getAllData }) => {
     parties: "",
     location_id: "", // Add location_id to state
   });
-  
+
   const [forwardData, setForwardData] = useState({
-    loginUser: user?.id,
+    loginUser: user?.user?.id,
     location_id: "",
     to_user_id: "",
     remark: "",
@@ -71,14 +72,14 @@ export const CreateFile = ({ datas, getAllData }) => {
 
   const handleDrawerOpen = (file) => {
     setSelectedFile(file);
-    setForwardData({ ...forwardData, loginUser: user?.id });
+    setForwardData({ ...forwardData, loginUser: user?.user?.id });
     setOpenDrawer(true);
   };
 
   const handleDrawerClose = () => {
     setOpenDrawer(false);
     setForwardData({
-      loginUser: user?.id,
+      loginUser: user?.user?.id,
       location_id: "",
       to_user_id: "",
       remark: "",
@@ -152,14 +153,21 @@ export const CreateFile = ({ datas, getAllData }) => {
   const handleEdit = async () => {
     setLoading(true);
     try {
-      const res = await endpoint.put(`/file/update/${newFile.file_id}`, newFile);
+      const res = await endpoint.put(
+        `/file/update/${newFile.file_id}`,
+        newFile
+      );
       SuccessAlert(res.data.message || "File updated successfully!");
       setLoading(false);
       setOpen(false);
       getAllData();
     } catch (err) {
       console.error("Update error:", err.response);
-      ErrorAlert(err.response?.data?.message || err.response?.data?.description || "Failed to update file");
+      ErrorAlert(
+        err.response?.data?.message ||
+          err.response?.data?.description ||
+          "Failed to update file"
+      );
       setLoading(false);
     }
   };
@@ -218,7 +226,11 @@ export const CreateFile = ({ datas, getAllData }) => {
       selector: (row) => row.location_id,
       sortable: true,
       width: "160px",
-      cell: (row) => <h6 className="fs-12 fw-semibold">{row.location ? row.location.name : ""}</h6>
+      cell: (row) => (
+        <h6 className="fs-12 fw-semibold">
+          {row.location ? row.location.name : ""}
+        </h6>
+      ),
     },
     {
       name: "Current Location",
@@ -264,7 +276,11 @@ export const CreateFile = ({ datas, getAllData }) => {
           <button
             className="btn btn-sm"
             onClick={() => onEdit(row)}
-            style={{ backgroundColor: "#0A7E51", color: "#fff", borderColor: "#0A7E51" }}
+            style={{
+              backgroundColor: "#0A7E51",
+              color: "#fff",
+              borderColor: "#0A7E51",
+            }}
             title="Edit"
           >
             <i className="fa fa-edit me-1"></i>
@@ -273,7 +289,11 @@ export const CreateFile = ({ datas, getAllData }) => {
           <button
             onClick={() => handleDrawerOpen(row)}
             className="btn btn-sm"
-            style={{ backgroundColor: "#0d0c22", color: "#fff", borderColor: "#0d0c22" }}
+            style={{
+              backgroundColor: "#0d0c22",
+              color: "#fff",
+              borderColor: "#0d0c22",
+            }}
             title="Forward"
           >
             <i className="fa fa-forward me-1"></i>
@@ -281,7 +301,7 @@ export const CreateFile = ({ datas, getAllData }) => {
           </button>
         </div>
       ),
-    }
+    },
   ];
 
   const tableDatas = {
@@ -292,7 +312,7 @@ export const CreateFile = ({ datas, getAllData }) => {
   return (
     <>
       {isLoading && <Loader />}
-      
+
       <DataTableExtensions {...tableDatas}>
         <DataTable
           fixedHeader
@@ -309,7 +329,12 @@ export const CreateFile = ({ datas, getAllData }) => {
       </DataTableExtensions>
 
       {/* Edit Modal */}
-      <Modal show={open} onHide={onClose} className="file-modal-wrapper" centered>
+      <Modal
+        show={open}
+        onHide={onClose}
+        className="file-modal-wrapper"
+        centered
+      >
         <Modal.Header closeButton className="file-modal-header">
           <Modal.Title className="file-modal-title">Edit File</Modal.Title>
         </Modal.Header>
@@ -338,7 +363,8 @@ export const CreateFile = ({ datas, getAllData }) => {
               <Col md={6}>
                 <div className="file-form-group mb-3">
                   <label className="file-form-label">
-                    Process Number <span className="file-required-asterisk">*</span>
+                    Process Number{" "}
+                    <span className="file-required-asterisk">*</span>
                   </label>
                   <input
                     type="text"
@@ -355,12 +381,13 @@ export const CreateFile = ({ datas, getAllData }) => {
                 </div>
               </Col>
             </Row>
-            
+
             <Row>
               <Col md={6}>
                 <div className="file-form-group mb-3">
                   <label className="file-form-label">
-                    File Number <span className="file-required-asterisk">*</span>
+                    File Number{" "}
+                    <span className="file-required-asterisk">*</span>
                   </label>
                   <input
                     type="text"
@@ -379,7 +406,8 @@ export const CreateFile = ({ datas, getAllData }) => {
               <Col md={6}>
                 <div className="file-form-group mb-3">
                   <label className="file-form-label">
-                    Page Number <span className="file-required-asterisk">*</span>
+                    Page Number{" "}
+                    <span className="file-required-asterisk">*</span>
                   </label>
                   <input
                     type="text"
@@ -396,12 +424,13 @@ export const CreateFile = ({ datas, getAllData }) => {
                 </div>
               </Col>
             </Row>
-            
+
             <Row>
               <Col md={6}>
                 <div className="file-form-group mb-3">
                   <label className="file-form-label">
-                    Current Location <span className="file-required-asterisk">*</span>
+                    Current Location{" "}
+                    <span className="file-required-asterisk">*</span>
                   </label>
                   <Form.Select
                     className="form-control file-form-control"
@@ -413,9 +442,11 @@ export const CreateFile = ({ datas, getAllData }) => {
                       })
                     }
                     required
-                    style={{ height: "45px" }} 
+                    style={{ height: "45px" }}
                   >
-                    <option value="" disabled>-- Select Location --</option>
+                    <option value="" disabled>
+                      -- Select Location --
+                    </option>
                     {locations.map((location) => (
                       <option key={location.id} value={location.id}>
                         {location.name}
@@ -444,12 +475,13 @@ export const CreateFile = ({ datas, getAllData }) => {
                 </div>
               </Col>
             </Row>
-            
+
             <Row>
               <Col md={12}>
                 <div className="file-form-group mb-3">
                   <label className="file-form-label">
-                    Description <span className="file-required-asterisk">*</span>
+                    Description{" "}
+                    <span className="file-required-asterisk">*</span>
                   </label>
                   <input
                     type="text"
@@ -469,17 +501,25 @@ export const CreateFile = ({ datas, getAllData }) => {
           </form>
         </Modal.Body>
         <Modal.Footer className="file-modal-footer">
-          <Button variant="secondary" onClick={onClose} className="file-btn-cancel">
+          <Button
+            variant="secondary"
+            onClick={onClose}
+            className="file-btn-cancel"
+          >
             Close
           </Button>
-          <Button 
+          <Button
             className="file-btn-update"
             onClick={handleEdit}
             disabled={isLoading}
           >
             {isLoading ? (
               <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span
+                  className="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
                 Updating...
               </>
             ) : (
@@ -497,9 +537,7 @@ export const CreateFile = ({ datas, getAllData }) => {
         centered
       >
         <Modal.Header closeButton className="file-modal-header">
-          <Modal.Title className="file-modal-title">
-            Forward File
-          </Modal.Title>
+          <Modal.Title className="file-modal-title">Forward File</Modal.Title>
         </Modal.Header>
 
         <Modal.Body className="file-modal-body">
@@ -507,7 +545,7 @@ export const CreateFile = ({ datas, getAllData }) => {
           <input type="hidden" value={forwardData.loginUser} />
 
           {/* User Select */}
-          <Form.Group className="mb-3">
+          {/* <Form.Group className="mb-3">
             <Form.Label>User</Form.Label>
             <Form.Select
               value={forwardData.user_id || ""}
@@ -529,6 +567,33 @@ export const CreateFile = ({ datas, getAllData }) => {
                   }`}
                 </option>
               ))}
+            </Form.Select>
+          </Form.Group> */}
+
+          <Form.Group className="mb-3">
+            <Form.Label>User</Form.Label>
+            <Form.Select
+              value={forwardData.user_id || ""}
+              onChange={(e) =>
+                setForwardData({
+                  ...forwardData,
+                  user_id: e.target.value,
+                })
+              }
+              style={{ height: "45px" }}
+            >
+              <option value="" disabled hidden>
+                -- Select User --
+              </option>
+              {usersList
+                .filter((u) => u.id !== user?.user?.id) // 👈 logged-in user won't appear
+                .map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {`${u.surname} ${u.first_name}${
+                      u.middle_name ? ` ${u.middle_name}` : ""
+                    }`}
+                  </option>
+                ))}
             </Form.Select>
           </Form.Group>
 

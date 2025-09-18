@@ -19,6 +19,7 @@ export default function FileForwordCard() {
   const [isLoading, setLoading] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectRemark, setRejectRemark] = useState("");
+  const [locations, setLocation] = useState([]);
 
   const [forwardData, setForwardData] = useState({
     loginUser: loginUserId,
@@ -90,6 +91,7 @@ export default function FileForwordCard() {
   };
 
   // 🔹 Reject
+
   const handleReject = async () => {
     if (!selectedFile?.id) return ErrorAlert("File ID is missing");
 
@@ -272,6 +274,29 @@ export default function FileForwordCard() {
               {usersList.map((u) => (
                 <option key={u.id} value={u.id}>
                   {`${u.surname} ${u.first_name} ${u.middle_name || ""}`}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+
+          {/* Location Select */}
+          <Form.Group className="mb-3">
+            <Form.Label>Location</Form.Label>
+            <Form.Select
+              value={forwardData.location_id || ""}
+              onChange={(e) =>
+                setForwardData({
+                  ...forwardData,
+                  location_id: e.target.value,
+                })
+              }
+            >
+              <option value="" disabled hidden>
+                -- Select Location --
+              </option>
+              {locations.map((loc) => (
+                <option key={loc.id} value={loc.id}>
+                  {loc.name}
                 </option>
               ))}
             </Form.Select>

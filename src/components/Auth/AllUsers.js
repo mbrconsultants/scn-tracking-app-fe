@@ -237,6 +237,7 @@ export default function AllUsers() {
               fullWidth
               required
               className="mb-3"
+              autoComplete="off"
             />
 
             <TextField
@@ -248,6 +249,7 @@ export default function AllUsers() {
               fullWidth
               required
               className="mb-3"
+              autoComplete="new-password"
             />
 
             <TextField
@@ -362,7 +364,7 @@ export default function AllUsers() {
             </Form.Group> */}
             {/* --- Signature Upload --- */}
             <Form.Group className="mb-3">
-              <Form.Label>Upload Signature (optional)</Form.Label>
+              <Form.Label>Upload Signature</Form.Label>
               <Form.Control
                 type="file"
                 name="signature_url"
@@ -425,7 +427,7 @@ export default function AllUsers() {
             </Form.Group> */}
 
             <Form.Group className="mb-3">
-              <Form.Label> Draw Signature</Form.Label>
+              <Form.Label> Signature</Form.Label>
               <div
                 style={{
                   border: "1px solid #ccc",

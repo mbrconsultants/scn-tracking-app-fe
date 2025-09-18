@@ -1,14 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import {
-  Card,
-  Button,
-  Modal,
-  Form,
-  Row,
-  Col,
-  Alert,
-  Badge,
-} from "react-bootstrap";
+import { Card, Button, Modal, Form, Row, Col, Alert, Badge } from "react-bootstrap";
 import endpoint from "../../context/endpoint";
 import { Context } from "../../context/Context";
 import { ErrorAlert, SuccessAlert } from "../../data/Toast/toast";
@@ -18,9 +9,7 @@ import { QRCodeSVG } from "qrcode.react"; // Correct import
 export default function FileForwardCard() {
   const { file_Number } = useParams();
   const loginUserId = JSON.parse(localStorage.getItem("user"))?.id || null;
-  const { user, triggerRefresh } = useContext(Context);
-  console.log("login user", loginUserId);
-  console.log("login user2", user);
+  const { user } = useContext(Context);
 
   const [openDrawer, setOpenDrawer] = useState(false);
   const [usersList, setUsersList] = useState([]);
@@ -33,13 +22,10 @@ export default function FileForwardCard() {
   const [rejectRemark, setRejectRemark] = useState("");
   const [showQRModal, setShowQRModal] = useState(false);
   const [fileStatus, setFileStatus] = useState("pending");
-  const [locations, setLocation] = useState([]);
-  const [showAcceptModal, setShowAcceptModal] = useState(false);
-  const [acceptRemark, setAcceptRemark] = useState("");
 
   const [forwardData, setForwardData] = useState({
-    loginUser: user?.user?.id,
-    location_id: "",
+    loginUser: loginUserId,
+
     to_user_id: "",
     remark: "",
   });
@@ -49,9 +35,9 @@ export default function FileForwardCard() {
     const fetchFile = async () => {
       try {
         const res = await endpoint.get(`/file/file-number/${file_Number}`);
-        console.log("single file detail", res.data.data);
+        console.log("single file detail", res.data.data)
         setSelectedFile(res.data.data);
-
+        
         // Check if file is already accepted/rejected
         if (res.data.data.status === "accepted") {
           setIsAccepted(true);
@@ -80,45 +66,7 @@ export default function FileForwardCard() {
     fetchData();
   }, []);
 
-  // fetch locations
-  useEffect(() => {
-    const getAllLocations = async () => {
-      try {
-        const res = await endpoint.get(`/location/getAllLocations`);
-        console.log("all locations", res.data.data);
-        setLocation(res.data.data);
-      } catch (err) {
-        console.error("Error fetching locations:", err);
-      }
-    };
-    getAllLocations();
-  }, []);
-
   // Handle Accept
-  // const handleAccept = async () => {
-  //   if (!selectedFile?.id) return ErrorAlert("File ID is missing");
-
-  //   setLoading(true);
-  //   try {
-  //     const res = await endpoint.post(`/file-track/accept-file-tracking`, {
-  //       tracking_id: selectedFile.id,
-  //       user_id: loginUserId,
-  //       remark: "Accepted",
-  //     });
-
-  //     SuccessAlert(res.data.message || "File accepted successfully!");
-  //     setIsAccepted(true);
-  //     setIsRejected(false);
-  //     setFileStatus("accepted");
-  //     // 👇 tell Tracking page to refresh
-  //     triggerRefresh();
-  //   } catch (err) {
-  //     ErrorAlert(err.response?.data?.message || "Accept failed!");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleAccept = async () => {
     if (!selectedFile?.id) return ErrorAlert("File ID is missing");
 
@@ -126,17 +74,14 @@ export default function FileForwardCard() {
     try {
       const res = await endpoint.post(`/file-track/accept-file-tracking`, {
         tracking_id: selectedFile.id,
-        user_id: user?.user?.id,
-        remark: acceptRemark || "Accepted",
+        user_id: loginUserId,
+        remark: "Accepted",
       });
 
       SuccessAlert(res.data.message || "File accepted successfully!");
       setIsAccepted(true);
       setIsRejected(false);
       setFileStatus("accepted");
-      setAcceptRemark("");
-      setShowAcceptModal(false);
-      triggerRefresh();
     } catch (err) {
       ErrorAlert(err.response?.data?.message || "Accept failed!");
     } finally {
@@ -152,18 +97,16 @@ export default function FileForwardCard() {
     try {
       const res = await endpoint.post(`/file-track/reject-file-tracking`, {
         tracking_id: selectedFile.id,
-        user_id: user?.user?.id,
-        remark: rejectRemark,
+        user_id: loginUserId,
+        remark: rejectRemark, 
       });
 
       SuccessAlert(res.data.message || "File rejected successfully!");
       setIsRejected(true);
       setIsAccepted(false);
       setFileStatus("rejected");
-      setRejectRemark("");
+      setRejectRemark(""); 
       setShowRejectModal(false);
-      // 👇 tell Tracking page to refresh
-      triggerRefresh();
     } catch (err) {
       ErrorAlert(err.response?.data?.message || "Reject failed!");
     } finally {
@@ -180,9 +123,8 @@ export default function FileForwardCard() {
     try {
       const payload = {
         file_id: selectedFile.id,
-        from_user_id: user?.user?.id,
+        from_user_id: loginUserId,
         to_user_id: forwardData.user_id,
-        location_id: forwardData.location_id,
         remark: forwardData.remark || "",
       };
 
@@ -194,17 +136,13 @@ export default function FileForwardCard() {
       SuccessAlert(res.data.message || "File forwarded successfully!");
       setIsForwarded(true);
       setOpenDrawer(false);
-
+      
       // Reset form
       setForwardData({
-        loginUser: user?.user?.id,
+        loginUser: loginUserId,
         to_user_id: "",
-        location_id: "",
         remark: "",
       });
-
-      // 👇 tell Tracking page to refresh
-      triggerRefresh();
     } catch (err) {
       ErrorAlert(err.response?.data?.message || "Forward failed!");
     } finally {
@@ -220,32 +158,30 @@ export default function FileForwardCard() {
   // Handle Share
   const handleShare = async () => {
     const shareUrl = generateQRCodeUrl();
-
+    
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "File Forwarding",
+          title: 'File Forwarding',
           text: `Forward file ${file_Number}`,
           url: shareUrl,
         });
       } catch (err) {
-        console.log("Error sharing:", err);
+        console.log('Error sharing:', err);
       }
     } else {
       // Fallback for browsers that don't support Web Share API
-      navigator.clipboard
-        .writeText(shareUrl)
-        .then(() => SuccessAlert("Link copied to clipboard!"))
-        .catch(() => ErrorAlert("Failed to copy link"));
+      navigator.clipboard.writeText(shareUrl)
+        .then(() => SuccessAlert('Link copied to clipboard!'))
+        .catch(() => ErrorAlert('Failed to copy link'));
     }
   };
 
   // Handle Copy
   const handleCopy = () => {
-    navigator.clipboard
-      .writeText(generateQRCodeUrl())
-      .then(() => SuccessAlert("Link copied to clipboard!"))
-      .catch(() => ErrorAlert("Failed to copy link"));
+    navigator.clipboard.writeText(generateQRCodeUrl())
+      .then(() => SuccessAlert('Link copied to clipboard!'))
+      .catch(() => ErrorAlert('Failed to copy link'));
   };
 
   return (
@@ -253,112 +189,97 @@ export default function FileForwardCard() {
       <Row className="justify-content-center">
         <Col md={8} lg={6}>
           <Card className="shadow-sm">
-            <Card.Header
-              className="py-3"
-              style={{ backgroundColor: "#0A7E51", color: "white" }}
-            >
+            <Card.Header className="py-3" style={{ backgroundColor: "#0A7E51", color: "white" }}>
               <div className="d-flex justify-content-between align-items-center">
-                <Card.Title className="mb-0" style={{ color: "#fff" }}>
-                  File Forwarding
-                </Card.Title>
-                <Badge
-                  bg={
-                    fileStatus === "accepted"
-                      ? "success"
-                      : fileStatus === "rejected"
-                      ? "danger"
-                      : "warning"
-                  }
-                >
+                <Card.Title className="mb-0" style={{color: "#fff"}}>File Forwarding</Card.Title> 
+                <Badge bg={fileStatus === "accepted" ? "success" : fileStatus === "rejected" ? "danger" : "warning"}>
                   {fileStatus.toUpperCase()}
                 </Badge>
               </div>
             </Card.Header>
-
+            
             <Card.Body className="p-4">
               {selectedFile ? (
                 <>
                   <div className="text-center mb-4">
-                    <h4 className="text-primary">
-                      File Number: {selectedFile.file_Number}
-                    </h4>
+                    <h4 className="text-primary">File Number: {selectedFile.file_Number}</h4>
                     <p className="text-muted">{selectedFile.file_Name}</p>
                   </div>
-
+                  
                   <Row className="mb-4">
                     <Col md={6}>
                       <div className="mb-3">
                         <strong>Description:</strong>
-                        <p className="text-muted">
-                          {selectedFile.description ||
-                            "No description available"}
-                        </p>
+                        <p className="text-muted">{selectedFile.description || "No description available"}</p>
                       </div>
                     </Col>
                     <Col md={6}>
                       <div className="mb-3">
                         <strong>Parties:</strong>
-                        <p className="text-muted">
-                          {selectedFile.parties || "Not specified"}
-                        </p>
+                        <p className="text-muted">{selectedFile.parties || "Not specified"}</p>
                       </div>
                     </Col>
                   </Row>
-
+                  
                   <div className="text-center mb-4">
-                    <Button
-                      variant="outline-primary"
+                    <Button 
+                      variant="outline-primary" 
                       onClick={() => setShowQRModal(true)}
                       className="me-2"
                     >
                       <i className="fas fa-qrcode me-2"></i>Show QR Code
                     </Button>
-
-                    <Button variant="outline-secondary" onClick={handleCopy}>
+                    
+                    <Button 
+                      variant="outline-secondary" 
+                      onClick={handleCopy}
+                    >
                       <i className="fas fa-copy me-2"></i>Copy Link
                     </Button>
                   </div>
-
+                  
                   <hr />
                   
-                <div className="text-center mt-4">
-                  {/* Show Accept/Reject buttons if tracking exists AND status_id is 1 */}
-                  {selectedFile?.lastTracking?.id && selectedFile?.lastTracking?.status_id === 1 ? (
-                    <>
+                  <div className="text-center mt-4">
+                    {/* Accept button - only visible if not accepted/rejected */}
+                    {!isAccepted && !isRejected && (
                       <Button
-                        // onClick={handleAccept}
-                        onClick={() => setShowAcceptModal(true)}
+                        onClick={handleAccept}
                         className="me-3"
                         style={{ minWidth: "100px" }}
-                        disabled={isLoading || isAccepted}
+                        disabled={isLoading}
                       >
                         {isLoading ? "Processing..." : "Accept"}
                       </Button>
+                    )}
 
+                    {/* Reject button - hidden after accept */}
+                    {!isAccepted && (
                       <Button
                         onClick={() => setShowRejectModal(true)}
                         variant="danger"
                         style={{ minWidth: "100px" }}
                         disabled={isRejected || isLoading}
                       >
-                        Reject 
+                        Reject
                       </Button>
-                    </>
-                  ) : (
-                    /* Show Forward button if no tracking exists OR status_id is not 1 */
-                    <Button
-                      onClick={() => setOpenDrawer(true)}
-                      style={{ 
-                        backgroundColor: "#0A7E51", 
-                        borderColor: "#0A7E51",
-                        minWidth: "100px"
-                      }}
-                      disabled={isForwarded || isLoading}
-                    >
-                      {isForwarded ? "Forwarded" : "Forward"}
-                    </Button>
-                  )}
-                </div>
+                    )}
+
+                    {/* Forward button - only visible after accept */}
+                    {isAccepted && (
+                      <Button
+                        onClick={() => setOpenDrawer(true)}
+                        style={{ 
+                          backgroundColor: "#0A7E51", 
+                          borderColor: "#0A7E51",
+                          minWidth: "100px"
+                        }}
+                        disabled={isForwarded || isLoading}
+                      >
+                        {isForwarded ? "Forwarded" : "Forward"}
+                      </Button>
+                    )}
+                  </div>
                 </>
               ) : (
                 <div className="text-center">
@@ -375,11 +296,7 @@ export default function FileForwardCard() {
 
       {/* Forward Modal */}
       <Modal show={openDrawer} onHide={() => setOpenDrawer(false)} centered>
-        <Modal.Header
-          closeButton
-          className="py-3"
-          style={{ backgroundColor: "#0A7E51", color: "white" }}
-        >
+        <Modal.Header closeButton className="py-3" style={{ backgroundColor: "#0A7E51", color: "white" }}>
           <Modal.Title>Forward File</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -391,42 +308,10 @@ export default function FileForwardCard() {
                 setForwardData({ ...forwardData, user_id: e.target.value })
               }
             >
-              <option value="" disabled></option>
-              {/* {usersList.map((u) => (
+              <option value="" disabled>Select a user</option>
+              {usersList.map((u) => (
                 <option key={u.id} value={u.id}>
                   {`${u.surname} ${u.first_name} ${u.middle_name || ""}`}
-                </option>
-              ))} */}
-              {usersList
-                .filter((u) => u.id !== user?.user?.id) // 👈 logged-in user won't appear
-                .map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {`${u.surname} ${u.first_name}${
-                      u.middle_name ? ` ${u.middle_name}` : ""
-                    }`}
-                  </option>
-                ))}
-            </Form.Select>
-          </Form.Group>
-
-          {/* Location Select */}
-          <Form.Group className="mb-3">
-            <Form.Label>Location</Form.Label>
-            <Form.Select
-              value={forwardData.location_id || ""}
-              onChange={(e) =>
-                setForwardData({
-                  ...forwardData,
-                  location_id: e.target.value,
-                })
-              }
-            >
-              <option value="" disabled hidden>
-                -- Select Location --
-              </option>
-              {locations.map((loc) => (
-                <option key={loc.id} value={loc.id}>
-                  {loc.name}
                 </option>
               ))}
             </Form.Select>
@@ -449,8 +334,8 @@ export default function FileForwardCard() {
           <Button variant="secondary" onClick={() => setOpenDrawer(false)}>
             Cancel
           </Button>
-          <Button
-            onClick={handleForwardSubmit}
+          <Button 
+            onClick={handleForwardSubmit} 
             disabled={isForwarded || isLoading}
             style={{ backgroundColor: "#0A7E51", borderColor: "#0A7E51" }}
           >
@@ -460,11 +345,7 @@ export default function FileForwardCard() {
       </Modal>
 
       {/* Reject Modal */}
-      <Modal
-        show={showRejectModal}
-        onHide={() => setShowRejectModal(false)}
-        centered
-      >
+      <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Reject File</Modal.Title>
         </Modal.Header>
@@ -497,55 +378,6 @@ export default function FileForwardCard() {
         </Modal.Footer>
       </Modal>
 
-      <Modal
-        show={showAcceptModal}
-        onHide={() => setShowAcceptModal(false)}
-        centered
-      >
-        <Modal.Header closeButton style={{ backgroundColor: "#0a7148" }}>
-          <Modal.Title style={{ color: "#fff" }}>Accept File</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedFile && (
-            <>
-              <p>
-                <strong>File Number:</strong> {selectedFile.file_Number}
-              </p>
-              <p>
-                <strong>File Name:</strong> {selectedFile.file_Name}
-              </p>
-              <p>
-                <strong>File Page Number:</strong>{" "}
-                {selectedFile.page_Number || "N/A"}
-              </p>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Remark</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  placeholder="Add your remark"
-                  value={acceptRemark}
-                  onChange={(e) => setAcceptRemark(e.target.value)}
-                />
-              </Form.Group>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowAcceptModal(false)}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleAccept}
-            disabled={isLoading || !acceptRemark.trim()}
-            style={{ backgroundColor: "#0A7E51", borderColor: "#0A7E51" }}
-          >
-            {isLoading ? "Accepting..." : "Confirm Accept"}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
       {/* QR Code Modal */}
       <Modal show={showQRModal} onHide={() => setShowQRModal(false)} centered>
         <Modal.Header closeButton>
@@ -553,24 +385,30 @@ export default function FileForwardCard() {
         </Modal.Header>
         <Modal.Body className="text-center">
           <div className="mb-3 d-flex justify-content-center">
-            <QRCodeSVG
-              value={generateQRCodeUrl()}
+            <QRCodeSVG 
+              value={generateQRCodeUrl()} 
               size={200}
               level="H"
               includeMargin
             />
           </div>
           <div className="d-flex justify-content-center gap-2 mb-3">
-            <Button
-              variant="primary"
-              onClick={() => window.open(generateQRCodeUrl(), "_blank")}
+            <Button 
+              variant="primary" 
+              onClick={() => window.open(generateQRCodeUrl(), '_blank')}
             >
               Open
             </Button>
-            <Button variant="info" onClick={handleShare}>
+            <Button 
+              variant="info" 
+              onClick={handleShare}
+            >
               Share
             </Button>
-            <Button variant="secondary" onClick={handleCopy}>
+            <Button 
+              variant="secondary" 
+              onClick={handleCopy}
+            >
               Copy
             </Button>
           </div>

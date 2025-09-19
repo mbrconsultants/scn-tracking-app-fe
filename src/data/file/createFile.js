@@ -237,7 +237,11 @@ export const CreateFile = ({ datas, getAllData }) => {
       selector: (row) => row.current_location_id,
       sortable: true,
       width: "160px",
-      cell: (row) => <h6 className="fs-12 fw-semibold">{row.currentLocation ? row.currentLocation.name : ""}</h6>
+      cell: (row) => (
+        <h6 className="fs-12 fw-semibold">
+          {row.currentLocation ? row.currentLocation.name : ""}
+        </h6>
+      ),
     },
     {
       name: "QRCode",
@@ -545,30 +549,6 @@ export const CreateFile = ({ datas, getAllData }) => {
           <input type="hidden" value={forwardData.loginUser} />
 
           {/* User Select */}
-          {/* <Form.Group className="mb-3">
-            <Form.Label>User</Form.Label>
-            <Form.Select
-              value={forwardData.user_id || ""}
-              onChange={(e) =>
-                setForwardData({
-                  ...forwardData,
-                  user_id: e.target.value,
-                })
-              }
-              style={{ height: "45px" }} // Increased height
-            >
-              <option value="" disabled hidden>
-                -- Select User --
-              </option>
-              {usersList.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {`${u.surname} ${u.first_name}${
-                    u.middle_name ? ` ${u.middle_name}` : ""
-                  }`}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group> */}
 
           <Form.Group className="mb-3">
             <Form.Label>User</Form.Label>

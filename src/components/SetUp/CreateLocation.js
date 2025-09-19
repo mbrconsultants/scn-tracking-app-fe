@@ -14,6 +14,7 @@ import { CForm } from "@coreui/react";
 import { useForm } from "react-hook-form";
 import endpoint from "../../context/endpoint";
 import { ErrorAlert, SuccessAlert } from "../../data/Toast/toast";
+import "./styleLocation.css"
 
 export default function CreateLocation() {
   const { register, handleSubmit, reset: resetFormHook } = useForm();
@@ -97,42 +98,36 @@ export default function CreateLocation() {
       <Row>
         <Col sm={12} className="col-12">
           <Card className="shadow-lg border-0" style={{ borderRadius: '15px' }}>
-           <Card.Header className="py-3" style={{ 
+          <Card.Header className="py-3 d-flex justify-content-between align-items-center" style={{ 
               backgroundColor: '#f8f9fa', 
               borderBottom: '2px solid #0A7E51',
               borderTopLeftRadius: '15px',
               borderTopRightRadius: '15px'
             }}>
-              <Row className="align-items-center">
-                <Col>
-                  <Card.Title
-                    as="h3"
-                    style={{ color: "#0A7E51", fontWeight: 'bold', margin: 0 }}
-                  >
-                    <i className="fas fa-map-marker-alt me-2"></i>
-                    LOCATION SETUP
-                  </Card.Title>
-                </Col>
-                <Col className="text-end">
-                  <Button
-                    className="btn"
-                    type="button"
-                    variant=""
-                    onClick={handleAppellantModal}
-                    style={{
-                      backgroundColor: "#0A7E51",
-                      borderColor: "#0A7E51",
-                      color: "white",
-                      fontWeight: '600',
-                      borderRadius: '8px',
-                      padding: '8px 16px'
-                    }}
-                  >
-                    <i className="fas fa-plus me-2"></i>
-                    Add Location
-                  </Button>
-                </Col>
-              </Row>
+              <Card.Title
+                as="h3"
+                style={{ color: "#0A7E51", fontWeight: 'bold', margin: 0 }}
+              >
+                <i className="fas fa-map-marker-alt me-2"></i>
+                LOCATION SETUP
+              </Card.Title>
+              <Button
+                className="btn"
+                type="button"
+                variant=""
+                onClick={handleAppellantModal}
+                style={{
+                  backgroundColor: "#0A7E51",
+                  borderColor: "#0A7E51",
+                  color: "white",
+                  fontWeight: '600',
+                  borderRadius: '8px',
+                  padding: '8px 16px'
+                }}
+              >
+                <i className="fas fa-plus me-2"></i>
+                Add Location
+              </Button>
             </Card.Header>
             <Card.Body style={{ backgroundColor: '#fafafa' }}>
               <div className="location-table-container">
@@ -265,22 +260,6 @@ export default function CreateLocation() {
           </Modal.Body>
         </CForm>
       </Modal>
-
-      <style jsx>{`
-        .location-table-container {
-          background: white;
-          border-radius: 10px;
-          padding: 0;
-        }
-        .form-control:focus {
-          border-color: #0A7E51;
-          box-shadow: 0 0 0 0.2rem rgba(10, 126, 81, 0.25);
-        }
-        .btn:hover {
-          transform: translateY(-1px);
-          transition: all 0.2s ease;
-        }
-      `}</style>
     </div>
   );
 }

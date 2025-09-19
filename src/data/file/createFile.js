@@ -571,7 +571,7 @@ export const CreateFile = ({ datas, getAllData }) => {
 
           {/* Location Select */}
           <Form.Group className="mb-3">
-            <Form.Label>Location</Form.Label>
+            <Form.Label>Forward To (Location)</Form.Label>
             <Form.Select
               value={forwardData.location_id || ""}
               onChange={(e) =>
@@ -580,18 +580,19 @@ export const CreateFile = ({ datas, getAllData }) => {
                   location_id: e.target.value,
                 })
               }
-              style={{ height: "45px" }} // Increased height
             >
               <option value="" disabled hidden>
                 -- Select Location --
               </option>
-              {locations.map((location) => (
-                <option key={location.id} value={location.id}>
-                  {location.name}
-                </option>
-              ))}
+              {locations
+                .filter((loc) => loc.id !== selectedFile?.location_id) // 👈 exclude current location
+                .map((loc) => (
+                  <option key={loc.id} value={loc.id}>
+                    {loc.name}
+                  </option>
+                ))}
             </Form.Select>
-          </Form.Group>
+          </Form.Group>
 
           {/* Remark */}
           <Form.Group className="mb-3">

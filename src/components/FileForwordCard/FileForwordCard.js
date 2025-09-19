@@ -94,31 +94,6 @@ export default function FileForwardCard() {
     getAllLocations();
   }, []);
 
-  // Handle Accept
-  // const handleAccept = async () => {
-  //   if (!selectedFile?.id) return ErrorAlert("File ID is missing");
-
-  //   setLoading(true);
-  //   try {
-  //     const res = await endpoint.post(`/file-track/accept-file-tracking`, {
-  //       tracking_id: selectedFile.id,
-  //       user_id: loginUserId,
-  //       remark: "Accepted",
-  //     });
-
-  //     SuccessAlert(res.data.message || "File accepted successfully!");
-  //     setIsAccepted(true);
-  //     setIsRejected(false);
-  //     setFileStatus("accepted");
-  //     // 👇 tell Tracking page to refresh
-  //     triggerRefresh();
-  //   } catch (err) {
-  //     ErrorAlert(err.response?.data?.message || "Accept failed!");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleAccept = async () => {
     if (!selectedFile?.id) return ErrorAlert("File ID is missing");
 
@@ -136,7 +111,8 @@ export default function FileForwardCard() {
       setFileStatus("accepted");
       setAcceptRemark("");
       setShowAcceptModal(false);
-      triggerRefresh();
+
+      window.location.reload();
     } catch (err) {
       ErrorAlert(err.response?.data?.message || "Accept failed!");
     } finally {
@@ -162,8 +138,8 @@ export default function FileForwardCard() {
       setFileStatus("rejected");
       setRejectRemark("");
       setShowRejectModal(false);
-      // 👇 tell Tracking page to refresh
-      triggerRefresh();
+
+      window.location.reload();
     } catch (err) {
       ErrorAlert(err.response?.data?.message || "Reject failed!");
     } finally {
@@ -203,8 +179,7 @@ export default function FileForwardCard() {
         remark: "",
       });
 
-      // 👇 tell Tracking page to refresh
-      triggerRefresh();
+      window.location.reload();
     } catch (err) {
       ErrorAlert(err.response?.data?.message || "Forward failed!");
     } finally {
@@ -250,128 +225,149 @@ export default function FileForwardCard() {
 
   return (
     <div className="container mt-4">
-      <Row className="justify-content-center">
-        <Col md={8} lg={6}>
-          <Card className="shadow-sm">
-            <Card.Header
-              className="py-3"
-              style={{ backgroundColor: "#0A7E51", color: "white" }}
-            >
-              <div className="d-flex justify-content-between align-items-center">
-                <Card.Title className="mb-0" style={{ color: "#fff" }}>
-                  File Forwarding
-                </Card.Title>
-                <Badge
-                  bg={
-                    fileStatus === "accepted"
-                      ? "success"
-                      : fileStatus === "rejected"
-                      ? "danger"
-                      : "warning"
-                  }
-                >
-                  {fileStatus.toUpperCase()}
-                </Badge>
-              </div>
-            </Card.Header>
+     <Row className="justify-content-center">
+      <Col md={8} lg={6}>
+        <Card className="shadow border-0" style={{ borderRadius: '2px', overflow: 'hidden' }}>
+          <Card.Header
+            className="py-2 text-center"
+            style={{ 
+              backgroundColor: "#0A7E51", 
+              color: "white",
+              borderBottom: '2px solid #066a44'
+            }}
+          >
+            <Card.Title className="mb-0 fw-bold" style={{ color: "#fff", fontSize: '1.1rem' }}>
+              <i className="fas fa-file-export me-1"></i>File Forwarding
+            </Card.Title>
+          </Card.Header>
 
-            <Card.Body className="p-4">
-              {selectedFile ? (
-                <>
-                  <div className="text-center mb-4">
-                    <h4 className="text-primary">
-                      File Number: {selectedFile.file_Number}
-                    </h4>
-                    <p className="text-muted">{selectedFile.file_Name}</p>
+          <Card.Body className="p-3">
+            {selectedFile ? (
+              <>
+                <div className="text-center mb-2">
+                  <div className="bg-light p-2 rounded mb-1">
+                    <h5 className="text-primary fw-bold mb-0" style={{ fontSize: '1rem' }}>
+                      <i className="fas fa-hashtag me-1"></i>{selectedFile.file_Number}
+                    </h5>
+                    <p className="text-muted mb-0 small">
+                      <i className="fas fa-file-alt me-1"></i>{selectedFile.file_Name}
+                    </p>
                   </div>
+                </div>
 
-                  <Row className="mb-4">
-                    <Col md={6}>
-                      <div className="mb-3">
-                        <strong>Description:</strong>
-                        <p className="text-muted">
-                          {selectedFile.description ||
-                            "No description available"}
-                        </p>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className="mb-3">
-                        <strong>Parties:</strong>
-                        <p className="text-muted">
-                          {selectedFile.parties || "Not specified"}
-                        </p>
-                      </div>
-                    </Col>
-                  </Row>
+                <Row className="mb-2">
+                  <Col md={6} className="mb-1">
+                    <div className="bg-light p-2 rounded small">
+                      <strong className="text-dark">Description:</strong>
+                      <p className="text-muted mb-0">
+                        {selectedFile.description || "No description"}
+                      </p>
+                    </div>
+                  </Col>
+                  <Col md={6} className="mb-1">
+                    <div className="bg-light p-2 rounded small">
+                      <strong className="text-dark">Parties:</strong>
+                      <p className="text-muted mb-0">
+                        {selectedFile.parties || "Not specified"}
+                      </p>
+                    </div>
+                  </Col>
+                </Row>
 
-                  <div className="text-center mb-4">
-                    <Button
-                      variant="outline-primary"
-                      onClick={() => setShowQRModal(true)}
-                      className="me-2"
-                    >
-                      <i className="fas fa-qrcode me-2"></i>Show QR Code
-                    </Button>
+                {/* Only show QR Code and Copy Link buttons if file belongs to logged-in user */}
+                {selectedFile?.lastTracking?.to_user_id === user?.user?.id && (
+                  <div className="text-center mb-2">
+                    <div className="bg-light p-2 rounded">
+                      <Button
+                        variant="outline-primary"
+                        onClick={() => setShowQRModal(true)}
+                        className="me-1 px-2 py-1 rounded small"
+                        size="sm"
+                      >
+                        <i className="fas fa-qrcode me-1"></i>Show QR Code
+                      </Button>
 
-                    <Button variant="outline-secondary" onClick={handleCopy}>
-                      <i className="fas fa-copy me-2"></i>Copy Link
-                    </Button>
+                      <Button 
+                        variant="outline-secondary" 
+                        onClick={handleCopy}
+                        className="px-2 py-1 rounded small"
+                        size="sm"
+                      >
+                        <i className="fas fa-copy me-1"></i>Copy Link
+                      </Button>
+                    </div>
                   </div>
+                )}
 
-                  <hr />
-                  
-                <div className="text-center mt-4">
-                  {/* Show Accept/Reject buttons if tracking exists AND status_id is 1 */}
-                  {selectedFile?.lastTracking?.id && selectedFile?.lastTracking?.status_id === 1 ? (
+                <hr className="my-2" />
+                
+                <div className="text-center">
+                  {/* Only show buttons if the file belongs to the logged-in user */}
+                  {selectedFile?.lastTracking?.to_user_id === user?.user?.id ? (
                     <>
-                      <Button
-                        // onClick={handleAccept}
-                        onClick={() => setShowAcceptModal(true)}
-                        className="me-3"
-                        style={{ minWidth: "100px" }}
-                        disabled={isLoading || isAccepted}
-                      >
-                        {isLoading ? "Processing..." : "Accept"}
-                      </Button>
+                      {/* Show Accept/Reject buttons if tracking exists AND status_id is 1 */}
+                      {selectedFile?.lastTracking?.id && selectedFile?.lastTracking?.status_id === 1 ? (
+                        <div className="p-2">
+                          <Button
+                            onClick={() => setShowAcceptModal(true)}
+                            className="me-1 px-2 py-1 rounded small"
+                            size="sm"
+                            style={{ backgroundColor: "#28a745", borderColor: "#28a745" }}
+                            disabled={isLoading || isAccepted}
+                          >
+                            {isLoading ? <><i className="fas fa-spinner fa-spin me-1"></i></> : <><i className="fas fa-check me-1"></i>Accept</>}
+                          </Button>
 
-                      <Button
-                        onClick={() => setShowRejectModal(true)}
-                        variant="danger"
-                        style={{ minWidth: "100px" }}
-                        disabled={isRejected || isLoading}
-                      >
-                        Reject 
-                      </Button>
+                          <Button
+                            onClick={() => setShowRejectModal(true)}
+                            variant="danger"
+                            className="px-2 py-1 rounded small"
+                            size="sm"
+                            disabled={isRejected || isLoading}
+                          >
+                            <i className="fas fa-times me-1"></i>Reject 
+                          </Button>
+                        </div>
+                      ) : (
+                        /* Show Forward button if status_id is not 1 */
+                        <div className="p-2">
+                          <Button
+                            onClick={() => setOpenDrawer(true)}
+                            className="px-3 py-1 rounded small"
+                            size="sm"
+                            style={{ 
+                              backgroundColor: "#0A7E51", 
+                              borderColor: "#0A7E51"
+                            }}
+                            disabled={isForwarded || isLoading}
+                          >
+                            {isForwarded ? <><i className="fas fa-check-circle me-1"></i></> : <><i className="fas fa-share me-1"></i>Forward</>}
+                          </Button>
+                        </div>
+                      )}
                     </>
                   ) : (
-                    /* Show Forward button if no tracking exists OR status_id is not 1 */
-                    <Button
-                      onClick={() => setOpenDrawer(true)}
-                      style={{ 
-                        backgroundColor: "#0A7E51", 
-                        borderColor: "#0A7E51",
-                        minWidth: "100px"
-                      }}
-                      disabled={isForwarded || isLoading}
-                    >
-                      {isForwarded ? "Forwarded" : "Forward"}
-                    </Button>
+                    /* Show message if file doesn't belong to logged-in user */
+                    <div className="p-2">
+                      <p className="text-muted mb-0 small">
+                        <i className="fas fa-info-circle me-1"></i>This file is not assigned to you.
+                      </p>
+                    </div>
                   )}
                 </div>
-                </>
-              ) : (
-                <div className="text-center">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                  <p className="mt-2">Loading file information...</p>
+              </>
+            ) : (
+              <div className="text-center py-2">
+                <div className="spinner-border text-primary mb-1" style={{ width: '1.5rem', height: '1.5rem' }} role="status">
+                  <span className="visually-hidden">Loading...</span>
                 </div>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+                <p className="text-muted small mb-0">Loading file information...</p>
+              </div>
+            )}
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>
 
       {/* Forward Modal */}
       <Modal show={openDrawer} onHide={() => setOpenDrawer(false)} centered>

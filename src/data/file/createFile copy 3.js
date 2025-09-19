@@ -275,22 +275,19 @@ export const CreateFile = ({ datas, getAllData }) => {
             <i className="fa fa-edit me-1"></i>
             Edit
           </button>
-          
-          {row.lastTracking === null && (
-            <button
-              onClick={() => handleDrawerOpen(row)}
-              className="btn btn-sm"
-              style={{
-                backgroundColor: "#0d0c22",
-                color: "#fff",
-                borderColor: "#0d0c22",
-              }}
-              title="Forward"
-            >
-              <i className="fa fa-forward me-1"></i>
-              Forward
-            </button>
-          )}
+          <button
+            onClick={() => handleDrawerOpen(row)}
+            className="btn btn-sm"
+            style={{
+              backgroundColor: "#0d0c22",
+              color: "#fff",
+              borderColor: "#0d0c22",
+            }}
+            title="Forward"
+          >
+            <i className="fa fa-forward me-1"></i>
+            Forward
+          </button>
         </div>
       ),
     },

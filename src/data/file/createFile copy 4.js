@@ -591,7 +591,7 @@ export const CreateFile = ({ datas, getAllData }) => {
 
           {/* Location Select */}
           <Form.Group className="mb-3">
-            <Form.Label>Location</Form.Label>
+            <Form.Label>Location Update</Form.Label>
             <Form.Select
               value={forwardData.location_id || ""}
               onChange={(e) =>

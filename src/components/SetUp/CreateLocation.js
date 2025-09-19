@@ -96,39 +96,47 @@ export default function CreateLocation() {
     <div>
       <Row>
         <Col sm={12} className="col-12">
-          <Card>
-            <Card.Header>
-              <Col className="text-beginning">
-                <Card.Title
-                  as="h3"
-                  style={{ color: "#0A7E51", fontWeight: 900 }}
-                >
-                  LOCATION SETUP
-                </Card.Title>
-              </Col>
-              <Col className="text-end">
-                <Button
-                  className="btn btn-sm"
-                  type="button"
-                  variant=""
-                  onClick={(e) => {
-                    handleAppellantModal();
-                  }}
-                  style={{
-                    backgroundColor: "#0A7E51",
-                    borderColor: "#0A7E51",
-                    color: "white",
-                    fontWeight: 900,
-                  }}
-                >
-                  <span className="fa fa-plus"></span>
-                  Add Location
-                </Button>
-              </Col>
+          <Card className="shadow-lg border-0" style={{ borderRadius: '15px' }}>
+           <Card.Header className="py-3" style={{ 
+              backgroundColor: '#f8f9fa', 
+              borderBottom: '2px solid #0A7E51',
+              borderTopLeftRadius: '15px',
+              borderTopRightRadius: '15px'
+            }}>
+              <Row className="align-items-center">
+                <Col>
+                  <Card.Title
+                    as="h3"
+                    style={{ color: "#0A7E51", fontWeight: 'bold', margin: 0 }}
+                  >
+                    <i className="fas fa-map-marker-alt me-2"></i>
+                    LOCATION SETUP
+                  </Card.Title>
+                </Col>
+                <Col className="text-end">
+                  <Button
+                    className="btn"
+                    type="button"
+                    variant=""
+                    onClick={handleAppellantModal}
+                    style={{
+                      backgroundColor: "#0A7E51",
+                      borderColor: "#0A7E51",
+                      color: "white",
+                      fontWeight: '600',
+                      borderRadius: '8px',
+                      padding: '8px 16px'
+                    }}
+                  >
+                    <i className="fas fa-plus me-2"></i>
+                    Add Location
+                  </Button>
+                </Col>
+              </Row>
             </Card.Header>
-            <Card.Body>
-              <div className="">
-                <div className="">
+            <Card.Body style={{ backgroundColor: '#fafafa' }}>
+              <div className="location-table-container">
+                <div className="table-responsive">
                   <location.CreateLocation
                     datas={datas}
                     getAllData={getAllData}
@@ -140,12 +148,17 @@ export default function CreateLocation() {
         </Col>
       </Row>
 
-      <Modal show={locationModal} onHide={handleModalClose}>
+      <Modal show={locationModal} onHide={handleModalClose} centered>
         <Modal.Header
           closeButton
-          style={{ backgroundColor: "#0a7148", color: "#fff" }}
+          style={{ 
+            backgroundColor: "#0A7E51", 
+            color: "#fff",
+            borderBottom: '3px solid #066a44'
+          }}
         >
-          <Modal.Title style={{ color: "#fff" }}>
+          <Modal.Title style={{ color: "#fff", fontWeight: '600' }}>
+            <i className="fas fa-plus-circle me-2"></i>
             {locationModalHeading}
           </Modal.Title>
         </Modal.Header>
@@ -153,58 +166,121 @@ export default function CreateLocation() {
           onSubmit={handleSubmit(handleCreateLocation)}
           className="row g-3 needs-validation"
         >
-          <Modal.Body>
-            <Card>
-              <Card.Body>
-                <Col lg={12} md={12}>
-                  <FormGroup>
-                    <label htmlFor="name">
-                      Name <span style={{ color: "red" }}>*</span>
-                    </label>
-                    <Form.Control
-                      type="text"
-                      name="name"
-                      value={name}
-                      onChange={(e) => setLocationName(e.target.value)}
-                      className="form-control"
-                      required
-                    />
-                  </FormGroup>
-                </Col>
-                <br />
-                <Col lg={12} md={12}>
-                  <FormGroup>
-                    <label htmlFor="description">
-                      Description <span style={{ color: "red" }}>*</span>
-                    </label>
-                    <Form.Control
-                      type="text"
-                      name="description"
-                      value={description}
-                      onChange={(e) => setLocationDescription(e.target.value)}
-                      className="form-control"
-                      required
-                    />
-                  </FormGroup>
-                </Col>
+          <Modal.Body style={{ padding: '20px' }}>
+            <Card className="border-0 shadow-sm">
+              <Card.Body style={{ padding: '20px' }}>
+                <Row>
+                  <Col lg={12} md={12}>
+                    <FormGroup className="mb-3">
+                      <label htmlFor="name" className="form-label fw-semibold">
+                        <i className="fas fa-tag me-2 text-primary"></i>
+                        Name <span className="text-danger">*</span>
+                      </label>
+                      <Form.Control
+                        type="text"
+                        name="name"
+                        value={name}
+                        onChange={(e) => setLocationName(e.target.value)}
+                        className="form-control form-control-lg"
+                        style={{ 
+                          borderRadius: '8px',
+                          border: '2px solid #e9ecef',
+                          padding: '12px'
+                        }}
+                        required
+                        placeholder="Enter location name"
+                      />
+                    </FormGroup>
+                  </Col>
+                  
+                  <Col lg={12} md={12}>
+                    <FormGroup className="mb-3">
+                      <label htmlFor="description" className="form-label fw-semibold">
+                        <i className="fas fa-align-left me-2 text-primary"></i>
+                        Description <span className="text-danger">*</span>
+                      </label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        name="description"
+                        value={description}
+                        onChange={(e) => setLocationDescription(e.target.value)}
+                        className="form-control"
+                        style={{ 
+                          borderRadius: '8px',
+                          border: '2px solid #e9ecef',
+                          padding: '12px',
+                          resize: 'vertical'
+                        }}
+                        required
+                        placeholder="Enter location description"
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
               </Card.Body>
             </Card>
 
-            <Modal.Footer>
-              <Button variant="danger" onClick={handleModalClose}>
+            <Modal.Footer style={{ 
+              borderTop: '1px solid #e9ecef',
+              padding: '20px',
+              marginTop: '20px'
+            }}>
+              <Button 
+                variant="outline-secondary" 
+                onClick={handleModalClose}
+                style={{
+                  borderRadius: '8px',
+                  padding: '8px 20px',
+                  border: '2px solid #6c757d'
+                }}
+              >
+                <i className="fas fa-times me-2"></i>
                 Close
               </Button>
               <Button
-                style={{ backgroundColor: "#0A7E51", borderColor: "#0A7E51" }}
+                style={{ 
+                  backgroundColor: "#0A7E51", 
+                  borderColor: "#0A7E51",
+                  borderRadius: '8px',
+                  padding: '8px 25px',
+                  fontWeight: '600'
+                }}
                 type="submit"
                 disabled={isLoading}
               >
-                {isLoading ? "Creating..." : "Save"}
+                {isLoading ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-save me-2"></i>
+                    Save Location
+                  </>
+                )}
               </Button>
             </Modal.Footer>
           </Modal.Body>
         </CForm>
       </Modal>
+
+      <style jsx>{`
+        .location-table-container {
+          background: white;
+          border-radius: 10px;
+          padding: 0;
+        }
+        .form-control:focus {
+          border-color: #0A7E51;
+          box-shadow: 0 0 0 0.2rem rgba(10, 126, 81, 0.25);
+        }
+        .btn:hover {
+          transform: translateY(-1px);
+          transition: all 0.2s ease;
+        }
+      `}</style>
     </div>
   );
 }

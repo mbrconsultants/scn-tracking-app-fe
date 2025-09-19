@@ -105,6 +105,19 @@ export const Tracking = () => {
     getUsersroles();
     getAllLocations();
   }, [refreshKey]);
+  // 👇 define helper at the top (before your component, or inside it)
+  const getStatus = (status_id) => {
+    switch (status_id) {
+      case 1:
+        return { label: "Pending", color: "#ffc107" }; // yellow
+      case 2:
+        return { label: "Accepted", color: "#0a7e51" }; // green
+      case 3:
+        return { label: "Rejected", color: "#dc3545" }; // red
+      default:
+        return { label: "Unknown", color: "#6c757d" }; // gray
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -182,49 +195,6 @@ export const Tracking = () => {
     setFilteredUnits([]);
   };
 
-  // const handleAccept = async () => {
-  //   if (!acceptFile) return;
-
-  //   try {
-  //     await endpoint.post(
-  //       "/file-track/accept-file-tracking",
-  //       {
-  //         tracking_id: acceptFile.id,
-  //         remark: acceptRemark || "Accepted",
-  //       },
-  //       {
-  //         headers: { "Content-Type": "application/json" },
-  //       }
-  //     );
-
-  //     SuccessAlert("File accepted successfully!");
-
-  //     // 🔹 Update the row locally in trackingList
-  //     // setTrackingList((prev) =>
-  //     //   prev.map((item) =>
-  //     //     item.file.id === acceptFile.id
-  //     //       ? { ...item, status_id: 2, is_forwarded: 0 } // 👈 make sure it's marked correctly
-  //     //       : item
-  //     //   )
-  //     // );
-
-  //     setTrackingList((prev) =>
-  //       prev.map((item) =>
-  //         item.file.id === acceptFile.id
-  //           ? { ...item, status_id: 2, is_forwarded: item.is_forwarded } // or leave as-is
-  //           : item
-  //       )
-  //     );
-
-  //     setAcceptOpen(false);
-  //     setAcceptRemark("");
-  //     setAcceptFile(null);
-  //   } catch (err) {
-  //     console.error("Accept Error:", err.response?.data || err.message);
-  //     ErrorAlert(err.response?.data?.message || "Failed to accept file");
-  //   }
-  // };
-
   const handleAccept = async () => {
     if (!acceptFile) return;
 
@@ -242,11 +212,10 @@ export const Tracking = () => {
 
       SuccessAlert("File accepted successfully!");
 
-      // Update tracking list for UI
       setTrackingList((prev) =>
         prev.map((item) =>
           item.file.id === acceptFile.id
-            ? { ...item, status_id: 2, is_forwarded: 0 } // 👈 fix
+            ? { ...item, status_id: 2, is_forwarded: false } // ✅ keep boolean
             : item
         )
       );
@@ -283,6 +252,8 @@ export const Tracking = () => {
         remark: rejectRemark,
       });
 
+      console.log("file ID", rejectFile.id);
+
       SuccessAlert("File has been rejected successfully!");
       setRejectOpen(false);
       setRejectRemark("");
@@ -291,9 +262,17 @@ export const Tracking = () => {
       // 👇 update the correct row (tracking id, not file id)
       setTrackingList((prev) =>
         prev.map((item) =>
-          item.id === rejectFile.id ? { ...item, status_id: 3 } : item
+          item.file?.id === rejectFile.id ? { ...item, status_id: 3 } : item
         )
       );
+
+      // setTrackingList((prev) =>
+      //   prev.map((item) =>
+      //     item.id === rejectFile.id || item.file?.id === rejectFile.file?.id
+      //       ? { ...item, status_id: 3 }
+      //       : item
+      //   )
+      // );
     } catch (err) {
       console.error("Reject error:", err.response);
       ErrorAlert(err.response?.data?.message || "Failed to reject file");
@@ -330,23 +309,15 @@ export const Tracking = () => {
 
       SuccessAlert(res.data.message || "File forwarded successfully!");
 
-      // ✅ mark forwarded instead of removing
-
-      // setTrackingList((prev) =>
-      //   prev.map((item) =>
-      //     item.file.id === selectedFile.file.id
-      //       ? { ...item, isForwarded: true }
-      //       : item
-      //   )
-      // );
-
       setTrackingList((prev) =>
         prev.map((item) =>
           item.file.id === selectedFile.file.id
-            ? { ...item, is_forwarded: 1 } // now Forward button disappears
+            ? { ...item, is_forwarded: true } // ✅ use boolean, not number
             : item
         )
       );
+
+      await getTrackingList();
 
       handleDrawerClose();
     } catch (err) {
@@ -372,10 +343,10 @@ export const Tracking = () => {
       name: "Sender",
       selector: (row) => row.sender?.first_name,
       cell: (row) => <span>{row.sender?.first_name || "N/A"}</span>,
-      width: "105px",
+      width: "90px",
     },
     {
-      name: "Prev. Location",
+      name: "Sender Location",
       selector: (row) => row.previous_location_of_the_file?.name, // backend should return location object
       cell: (row) => (
         <span>{row.previous_location_of_the_file?.name || "N/A"}</span>
@@ -384,11 +355,9 @@ export const Tracking = () => {
       width: "140px",
     },
     {
-      name: "Current Location",
-      selector: (row) => row.current_location_of_the_file?.name, // backend should return location object
-      cell: (row) => (
-        <span>{row.current_location_of_the_file?.name || "N/A"}</span>
-      ),
+      name: "Present Location",
+      selector: (row) => row.file?.currentLocation?.name, // backend should return location object
+      cell: (row) => <span>{row.file?.currentLocation?.name || "N/A"}</span>,
       sortable: true,
       width: "160px",
     },
@@ -509,6 +478,26 @@ export const Tracking = () => {
     // },
 
     {
+      name: "Status",
+      selector: (row) => {
+        const statusInfo = getStatus(row.status_id);
+        return (
+          <span
+            style={{
+              backgroundColor: statusInfo.color,
+              color: "white",
+              padding: "8px 12px",
+              display: "inline-block",
+              borderRadius: "5px",
+            }}
+          >
+            {statusInfo.label}
+          </span>
+        );
+      },
+    },
+
+    {
       name: "Action",
       cell: (row) => (
         <div className="d-flex gap-2">
@@ -531,7 +520,7 @@ export const Tracking = () => {
               variant="danger"
               size="sm"
               onClick={() => {
-                setRejectFile(row);
+                setRejectFile(row.file);
                 setRejectOpen(true);
               }}
             >
@@ -605,6 +594,7 @@ export const Tracking = () => {
         </DataTableExtensions>
       }
 
+      {/* Forward Modal */}
       <Modal
         show={openDrawer}
         onHide={handleDrawerClose}
@@ -625,6 +615,15 @@ export const Tracking = () => {
           {/* Hidden loginUser */}
           <input type="hidden" value={forwardData.loginUser} />
 
+          <Form.Group className="mb-3">
+            <Form.Label>Present Location</Form.Label>
+            <Form.Control
+              type="text"
+              value={selectedFile?.file?.currentLocation?.name || "N/A"}
+              readOnly
+              disabled
+            />
+          </Form.Group>
           {/* User Select */}
           <Form.Group className="mb-3">
             <Form.Label>User</Form.Label>
@@ -652,7 +651,7 @@ export const Tracking = () => {
           </Form.Group>
 
           {/* Location Select */}
-          <Form.Group className="mb-3">
+          {/* <Form.Group className="mb-3">
             <Form.Label>Location</Form.Label>
             <Form.Select
               value={forwardData.location_id || ""}
@@ -671,6 +670,33 @@ export const Tracking = () => {
                   {loc.name}
                 </option>
               ))}
+            </Form.Select>
+          </Form.Group> */}
+
+          {/* Location Select */}
+          <Form.Group className="mb-3">
+            <Form.Label>Forward To (Location)</Form.Label>
+            <Form.Select
+              value={forwardData.location_id || ""}
+              onChange={(e) =>
+                setForwardData({
+                  ...forwardData,
+                  location_id: e.target.value,
+                })
+              }
+            >
+              <option value="" disabled hidden>
+                -- Select Location --
+              </option>
+              {locations
+                .filter(
+                  (loc) => loc.id !== selectedFile?.file?.currentLocation?.id
+                ) // 👈 exclude present location
+                .map((loc) => (
+                  <option key={loc.id} value={loc.id}>
+                    {loc.name}
+                  </option>
+                ))}
             </Form.Select>
           </Form.Group>
 
@@ -722,6 +748,7 @@ export const Tracking = () => {
               <p>
                 <strong>Parties:</strong> {rejectFile?.file?.file_Name}
               </p>
+
               <p>
                 <strong>Number of Pages:</strong>{" "}
                 {rejectFile?.file?.page_Number}

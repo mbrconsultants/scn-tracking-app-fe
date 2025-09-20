@@ -348,20 +348,7 @@ export default function AllUsers() {
                 ))}
               </Form.Select>
             </Form.Group>
-            {/* <Form.Group className="mb-3">
-              <Form.Label>Signature</Form.Label>
-              <Form.Control
-                type="file"
-                name="signature_url"
-                accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    setFormData({ ...formData, signature_url: file });
-                  }
-                }}
-              />
-            </Form.Group> */}
+
             {/* --- Signature Upload --- */}
             <Form.Group className="mb-3">
               <Form.Label>Upload Signature</Form.Label>
@@ -378,56 +365,8 @@ export default function AllUsers() {
               />
             </Form.Group>
 
-            {/* --- Signature Canvas --- */}
-            {/* <Form.Group className="mb-3">
-              <Form.Label> Draw Signature</Form.Label>
-              <div
-                style={{
-                  border: "1px solid #ccc",
-                  borderRadius: "5px",
-                  width: "100%",
-                  height: "100px",
-                }}
-              >
-                <SignatureCanvas
-                  ref={sigPadRef}
-                  penColor="black"
-                  canvasProps={{
-                    width: 350,
-                    height: 150,
-                    className: "sigCanvas",
-                  }}
-                  // onEnd={saveSignature}
-                  onEnd={() => {
-                    if (!sigPadRef.current.isEmpty()) {
-                      const dataUrl = sigPadRef.current.toDataURL("image/png");
-                      setFormData({ ...formData, signature_url: dataUrl }); // 👈 overwrite signature_url
-                    }
-                  }}
-                />
-              </div>
-              <div className="d-flex justify-content-between mt-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={clearSignature}
-                  type="button"
-                >
-                  Clear
-                </Button>
-                <Button
-                  variant="success"
-                  size="sm"
-                  onClick={saveSignature}
-                  type="button"
-                >
-                  Save Signature
-                </Button>
-              </div>
-            </Form.Group> */}
-
             <Form.Group className="mb-3">
-              <Form.Label> Signature</Form.Label>
+              <Form.Label> Draw Signature</Form.Label>
               <div
                 style={{
                   border: "1px solid #ccc",

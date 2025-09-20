@@ -100,6 +100,16 @@ export const Tracking = () => {
     name: "",
   });
 
+  // const customStyles = {
+  //   headCells: {
+  //     style: {
+  //       fontWeight: "bold",
+  //       fontSize: "13px",
+  //       textTransform: "uppercase",
+  //     },
+  //   },
+  // };
+
   useEffect(() => {
     getTrackingList();
     getUsersroles();
@@ -163,6 +173,7 @@ export const Tracking = () => {
         // console.log(err)
       });
   };
+
   const getUsersroles = async () => {
     setLoading(true);
     await endpoint
@@ -330,20 +341,20 @@ export const Tracking = () => {
     {
       name: "S/N",
       cell: (row, index) => index + 1,
-      width: "60px",
+      width: "57px",
     },
     {
       name: "File Number",
       selector: (row) => row.file?.file_Number,
       sortable: true,
       cell: (row) => <span>{row.file?.file_Number || "N/A"}</span>,
-      width: "132px",
+      width: "127px",
     },
     {
       name: "Sender",
       selector: (row) => row.sender?.first_name,
       cell: (row) => <span>{row.sender?.first_name || "N/A"}</span>,
-      width: "90px",
+      width: "85px",
     },
     {
       name: "Sender Location",
@@ -359,31 +370,9 @@ export const Tracking = () => {
       selector: (row) => row.file?.currentLocation?.name, // backend should return location object
       cell: (row) => <span>{row.file?.currentLocation?.name || "N/A"}</span>,
       sortable: true,
-      width: "160px",
+      width: "157px",
     },
 
-    // {
-    //   name: "Recipient",
-    //   selector: () => user?.user?.surname, // 👈 always authenticated user
-    //   cell: () => (
-    //     <span>
-    //       {`${user?.user?.surname} ${user?.user?.first_name}` || "N/A"}
-    //     </span>
-    //   ),
-    //   width: "120px",
-    // },
-    // {
-    //   name: "Unit",
-    //   selector: (row) => row?.unit_name,
-    //   cell: (row) => <span>{row.unit_name || "N/A"}</span>,
-    //   width: "80px",
-    // },
-    // {
-    //   name: "Department",
-    //   selector: (row) => row.department_name,
-    //   cell: (row) => <span>{row.department_name || "N/A"}</span>,
-    //   width: "120px",
-    // },
     {
       name: "Date Sent",
       selector: (row) => row.date_sent,
@@ -392,7 +381,7 @@ export const Tracking = () => {
           {row.date_sent ? moment(row.date_sent).format("Do MMMM YYYY") : ""}
         </span>
       ),
-      width: "120px",
+      width: "110px",
     },
     {
       name: "Date Received",
@@ -404,7 +393,7 @@ export const Tracking = () => {
             : ""}
         </span>
       ),
-      width: "125px",
+      width: "120px",
     },
     {
       name: "Date Rejected",
@@ -416,85 +405,62 @@ export const Tracking = () => {
             : ""}
         </span>
       ),
-      width: "125px",
+      width: "120px",
     },
 
     // {
-    //   name: "Action",
-    //   cell: (row) => (
-    //     <div className="d-flex gap-2">
-    //       {/* Accept button: only when status_id = 1 */}
-    //       {row.status_id === 1 && (
-    //         <Button
-    //           size="sm"
-    //           onClick={() => {
-    //             setAcceptFile(row.file);
-    //             setAcceptOpen(true);
-    //           }}
-    //         >
-    //           Accept
-    //         </Button>
-    //       )}
-
-    //       {/* Reject button: only when status_id = 1 */}
-    //       {row.status_id === 1 && (
-    //         <Button
-    //           variant="danger"
-    //           size="sm"
-    //           onClick={() => {
-    //             setRejectFile(row);
-    //             setRejectOpen(true);
-    //           }}
-    //         >
-    //           Reject
-    //         </Button>
-    //       )}
-
-    //       {/* Show rejected badge */}
-    //       {row.status_id === 3 && <Badge bg="danger">Rejected</Badge>}
-
-    //       {/* Forward button: only when status_id = 2 (accepted) and not forwarded */}
-    //       {row.status_id === 2 && row.is_forwarded === 0 && (
-    //         <button
-    //           onClick={() => handleDrawerOpen(row)}
-    //           className="btn btn-sm"
-    //           style={{
-    //             backgroundColor: "#0A7E51",
-    //             color: "#fff",
-    //             borderColor: "#0A7E51",
-    //           }}
-    //         >
-    //           Forward
-    //         </button>
-    //       )}
-
-    //       {/* Show forwarded badge */}
-    //       {row.status_id === 2 && row.is_forwarded === 1 && (
-    //         <Badge bg="success">Forwarded</Badge>
-    //       )}
-    //     </div>
-    //   ),
-    //   width: "180px",
+    //   name: "Status",
+    //   selector: (row) => {
+    //     const statusInfo = getStatus(row.status_id);
+    //     return (
+    //       <span
+    //         style={{
+    //           backgroundColor: statusInfo.color,
+    //           color: "white",
+    //           padding: "8px 12px",
+    //           display: "inline-block",
+    //           borderRadius: "5px",
+    //         }}
+    //       >
+    //         {statusInfo.label}
+    //       </span>
+    //     );
+    //   },
     // },
 
     {
       name: "Status",
       selector: (row) => {
-        const statusInfo = getStatus(row.status_id);
-        return (
-          <span
-            style={{
-              backgroundColor: statusInfo.color,
-              color: "white",
-              padding: "8px 12px",
-              display: "inline-block",
-              borderRadius: "5px",
-            }}
-          >
-            {statusInfo.label}
-          </span>
-        );
+        if (row.status_id === 3) return "Rejected"; // rejected
+        if (row.status_id === 2) {
+          return row.is_forwarded ? "Forwarded" : "Accepted"; // 🔑 check forwarded
+        }
+        if (row.status_id === 1) return "Pending";
+        return "Unknown";
       },
+      cell: (row) => {
+        let badgeColor = "secondary";
+        let label = "Unknown";
+
+        if (row.status_id === 3) {
+          badgeColor = "danger";
+          label = "Rejected";
+        } else if (row.status_id === 2) {
+          if (row.is_forwarded) {
+            badgeColor = "success";
+            label = "Forwarded"; // 🔑 now shows Forwarded
+          } else {
+            badgeColor = "primary";
+            label = "Accepted";
+          }
+        } else if (row.status_id === 1) {
+          badgeColor = "warning";
+          label = "Pending";
+        }
+
+        return <Badge bg={badgeColor}>{label}</Badge>;
+      },
+      width: "85px",
     },
 
     {
@@ -552,7 +518,7 @@ export const Tracking = () => {
           )}
         </div>
       ),
-      width: "180px",
+      width: "150px",
     },
   ];
 
@@ -581,6 +547,7 @@ export const Tracking = () => {
               striped={true}
               center={true}
               pagination
+              // customStyles={customStyles}
               // paginationServer
               // paginationTotalRows={totalRows}
               // onChangePage={handlePageChange}
@@ -616,7 +583,7 @@ export const Tracking = () => {
           <input type="hidden" value={forwardData.loginUser} />
 
           <Form.Group className="mb-3">
-            <Form.Label>Present Location</Form.Label>
+            <Form.Label>Sender Location</Form.Label>
             <Form.Control
               type="text"
               value={selectedFile?.file?.currentLocation?.name || "N/A"}
@@ -626,7 +593,7 @@ export const Tracking = () => {
           </Form.Group>
           {/* User Select */}
           <Form.Group className="mb-3">
-            <Form.Label>User</Form.Label>
+            <Form.Label>Forward To (User)</Form.Label>
             <Form.Select
               value={forwardData.user_id || ""}
               onChange={(e) =>

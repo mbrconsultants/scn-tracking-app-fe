@@ -192,7 +192,7 @@ export default function CreateFile() {
                       <Col lg={6} md={6}>
                         <FormGroup className="form-group-custom mb-3">
                           <label htmlFor="name" className="form-label-custom">
-                            File Number{" "}
+                            Appeal Number{" "}
                             <span className="required-asterisk">*</span>
                           </label>
                           <Form.Control

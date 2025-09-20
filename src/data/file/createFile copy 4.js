@@ -226,11 +226,7 @@ export const CreateFile = ({ datas, getAllData }) => {
       selector: (row) => row.current_location_id,
       sortable: true,
       width: "160px",
-      cell: (row) => (
-        <h6 className="fs-12 fw-semibold">
-          {row.currentLocation ? row.currentLocation.name : ""}
-        </h6>
-      ),
+      cell: (row) => <h6 className="fs-12 fw-semibold">{row.currentLocation ? row.currentLocation.name : ""}</h6>
     },
     {
       name: "QRCode",
@@ -541,6 +537,30 @@ export const CreateFile = ({ datas, getAllData }) => {
           <input type="hidden" value={forwardData.loginUser} />
 
           {/* User Select */}
+          {/* <Form.Group className="mb-3">
+            <Form.Label>User</Form.Label>
+            <Form.Select
+              value={forwardData.user_id || ""}
+              onChange={(e) =>
+                setForwardData({
+                  ...forwardData,
+                  user_id: e.target.value,
+                })
+              }
+              style={{ height: "45px" }} // Increased height
+            >
+              <option value="" disabled hidden>
+                -- Select User --
+              </option>
+              {usersList.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {`${u.surname} ${u.first_name}${
+                    u.middle_name ? ` ${u.middle_name}` : ""
+                  }`}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group> */}
 
           <Form.Group className="mb-3">
             <Form.Label>User</Form.Label>
@@ -571,7 +591,7 @@ export const CreateFile = ({ datas, getAllData }) => {
 
           {/* Location Select */}
           <Form.Group className="mb-3">
-            <Form.Label>Forward To (Location)</Form.Label>
+            <Form.Label>Location Update</Form.Label>
             <Form.Select
               value={forwardData.location_id || ""}
               onChange={(e) =>
@@ -580,19 +600,18 @@ export const CreateFile = ({ datas, getAllData }) => {
                   location_id: e.target.value,
                 })
               }
+              style={{ height: "45px" }} // Increased height
             >
               <option value="" disabled hidden>
                 -- Select Location --
               </option>
-              {locations
-                .filter((loc) => loc.id !== selectedFile?.location_id) // 👈 exclude current location
-                .map((loc) => (
-                  <option key={loc.id} value={loc.id}>
-                    {loc.name}
-                  </option>
-                ))}
+              {locations.map((location) => (
+                <option key={location.id} value={location.id}>
+                  {location.name}
+                </option>
+              ))}
             </Form.Select>
-          </Form.Group>
+          </Form.Group>
 
           {/* Remark */}
           <Form.Group className="mb-3">

@@ -1,0 +1,13 @@
+.location-table-container {
+          background: white;
+          border-radius: 10px;
+          padding: 0;
+        }
+        .form-control:focus {
+          border-color: #0A7E51;
+          box-shadow: 0 0 0 0.2rem rgba(10, 126, 81, 0.25);
+        }
+        .btn:hover {
+          transform: translateY(-1px);
+          transition: all 0.2s ease;
+        }

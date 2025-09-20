@@ -49,6 +49,16 @@ export const Depertments = ({ refreshKey }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
+  const customStyles = {
+    headCells: {
+      style: {
+        fontWeight: "bold",
+        fontSize: "13px",
+        textTransform: "uppercase",
+      },
+    },
+  };
+
   // const [value, setValue] = useState({
   //   fullname: "",
   //   email: "",
@@ -166,7 +176,7 @@ export const Depertments = ({ refreshKey }) => {
 
       width: "400px",
       cell: (row) => (
-        <div className="fs-12 fw-bold ">
+        <div className="fs-14 fw-semibold  ">
           {row.name !== null ? row.name : ""}{" "}
         </div>
       ),
@@ -259,6 +269,7 @@ export const Depertments = ({ refreshKey }) => {
               striped={true}
               center={true}
               pagination
+              customStyles={customStyles}
               // paginationServer
               // paginationTotalRows={totalRows}
               // onChangePage={handlePageChange}

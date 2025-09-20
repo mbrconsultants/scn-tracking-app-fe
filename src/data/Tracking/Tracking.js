@@ -100,6 +100,16 @@ export const Tracking = () => {
     name: "",
   });
 
+  // const customStyles = {
+  //   headCells: {
+  //     style: {
+  //       fontWeight: "bold",
+  //       fontSize: "13px",
+  //       textTransform: "uppercase",
+  //     },
+  //   },
+  // };
+
   useEffect(() => {
     getTrackingList();
     getUsersroles();
@@ -163,25 +173,6 @@ export const Tracking = () => {
         // console.log(err)
       });
   };
-
-  // const getTrackingList = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const res = await endpoint.get("/file-track/get-all-files");
-  //     const normalized = res.data.data.map((item) => ({
-  //       ...item,
-  //       is_forwarded: item.is_forwarded === 1, // 🔑 force boolean
-  //     }));
-  //     console.log("tracking list nomalize", normalized);
-  //     console.log("tracking list", res.data.data);
-
-  //     setTrackingList(normalized);
-  //   } catch (err) {
-  //     console.error(err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const getUsersroles = async () => {
     setLoading(true);
@@ -350,7 +341,7 @@ export const Tracking = () => {
     {
       name: "S/N",
       cell: (row, index) => index + 1,
-      width: "60px",
+      width: "57px",
     },
     {
       name: "File Number",
@@ -379,7 +370,7 @@ export const Tracking = () => {
       selector: (row) => row.file?.currentLocation?.name, // backend should return location object
       cell: (row) => <span>{row.file?.currentLocation?.name || "N/A"}</span>,
       sortable: true,
-      width: "160px",
+      width: "157px",
     },
 
     {
@@ -390,7 +381,7 @@ export const Tracking = () => {
           {row.date_sent ? moment(row.date_sent).format("Do MMMM YYYY") : ""}
         </span>
       ),
-      width: "120px",
+      width: "110px",
     },
     {
       name: "Date Received",
@@ -402,7 +393,7 @@ export const Tracking = () => {
             : ""}
         </span>
       ),
-      width: "125px",
+      width: "120px",
     },
     {
       name: "Date Rejected",
@@ -414,7 +405,7 @@ export const Tracking = () => {
             : ""}
         </span>
       ),
-      width: "125px",
+      width: "120px",
     },
 
     // {
@@ -556,6 +547,7 @@ export const Tracking = () => {
               striped={true}
               center={true}
               pagination
+              // customStyles={customStyles}
               // paginationServer
               // paginationTotalRows={totalRows}
               // onChangePage={handlePageChange}
@@ -591,7 +583,7 @@ export const Tracking = () => {
           <input type="hidden" value={forwardData.loginUser} />
 
           <Form.Group className="mb-3">
-            <Form.Label>Present Location</Form.Label>
+            <Form.Label>Sender Location</Form.Label>
             <Form.Control
               type="text"
               value={selectedFile?.file?.currentLocation?.name || "N/A"}
@@ -601,7 +593,7 @@ export const Tracking = () => {
           </Form.Group>
           {/* User Select */}
           <Form.Group className="mb-3">
-            <Form.Label>User</Form.Label>
+            <Form.Label>Forward To (User)</Form.Label>
             <Form.Select
               value={forwardData.user_id || ""}
               onChange={(e) =>

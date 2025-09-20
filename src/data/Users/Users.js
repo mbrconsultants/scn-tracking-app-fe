@@ -66,6 +66,16 @@ export const Users = ({ refreshKey }) => {
     signature_url: "",
   });
 
+  const customStyles = {
+    headCells: {
+      style: {
+        fontWeight: "bold",
+        fontSize: "13px",
+        textTransform: "uppercase",
+      },
+    },
+  };
+
   useEffect(() => {
     getUsersList();
     getUsersroles();
@@ -280,7 +290,7 @@ export const Users = ({ refreshKey }) => {
       sortable: true,
       width: "250px",
       cell: (row) => (
-        <div className="fs-12 fw-bold ">
+        <div className="fs-14 fw-semibold  ">
           {row.surname ?? ""} {row.first_name ?? ""}{" "}
           {row.middle_name ? row.middle_name : ""}
         </div>
@@ -296,7 +306,7 @@ export const Users = ({ refreshKey }) => {
 
       width: "250px",
       cell: (row) => (
-        <div className="fs-12 fw-bold ">
+        <div className="fs-14 fw-semibold  ">
           {row.email !== null ? row.email : ""}
         </div>
       ),
@@ -308,7 +318,7 @@ export const Users = ({ refreshKey }) => {
       sortable: true,
       width: "140px",
       cell: (row) => (
-        <div className="fs-12">
+        <div className="fs-14 fw-semibold ">
           {row.department?.name ?? row.department ?? ""}
         </div>
       ),
@@ -320,7 +330,9 @@ export const Users = ({ refreshKey }) => {
       sortable: true,
       width: "100px",
       cell: (row) => (
-        <div className="fs-12">{row.unit?.name ?? row.unit ?? ""}</div>
+        <div className="fs-14 fw-semibold ">
+          {row.unit?.name ?? row.unit ?? ""}
+        </div>
       ),
     },
 
@@ -392,6 +404,7 @@ export const Users = ({ refreshKey }) => {
               striped={true}
               center={true}
               pagination
+              customStyles={customStyles}
               // paginationServer
               // paginationTotalRows={totalRows}
               // onChangePage={handlePageChange}
@@ -688,7 +701,7 @@ export const Users = ({ refreshKey }) => {
               />
             </Form.Group> */}
             <Form.Group className="mb-3">
-              <Form.Label>Upload Signature (optional)</Form.Label>
+              <Form.Label>Upload Signature </Form.Label>
               <Form.Control
                 type="file"
                 accept="image/*"

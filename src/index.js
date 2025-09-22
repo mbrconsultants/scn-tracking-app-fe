@@ -391,10 +391,7 @@ const Root = () => {
                                 path={`${process.env.PUBLIC_URL}/create-password/:token`}
                                 element={<Password />}
                             /> */}
-              <Route
-                path={`${process.env.PUBLIC_URL}/file-forward-card/:file_Number`}
-                element={<FileForwordCard />}
-              />
+              
               <Route element={<MainLayout />}>
                 <Route path="/login" element={<Login />} />
                 {/* <Route path="/home" element={<Home />} /> */}
@@ -456,6 +453,11 @@ const Root = () => {
                     path={`${process.env.PUBLIC_URL}/file-forward-card`}
                     element={<FileForwordCard />}
                   /> */}
+
+                  <Route
+                    path={`${process.env.PUBLIC_URL}/file-forward-card/:file_Number`}
+                    element={<FileForwordCard />}
+                  />
 
                   <Route
                     path={`${process.env.PUBLIC_URL}/depertments`}

@@ -266,16 +266,15 @@ export default function CreateFile() {
                               </option>
                             ))}
                           </Form.Select>
-                          {/* Display selected location description below dropdown */}
-                          {location_id && (
-                            <div className="mt-2 p-2 bg-light rounded">
-                              <small className="text-muted">
-                                <strong>Description:</strong> {
-                                  locations.find(loc => loc.id === parseInt(location_id))?.description
-                                }
-                              </small>
-                            </div>
-                          )}
+                            {location_id && (
+                              <div className="mt-2 p-2 bg-light rounded">
+                                <small className="text-muted">
+                                  <strong>Description:</strong> {
+                                    locations.find(loc => loc.id === parseInt(location_id))?.description
+                                  }
+                                </small>
+                              </div>
+                            )}
                         </FormGroup>
                       </Col>
                     </Row>

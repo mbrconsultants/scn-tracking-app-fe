@@ -229,7 +229,8 @@ export const CreateLocation = ({ datas, getAllData }) => {
                     <label>
                       Description <span className="text-danger">*</span>
                     </label>
-                    <textarea
+                    <input
+                      type="text"
                       className="form-control"
                       value={newLocation.description}
                       onChange={(e) =>

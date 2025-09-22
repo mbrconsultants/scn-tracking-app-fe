@@ -44,12 +44,6 @@ export const CreateFile = ({ datas, getAllData }) => {
     remark: "",
   });
 
-  const [selectedUserDetails, setSelectedUserDetails] = useState({
-    department: "",
-    unit: ""
-  });
-
-
   useEffect(() => {
     setData(datas);
   }, [datas]);
@@ -155,31 +149,6 @@ export const CreateFile = ({ datas, getAllData }) => {
       location_id: row.location_id || "", // Set location_id from the row data
     });
     setOpen(true);
-  };
-
-  const handleUserSelect = (e) => {
-  const selectedUserId = e.target.value;
-  
-  // Find the selected user from usersList
-  const selectedUser = usersList.find(u => u.id === parseInt(selectedUserId));
-  
-  setForwardData({
-    ...forwardData,
-    user_id: selectedUserId,
-  });
-
-  // Set department and unit details
-  if (selectedUser) {
-      setSelectedUserDetails({
-        department: selectedUser.department_name || selectedUser.department?.name || "",
-        unit: selectedUser.unit_name || selectedUser.unit?.name || ""
-      });
-    } else {
-      setSelectedUserDetails({
-        department: "",
-        unit: ""
-      });
-    }
   };
 
   const handleEdit = async () => {
@@ -557,130 +526,106 @@ export const CreateFile = ({ datas, getAllData }) => {
       </Modal>
 
       {/* Forward Modal */}
-    <Modal
-      show={openDrawer}
-      onHide={handleDrawerClose}
-      className="file-modal-wrapper"
-      centered
-    >
-      <Modal.Header closeButton className="file-modal-header">
-        <Modal.Title className="file-modal-title">Forward File</Modal.Title>
-      </Modal.Header>
+      <Modal
+        show={openDrawer}
+        onHide={handleDrawerClose}
+        className="file-modal-wrapper"
+        centered
+      >
+        <Modal.Header closeButton className="file-modal-header">
+          <Modal.Title className="file-modal-title">Forward File</Modal.Title>
+        </Modal.Header>
 
-      <Modal.Body className="file-modal-body">
-        {/* Hidden loginUser */}
-        <input type="hidden" value={forwardData.loginUser} />
+        <Modal.Body className="file-modal-body">
+          {/* Hidden loginUser */}
+          <input type="hidden" value={forwardData.loginUser} />
 
-        {/* User Select */}
-        <Form.Group className="mb-3">
-          <Form.Label>Forward To (User) <span className="file-required-asterisk">*</span></Form.Label>
-          <Form.Select
-            value={forwardData.user_id || ""}
-            onChange={handleUserSelect}
-            style={{ height: "45px" }}
+          {/* User Select */}
+
+          <Form.Group className="mb-3">
+            <Form.Label>Forward To (User)</Form.Label>
+            <Form.Select
+              value={forwardData.user_id || ""}
+              onChange={(e) =>
+                setForwardData({
+                  ...forwardData,
+                  user_id: e.target.value,
+                })
+              }
+              style={{ height: "45px" }}
+            >
+              <option value="" disabled hidden>
+                -- Select User --
+              </option>
+              {usersList
+                .filter((u) => u.id !== user?.user?.id) // 👈 logged-in user won't appear
+                .map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {`${u.surname} ${u.first_name}${
+                      u.middle_name ? ` ${u.middle_name}` : ""
+                    }`}
+                  </option>
+                ))}
+            </Form.Select>
+          </Form.Group>
+
+          {/* Location Select */}
+          <Form.Group className="mb-3">
+            <Form.Label>Forward To (Location)</Form.Label>
+            <Form.Select
+              value={forwardData.location_id || ""}
+              onChange={(e) =>
+                setForwardData({
+                  ...forwardData,
+                  location_id: e.target.value,
+                })
+              }
+            >
+              <option value="" disabled hidden>
+                -- Select Location --
+              </option>
+              {locations
+                .filter((loc) => loc.id !== selectedFile?.location_id) // 👈 exclude current location
+                .map((loc) => (
+                  <option key={loc.id} value={loc.id}>
+                    {loc.name}
+                  </option>
+                ))}
+            </Form.Select>
+          </Form.Group>
+
+          {/* Remark */}
+          <Form.Group className="mb-3">
+            <Form.Label>Remark</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={forwardData.remark}
+              onChange={(e) =>
+                setForwardData({ ...forwardData, remark: e.target.value })
+              }
+            />
+          </Form.Group>
+        </Modal.Body>
+
+        <Modal.Footer className="file-modal-footer">
+          <Button
+            variant="danger"
+            className="file-btn-cancel"
+            onClick={handleDrawerClose}
           >
-            <option value="" disabled hidden>
-              -- Select User --
-            </option>
-            {usersList
-              .filter((u) => u.id !== user?.user?.id)
-              .map((u) => (
-                <option key={u.id} value={u.id}>
-                  {`${u.surname} ${u.first_name}${
-                    u.middle_name ? ` ${u.middle_name}` : ""
-                  }`}
-                </option>
-              ))}
-          </Form.Select>
-        </Form.Group>
-
-        {/* Department Display (Read-only) */}
-        <Form.Group className="mb-3">
-          <Form.Label>Department</Form.Label>
-          <Form.Control
-            type="text"
-            value={selectedUserDetails.department}
-            readOnly
-            // placeholder="Department will appear here when a user is selected"
-            style={{ 
-              backgroundColor: '#f8f9fa',
-              cursor: 'not-allowed'
-            }}
-          />
-        </Form.Group>
-
-        {/* Unit Display (Read-only) */}
-        <Form.Group className="mb-3">
-          <Form.Label>Unit</Form.Label>
-          <Form.Control
-            type="text"
-            value={selectedUserDetails.unit}
-            readOnly
-            // placeholder="Unit will appear here when a user is selected"
-            style={{ 
-              backgroundColor: '#f8f9fa',
-              cursor: 'not-allowed'
-            }}
-          />
-        </Form.Group>
-
-        {/* Location Select */}
-        <Form.Group className="mb-3">
-          <Form.Label>Forward To (Location)</Form.Label>
-          <Form.Select
-            value={forwardData.location_id || ""}
-            onChange={(e) =>
-              setForwardData({
-                ...forwardData,
-                location_id: e.target.value,
-              })
-            }
+            Close
+          </Button>
+          <Button
+            variant="success"
+            className="file-btn-update"
+            onClick={handleForwardSubmit}
+            disabled={isLoading}
           >
-            <option value="" disabled hidden>
-              -- Select Location --
-            </option>
-            {locations
-              .filter((loc) => loc.id !== selectedFile?.location_id)
-              .map((loc) => (
-                <option key={loc.id} value={loc.id}>
-                  {loc.name}
-                </option>
-              ))}
-          </Form.Select>
-        </Form.Group>
-
-        {/* Remark */}
-        <Form.Group className="mb-3">
-          <Form.Label>Remark</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={3}
-            value={forwardData.remark}
-            onChange={(e) =>
-              setForwardData({ ...forwardData, remark: e.target.value })
-            }
-          />
-        </Form.Group>
-      </Modal.Body>
-
-      <Modal.Footer className="file-modal-footer">
-        <Button
-          variant="danger"
-          className="file-btn-cancel"
-          onClick={handleDrawerClose}
-        >
-          Close
-        </Button>
-        <Button
-          variant="success"
-          className="file-btn-update"
-          onClick={handleForwardSubmit}
-          disabled={isLoading}
-        >
-          {isLoading ? "Forwarding..." : "Forward"}
-        </Button>
-      </Modal.Footer>
-    </Modal>
+            {isLoading ? "Forwarding..." : "Forward"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

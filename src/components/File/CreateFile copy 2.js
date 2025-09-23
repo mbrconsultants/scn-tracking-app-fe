@@ -262,19 +262,10 @@ export default function CreateFile() {
                             </option>
                             {locations.map((location) => (
                               <option key={location.id} value={location.id}>
-                                {location.name}
+                                {location.name} - {location.description}
                               </option>
                             ))}
                           </Form.Select>
-                            {location_id && (
-                              <div className="mt-2 p-2 bg-light rounded">
-                                <small className="text-muted">
-                                  <strong>Description:</strong> {
-                                    locations.find(loc => loc.id === parseInt(location_id))?.description
-                                  }
-                                </small>
-                              </div>
-                            )}
                         </FormGroup>
                       </Col>
                     </Row>

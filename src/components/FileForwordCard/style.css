@@ -1,0 +1,72 @@
+.file-forward-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.file-forward-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+.file-card-header {
+  position: relative;
+  overflow: hidden;
+}
+
+.file-card-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: rotate(45deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.detail-card, .location-card {
+  transition: transform 0.2s ease;
+}
+
+.detail-card:hover, .location-card:hover {
+  transform: translateY(-1px);
+}
+
+.rounded-3 {
+  border-radius: 1rem !important;
+}
+
+.rounded-pill {
+  border-radius: 50rem !important;
+}
+
+.action-buttons .btn {
+  transition: all 0.3s ease;
+}
+
+.action-buttons .btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .file-forward-card {
+    margin: 0 10px;
+  }
+  
+  .action-buttons .btn {
+    min-width: 140px !important;
+    padding: 0.75rem 1.5rem !important;
+  }
+  
+  .share-section .btn {
+    min-width: 120px !important;
+    margin-bottom: 0.5rem;
+  }
+}

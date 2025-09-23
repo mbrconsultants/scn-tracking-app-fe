@@ -355,19 +355,53 @@ export const Tracking = () => {
       cell: (row) => <span>{row.file?.file_Number || "N/A"}</span>,
       width: "127px",
     },
+    // {
+    //   name: "Sender",
+    //   selector: (row) => row.sender?.surname,
+    //   cell: (row) => <span>{row.sender?.surname || "N/A"}</span>,
+    //   width: "85px",
+    // },
+    // {
+    //   name: "Sender Location",
+    //   selector: (row) => row.previous_location_of_the_file?.name, // backend should return location object
+    //   cell: (row) => (
+    //     <span>{row.previous_location_of_the_file?.name || "N/A"}</span>
+    //   ),
+    //   sortable: true,
+    //   width: "140px",
+    // },
     {
-      name: "Sender",
+      name: "From",
       selector: (row) => row.sender?.surname,
-      cell: (row) => <span>{row.sender?.surname || "N/A"}</span>,
-      width: "85px",
+      cell: (row) => (
+        <div style={{ fontSize: "0.85rem" }}>
+          <div>
+            {" "}
+            <b>User:</b> {row.sender?.surname || "N/A"}
+          </div>
+          <small style={{ color: "#555" }}>
+            <b style={{ fontWeight: "bolder" }}>Location:</b>{" "}
+            {row.previous_location_of_the_file?.name || "N/A"}
+          </small>
+        </div>
+      ),
+      width: "140px",
     },
     {
-      name: "Sender Location",
-      selector: (row) => row.previous_location_of_the_file?.name, // backend should return location object
+      name: "To",
+      selector: (row) => row.sender?.surname,
       cell: (row) => (
-        <span>{row.previous_location_of_the_file?.name || "N/A"}</span>
+        <div style={{ fontSize: "0.85rem" }}>
+          <div>
+            {" "}
+            <b>User:</b> {row.receiver?.surname || "N/A"}
+          </div>
+          <small style={{ color: "#555" }}>
+            <b style={{ fontWeight: "bolder" }}>Location:</b>{" "}
+            {row.current_location_of_the_tracking?.name || "N/A"}
+          </small>
+        </div>
       ),
-      sortable: true,
       width: "140px",
     },
     {
@@ -378,12 +412,47 @@ export const Tracking = () => {
       width: "157px",
     },
 
+    // {
+    //   name: "Date Sent",
+    //   selector: (row) => row.date_sent,
+    //   cell: (row) => (
+    //     <span>
+    //       {row.date_sent ? moment(row.date_sent).format("Do MMMM YYYY") : ""}
+    //     </span>
+    //   ),
+    //   width: "110px",
+    // },
+    // {
+    //   name: "Date Received",
+    //   selector: (row) => row.date_received,
+    //   cell: (row) => (
+    //     <span>
+    //       {row.date_received
+    //         ? moment(row.date_received).format("Do MMMM YYYY")
+    //         : ""}
+    //     </span>
+    //   ),
+    //   width: "120px",
+    // },
+    // {
+    //   name: "Date Rejected",
+    //   selector: (row) => row.date_rejected,
+    //   cell: (row) => (
+    //     <span>
+    //       {row.date_rejected
+    //         ? moment(row.date_rejected).format("Do MMMM YYYY")
+    //         : ""}
+    //     </span>
+    //   ),
+    //   width: "120px",
+    // },
+
     {
       name: "Date Sent",
       selector: (row) => row.date_sent,
       cell: (row) => (
         <span>
-          {row.date_sent ? moment(row.date_sent).format("Do MMMM YYYY") : ""}
+          {row.date_sent ? moment(row.date_sent).format("Do MMMM YYYY") : "N/A"}
         </span>
       ),
       width: "110px",
@@ -395,7 +464,7 @@ export const Tracking = () => {
         <span>
           {row.date_received
             ? moment(row.date_received).format("Do MMMM YYYY")
-            : ""}
+            : "N/A"}
         </span>
       ),
       width: "120px",
@@ -407,31 +476,11 @@ export const Tracking = () => {
         <span>
           {row.date_rejected
             ? moment(row.date_rejected).format("Do MMMM YYYY")
-            : ""}
+            : "N/A"}
         </span>
       ),
       width: "120px",
     },
-
-    // {
-    //   name: "Status",
-    //   selector: (row) => {
-    //     const statusInfo = getStatus(row.status_id);
-    //     return (
-    //       <span
-    //         style={{
-    //           backgroundColor: statusInfo.color,
-    //           color: "white",
-    //           padding: "8px 12px",
-    //           display: "inline-block",
-    //           borderRadius: "5px",
-    //         }}
-    //       >
-    //         {statusInfo.label}
-    //       </span>
-    //     );
-    //   },
-    // },
 
     {
       name: "Status",

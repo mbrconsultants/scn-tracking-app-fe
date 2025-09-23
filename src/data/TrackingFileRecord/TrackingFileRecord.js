@@ -153,6 +153,32 @@ export const TrackingFileRecord = ({ refreshKey }) => {
     // },
 
     {
+      name: "Date Sent",
+      selector: (row) => row.date_sent,
+      cell: (row) =>
+        row.date_sent ? moment(row.date_sent).format("Do MMM YYYY") : "N/A",
+      width: "140px",
+    },
+    {
+      name: "Date Accepted",
+      selector: (row) => row.date_received,
+      cell: (row) =>
+        row.date_received
+          ? moment(row.date_received).format("Do MMM YYYY")
+          : "N/A",
+      width: "140px",
+    },
+    {
+      name: "Date Rejected",
+      selector: (row) => row.date_rejected,
+      cell: (row) =>
+        row.date_rejected
+          ? moment(row.date_rejected).format("Do MMM YYYY")
+          : "N/A",
+      width: "140px",
+    },
+
+    {
       name: "Remarks",
       selector: (row) => row.remarks,
       cell: (row) => {
@@ -195,32 +221,6 @@ export const TrackingFileRecord = ({ refreshKey }) => {
         );
       },
       width: "160px",
-    },
-
-    {
-      name: "Date Sent",
-      selector: (row) => row.date_sent,
-      cell: (row) =>
-        row.date_sent ? moment(row.date_sent).format("Do MMM YYYY") : "N/A",
-      width: "140px",
-    },
-    {
-      name: "Date Received",
-      selector: (row) => row.date_received,
-      cell: (row) =>
-        row.date_received
-          ? moment(row.date_received).format("Do MMM YYYY")
-          : "N/A",
-      width: "140px",
-    },
-    {
-      name: "Date Rejected",
-      selector: (row) => row.date_rejected,
-      cell: (row) =>
-        row.date_rejected
-          ? moment(row.date_rejected).format("Do MMM YYYY")
-          : "N/A",
-      width: "140px",
     },
 
     // {

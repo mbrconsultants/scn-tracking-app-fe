@@ -371,7 +371,7 @@ export const Tracking = () => {
       width: "140px",
     },
     {
-      name: "Current Location",
+      name: "Present Location",
       selector: (row) => row.file?.currentLocation?.name, // backend should return location object
       cell: (row) => <span>{row.file?.currentLocation?.name || "N/A"}</span>,
       sortable: true,
@@ -644,7 +644,6 @@ export const Tracking = () => {
           {/* Hidden loginUser */}
           <input type="hidden" value={forwardData.loginUser} />
 
-          {/* Sender Location */}
           <Form.Group className="mb-3">
             <Form.Label>Sender Location</Form.Label>
             <Form.Control
@@ -654,29 +653,22 @@ export const Tracking = () => {
               disabled
             />
           </Form.Group>
-
           {/* User Select */}
           <Form.Group className="mb-3">
             <Form.Label>Forward To (User)</Form.Label>
             <Form.Select
               value={forwardData.user_id || ""}
-              onChange={(e) => {
-                const userId = e.target.value;
-                const selectedUser = usersList.find((u) => u.id == userId);
-
+              onChange={(e) =>
                 setForwardData({
                   ...forwardData,
-                  user_id: userId,
-                  department: selectedUser?.department?.name || "",
-                  unit: selectedUser?.unit?.name || "",
-                });
-              }}
+                  user_id: e.target.value,
+                })
+              }
             >
-              <option value="" disabled hidden>
-                -- Select User --
-              </option>
+              <option value="" disabled hidden></option>
+
               {usersList
-                .filter((u) => u.id !== user?.user?.id) // exclude logged-in user
+                .filter((u) => u.id !== user?.user?.id) // 👈 logged-in user won't appear
                 .map((u) => (
                   <option key={u.id} value={u.id}>
                     {`${u.surname} ${u.first_name}${
@@ -687,31 +679,28 @@ export const Tracking = () => {
             </Form.Select>
           </Form.Group>
 
-          {/* Department + Unit Row */}
-          <div className="row mb-3">
-            <div className="col-md-6">
-              <Form.Group>
-                <Form.Label>Department</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={forwardData.department || ""}
-                  readOnly
-                  disabled
-                />
-              </Form.Group>
-            </div>
-            <div className="col-md-6">
-              <Form.Group>
-                <Form.Label>Unit</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={forwardData.unit || ""}
-                  readOnly
-                  disabled
-                />
-              </Form.Group>
-            </div>
-          </div>
+          {/* Location Select */}
+          {/* <Form.Group className="mb-3">
+            <Form.Label>Location</Form.Label>
+            <Form.Select
+              value={forwardData.location_id || ""}
+              onChange={(e) =>
+                setForwardData({
+                  ...forwardData,
+                  location_id: e.target.value,
+                })
+              }
+            >
+              <option value="" disabled hidden>
+                -- Select Location --
+              </option>
+              {locations.map((loc) => (
+                <option key={loc.id} value={loc.id}>
+                  {loc.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group> */}
 
           {/* Location Select */}
           <Form.Group className="mb-3">
@@ -731,7 +720,7 @@ export const Tracking = () => {
               {locations
                 .filter(
                   (loc) => loc.id !== selectedFile?.file?.currentLocation?.id
-                ) // exclude present location
+                ) // 👈 exclude present location
                 .map((loc) => (
                   <option key={loc.id} value={loc.id}>
                     {loc.name}
@@ -744,8 +733,8 @@ export const Tracking = () => {
           <Form.Group className="mb-3">
             <Form.Label>Remark</Form.Label>
             <Form.Control
-              as="textarea"
-              rows={3}
+              as="textarea" // 👈 change from type="text"
+              rows={3} // 👈 control height
               value={forwardData.remark}
               onChange={(e) =>
                 setForwardData({ ...forwardData, remark: e.target.value })
@@ -756,7 +745,11 @@ export const Tracking = () => {
         </Modal.Body>
 
         <Modal.Footer className="file-modal-footer">
-          <Button variant="danger" onClick={handleDrawerClose}>
+          <Button
+            variant="danger"
+            // className="file-btn-cancel"
+            onClick={handleDrawerClose}
+          >
             Close
           </Button>
           <Button

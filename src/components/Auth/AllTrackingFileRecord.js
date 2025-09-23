@@ -130,7 +130,7 @@ export default function AllTracking() {
                   as="h3"
                   style={{ color: "#0A7E51", fontWeight: 120, fontSize: 20 }}
                 >
-                  Tracking File Records
+                  File Tracking History
                 </Card.Title>
               </Col>
             </Card.Header>

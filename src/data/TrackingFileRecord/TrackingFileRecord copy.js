@@ -47,7 +47,7 @@ import {
 } from "@mui/material";
 import { Card, Row, Col, Modal, Button } from "react-bootstrap";
 
-export const Tracking = () => {
+export const TrackingFileRecord = () => {
   const { user, refreshKey } = useContext(Context); // 👈 get auth user from Context
 
   console.log(user);
@@ -357,8 +357,8 @@ export const Tracking = () => {
     },
     {
       name: "Sender",
-      selector: (row) => row.sender?.surname,
-      cell: (row) => <span>{row.sender?.surname || "N/A"}</span>,
+      selector: (row) => row.sender?.first_name,
+      cell: (row) => <span>{row.sender?.first_name || "N/A"}</span>,
       width: "85px",
     },
     {

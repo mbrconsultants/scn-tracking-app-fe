@@ -35,6 +35,9 @@ const AllDepertments = React.lazy(() =>
   import("./components/Auth/AllDepertments")
 );
 const AllTracking = React.lazy(() => import("./components/Auth/AllTracking"));
+const AllTrackingFileRecord = React.lazy(() =>
+  import("./components/Auth/AllTrackingFileRecord")
+);
 
 const CreateUser = React.lazy(() => import("./components/Auth/CreateUser"));
 
@@ -464,6 +467,10 @@ const Root = () => {
                   <Route
                     path={`${process.env.PUBLIC_URL}/tracking-files`}
                     element={<AllTracking />}
+                  />
+                  <Route
+                    path={`${process.env.PUBLIC_URL}/tracking-file-records`}
+                    element={<AllTrackingFileRecord />}
                   />
                   <Route
                     path={`${process.env.PUBLIC_URL}/create-user`}

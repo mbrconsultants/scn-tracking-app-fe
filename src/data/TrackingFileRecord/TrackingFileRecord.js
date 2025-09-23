@@ -391,9 +391,16 @@ export const TrackingFileRecord = ({ refreshKey }) => {
               </div>
               <div className="modal-body">
                 {activeRemarks.length > 0 ? (
-                  <ul style={{ fontStyle: "normal", color: "#000000ff" }}>
+                  <ul
+                    style={{
+                      fontStyle: "normal",
+                      color: "#000000ff",
+                      listStyleType: "disc",
+                      paddingLeft: "20px",
+                    }}
+                  >
                     {activeRemarks.map((r, idx) => (
-                      <li key={idx}> - {r.remark}</li>
+                      <li key={idx}> {r.remark}</li>
                     ))}
                   </ul>
                 ) : (

@@ -371,7 +371,7 @@ export const Tracking = () => {
       width: "140px",
     },
     {
-      name: "Present Location",
+      name: "Current Location",
       selector: (row) => row.file?.currentLocation?.name, // backend should return location object
       cell: (row) => <span>{row.file?.currentLocation?.name || "N/A"}</span>,
       sortable: true,

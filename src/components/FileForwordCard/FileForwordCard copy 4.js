@@ -53,15 +53,6 @@ export default function FileForwardCard() {
         const res = await endpoint.get(`/file/file-number/${file_Number}`);
         console.log("single file detail", res.data.data);
         setSelectedFile(res.data.data);
-
-        // Check if file is already accepted/rejected
-        if (res.data.data.status === "accepted") {
-          setIsAccepted(true);
-          setFileStatus("accepted");
-        } else if (res.data.data.status === "rejected") {
-          setIsRejected(true);
-          setFileStatus("rejected");
-        }
       } catch {
         ErrorAlert("Failed to load file");
       }
@@ -122,32 +113,92 @@ export default function FileForwardCard() {
     }
   };
 
-  // Handle Reject
-  const handleReject = async () => {
-    if (!selectedFile?.id) return ErrorAlert("File ID is missing");
+// Handle Reject - Fixed endpoint call
+const handleReject = async () => {
+  console.log("=== REJECT DEBUG ===");
+  console.log("Selected File:", selectedFile);
+  console.log("Last Tracking:", selectedFile?.lastTracking);
+  console.log("Current User ID:", user?.user?.id);
+  
+  const trackingId = selectedFile?.lastTracking?.id;
+  console.log("Using tracking ID:", trackingId);
+  
+  if (!trackingId) {
+    return ErrorAlert("Tracking record not found. This file has not been forwarded to you.");
+  }
 
-    setLoading(true);
-    try {
-      const res = await endpoint.post(`/file-track/reject-file-tracking`, {
-        tracking_id: selectedFile.id,
-        user_id: user?.user?.id,
-        remark: rejectRemark,
-      });
+  // Check if the file is actually assigned to the current user
+  const toUserId = selectedFile?.lastTracking?.to_user_id;
+  if (toUserId !== user?.user?.id) {
+    return ErrorAlert("This file is not assigned to you. You cannot reject it.");
+  }
 
+  setLoading(true);
+  try {
+    console.log("Sending reject request with tracking_id:", trackingId);
+    
+    // Try different endpoint variations
+    const res = await endpoint.post(`/file-track/reject-file-tracking`, {
+      tracking_id: trackingId,
+      user_id: user?.user?.id,
+      remark: rejectRemark,
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log("Reject response:", res.data);
+    
+    if (res.data.success) {
       SuccessAlert(res.data.message || "File rejected successfully!");
       setIsRejected(true);
       setIsAccepted(false);
       setFileStatus("rejected");
       setRejectRemark("");
       setShowRejectModal(false);
-
       window.location.reload();
-    } catch (err) {
-      ErrorAlert(err.response?.data?.message || "Reject failed!");
-    } finally {
-      setLoading(false);
+    } else {
+      ErrorAlert(res.data.message || "Reject failed!");
     }
-  };
+  } catch (err) {
+    console.error("Reject error details:", err.response?.data || err);
+    
+    // If the main endpoint fails, try alternative endpoints
+    if (err.response?.status === 404 || err.response?.status === 400) {
+      try {
+        console.log("Trying alternative endpoint...");
+        
+        // Try alternative endpoint
+        const altRes = await endpoint.post(`/file-track/reject`, {
+          tracking_id: trackingId,
+          user_id: user?.user?.id,
+          remark: rejectRemark,
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (altRes.data.success) {
+          SuccessAlert(altRes.data.message || "File rejected successfully!");
+          setRejectRemark("");
+          setShowRejectModal(false);
+          window.location.reload();
+        } else {
+          ErrorAlert(altRes.data.message || "Reject failed with alternative endpoint!");
+        }
+      } catch (altErr) {
+        console.error("Alternative endpoint error:", altErr.response?.data || altErr);
+        ErrorAlert("Reject failed! Please check if the tracking record exists.");
+      }
+    } else {
+      ErrorAlert(err.response?.data?.message || "Reject failed!");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Handle Forward
   const handleForwardSubmit = async () => {
@@ -192,6 +243,7 @@ export default function FileForwardCard() {
   // Generate QR Code URL
   const generateQRCodeUrl = () => {
     return `${window.location.origin}/file-forward-card/${file_Number}`;
+
   };
 
   // Handle Share
@@ -226,6 +278,7 @@ export default function FileForwardCard() {
   };
 
   return (
+    
     <div className="container mt-4">
       <Row className="justify-content-center">
         <Col md={10} lg={8} xl={9}>
@@ -312,7 +365,7 @@ export default function FileForwardCard() {
                   </Row>
 
                   {/* Share Section with more height */}
-                  {selectedFile?.lastTracking?.to_user_id === user?.user?.id && selectedFile?.lastTracking?.status_id !== 3 && (
+                  {selectedFile?.lastTracking?.to_user_id === user?.user?.id && selectedFile?.lastTracking?.status_id !== 2 && (
                     <div className="share-section text-center mb-3">
                       <div className="p-3 rounded-3" style={{
                         background: 'linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%)',
@@ -351,12 +404,12 @@ export default function FileForwardCard() {
                     </div>
                   )}
 
-                  {/* Action Buttons with better spacing */}
+                    {/* Action Buttons with better spacing */}
                   <div className="action-section text-center">
                     <hr className="my-3" style={{ borderTop: '2px dashed #dee2e6' }} />
                     
-                    {/* Check if file is rejected (status = 3) - Show rejected message for ALL users */}
-                    {selectedFile?.lastTracking?.status_id === 3 ? (
+                    {/* Check if file is rejected (status = 2) - Show rejected message for ALL users */}
+                    {selectedFile?.lastTracking?.status_id === 2 ? (
                       <div className="rejected-status p-4 rounded-3" style={{
                         background: 'linear-gradient(135deg, #ffe6e6 0%, #ffcccc 100%)',
                         border: '2px solid #dc3545'
@@ -372,9 +425,11 @@ export default function FileForwardCard() {
                           </div>
                         )}
                       </div>
-                    ) : selectedFile?.lastTracking?.to_user_id === user?.user?.id ? (
+                    ) : 
+                    // Check if file is assigned to current user
+                    (selectedFile?.lastTracking?.to_user_id === user?.user?.id) ? (
                       <>
-                        {selectedFile?.lastTracking?.id && selectedFile?.lastTracking?.status_id === 1 ? (
+                        {selectedFile?.lastTracking?.status_id === 1 ? (
                           <div className="action-buttons">
                             <h5 className="text-muted mb-3">Action Required</h5>
                             <div className="d-flex justify-content-center gap-3">
@@ -415,7 +470,7 @@ export default function FileForwardCard() {
                               </Button>
                             </div>
                           </div>
-                        ) : selectedFile?.lastTracking?.status_id === 2 ? ( // Only show Forward if status is accepted (2)
+                        ) : selectedFile?.lastTracking?.status_id === 3 ? (
                           <div className="action-buttons">
                             <h5 className="text-muted mb-3">File Actions</h5>
                             <Button
@@ -500,8 +555,13 @@ export default function FileForwardCard() {
               }
             >
               <option value="" disabled></option>
+              {/* {usersList.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {`${u.surname} ${u.first_name} ${u.middle_name || ""}`}
+                </option>
+              ))} */}
               {usersList
-                .filter((u) => u.id !== user?.user?.id)
+                .filter((u) => u.id !== user?.user?.id) // 👈 logged-in user won't appear
                 .map((u) => (
                   <option key={u.id} value={u.id}>
                     {`${u.surname} ${u.first_name}${

@@ -19,6 +19,8 @@ export const TrackingFileRecord = ({ refreshKey }) => {
   const [showRemarksModal, setShowRemarksModal] = useState(false);
   const [activeRemarks, setActiveRemarks] = useState([]);
   const [activeFileNumber, setActiveFileNumber] = useState(null);
+  const [searchValue, setSearchValue] = useState("");
+  const [showNoRecordMsg, setShowNoRecordMsg] = useState(false);
 
   // 🔍 search files by file_number
   const handleSearchChange = async (event, value) => {
@@ -69,6 +71,8 @@ export const TrackingFileRecord = ({ refreshKey }) => {
         `/file-track/get-tracking-details-by-file-id/${value.id}`
       );
 
+      // setSelectedFile(res.data.data.file);
+
       // Use your controller’s response shape
       setTrackingList(res.data.data.tracking_history || []);
       console.log("tracking res", res.data.data.tracking_history);
@@ -78,6 +82,36 @@ export const TrackingFileRecord = ({ refreshKey }) => {
       setLoading(false);
     }
   };
+
+  // const handleFileSelect = async (event, value) => {
+  //   if (!value) return;
+  //   setSelectedFile(value);
+  //   setLoading(true);
+  //   try {
+  //     const res = await endpoint.get(
+  //       `/file-track/get-tracking-details-by-file-id/${value.id}`
+  //     );
+
+  //     const history = res.data.data.tracking_history || [];
+
+  //     if (history.length > 0) {
+  //       setTrackingList(history);
+  //       setShowNoRecordMsg(false); // hide message if records exist
+  //     } else {
+  //       setTrackingList([]);
+  //       setShowNoRecordMsg(true); // show "no record"
+  //       // ⏳ auto-hide after 30s
+  //       setTimeout(() => setShowNoRecordMsg(false), 30000);
+  //     }
+
+  //     // ✅ also update file details from backend, not just `value`
+  //     setSelectedFile(res.data.data.file);
+  //   } catch (err) {
+  //     console.error("Error fetching tracking records:", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // 📊 Table columns
   const columns = [
@@ -126,7 +160,7 @@ export const TrackingFileRecord = ({ refreshKey }) => {
           </div>
           <small style={{ color: "#555" }}>
             <b style={{ fontWeight: "bolder" }}>Location:</b>{" "}
-            {row.current_location_of_the_tracking?.name || "N/A"}
+            {row.to_location_of_the_tracking?.name || "N/A"}
           </small>
         </div>
       ),
@@ -278,7 +312,7 @@ export const TrackingFileRecord = ({ refreshKey }) => {
         <div style={{ width: "200px" }}></div>
 
         {/* Center: Appeal Number */}
-        <div className="text-center flex-grow-1">
+        {/* <div className="text-center flex-grow-1">
           {selectedFile ? (
             <h5 className="mb-0" style={{ fontWeight: "600" }}>
               <span style={{ fontWeight: "bolder" }}>
@@ -290,37 +324,109 @@ export const TrackingFileRecord = ({ refreshKey }) => {
                 Current Location:
               </span>{" "}
               <span>{selectedFile.currentLocation?.name}</span>
+              <span>({selectedFile.currentLocation?.description})</span>
             </h5>
           ) : (
-            <h5 className="mb-0 text-muted">No Appeal Selected</h5>
+            <h5 className="mb-0 text-muted">No File Selected</h5>
+          )}
+        </div> */}
+
+        <div className="text-center flex-grow-1">
+          {selectedFile ? (
+            trackingList.length > 0 ? (
+              <h5 className="mb-0" style={{ fontWeight: "600" }}>
+                <span style={{ fontWeight: "bolder" }}>
+                  Tracking File Records For:
+                </span>{" "}
+                <span>{selectedFile.file_number}</span>
+                <br />
+                <span style={{ fontWeight: "bolder" }}>
+                  Current Location:
+                </span>{" "}
+                <span>{selectedFile.currentLocation?.name}</span>
+                {/* <span>{selectedFile.current_location_of_the_file?.name}</span> */}
+                <span>
+                  ({selectedFile.currentLocation?.description || "N/A"})
+                </span>
+              </h5>
+            ) : (
+              <h5 className="mb-0 text-muted">
+                This file has no tracking record
+              </h5>
+            )
+          ) : (
+            <h5 className="mb-0 text-muted">No File Selected</h5>
           )}
         </div>
 
         {/* <div className="text-center flex-grow-1">
           {selectedFile ? (
-            <h5 className="mb-0" style={{ fontWeight: "600" }}>
-              <span style={{ fontWeight: "bolder" }}>
-                Tracking File Records For:
-              </span>{" "}
-              <span>{{selectedFile.file_number}}</span>
-              <br />
-              <span style={{ fontWeight: "bolder" }}>
-                Current Location:
-              </span>{" "}
-              <span>{selectedFile.current_location_of_the_file?.name}</span>
-            </h5>
+            showNoRecordMsg ? (
+              <h5 className="mb-0 text-muted">
+                This file has no tracking record
+              </h5>
+            ) : (
+              <h5 className="mb-0" style={{ fontWeight: "600" }}>
+                <span style={{ fontWeight: "bolder" }}>
+                  Tracking File Records For:
+                </span>{" "}
+                <span>{selectedFile.file_number}</span>
+                <br />
+                <span style={{ fontWeight: "bolder" }}>
+                  Current Location:
+                </span>{" "}
+                <span>{selectedFile.currentLocation?.name}</span>
+                <span>
+                  ({selectedFile.currentLocation?.description || "N/A"})
+                </span>
+              </h5>
+            )
           ) : (
-            <h5 className="mb-0 text-muted">No Appeal Selected</h5>
+            <h5 className="mb-0 text-muted">No File Selected</h5>
           )}
         </div> */}
 
         {/* Right: Search */}
         <div>
-          <Autocomplete
+          {/* <Autocomplete
             options={searchOptions}
             getOptionLabel={(option) => option.file_number}
             onInputChange={handleSearchChange}
             onChange={handleFileSelect}
+            sx={{ width: 220 }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Search"
+                variant="outlined"
+                size="small"
+                sx={{
+                  "& .MuiInputBase-root": {
+                    height: 50,
+                    fontSize: "0.8rem",
+                    paddingRight: 0,
+                  },
+                  "& .MuiInputLabel-root": {
+                    fontSize: "0.75rem",
+                  },
+                }}
+              />
+            )}
+          /> */}
+
+          <Autocomplete
+            options={searchOptions}
+            getOptionLabel={(option) => option.file_number || ""}
+            disableClearable
+            inputValue={searchValue} // 👈 control value
+            onInputChange={(event, newInputValue) => {
+              setSearchValue(newInputValue); // update input field
+              handleSearchChange(event, newInputValue); // still fetch
+            }}
+            onChange={async (event, value) => {
+              await handleFileSelect(event, value);
+              setSearchValue(""); // 👈 clear input after selection
+            }}
             sx={{ width: 220 }}
             renderInput={(params) => (
               <TextField
@@ -371,17 +477,15 @@ export const TrackingFileRecord = ({ refreshKey }) => {
         >
           <div className="modal-dialog modal-lg">
             <div className="modal-content">
-              <div className="modal-header">
+              <div
+                className="modal-header"
+                style={{ backgroundColor: "#235c45ff" }}
+              >
                 <h5
                   className="modal-title"
-                  style={{ color: "#235c45ff", fontWeight: "bold" }}
+                  style={{ color: "#fff", fontWeight: "bold" }}
                 >
                   All Remarks
-                  {/* <b>
-                    {(activeFileNumber || selectedFile?.file_number) && (
-                      <> {activeFileNumber || selectedFile?.file_number}</>
-                    )}
-                  </b> */}
                 </h5>
                 <button
                   type="button"
@@ -394,13 +498,32 @@ export const TrackingFileRecord = ({ refreshKey }) => {
                   <ul
                     style={{
                       fontStyle: "normal",
-                      color: "#000000ff",
+                      color: "#235c45ff",
+                      // color: "#000000ff",
                       listStyleType: "disc",
                       paddingLeft: "20px",
                     }}
                   >
                     {activeRemarks.map((r, idx) => (
-                      <li key={idx}> {r.remark}</li>
+                      // <li key={idx}> {r.remark}</li>
+                      <li key={idx}>
+                        <strong>
+                          {r.user
+                            ? `${r.user.surname || ""}`.trim()
+                            : "Unknown User"}
+                        </strong>
+                        (remark): {r.remark}
+                      </li>
+                      // <li key={idx}>
+                      //   <strong>
+                      //     {r.user
+                      //       ? `${r.user.surname || ""} ${
+                      //           r.user.first_name || ""
+                      //         } ${r.user.middle_name || ""}`.trim()
+                      //       : "Unknown User"}
+                      //   </strong>
+                      //   : {r.remark}
+                      // </li>
                     ))}
                   </ul>
                 ) : (

@@ -374,7 +374,8 @@ export default function FileForwardCard() {
                       </div>
                     ) : selectedFile?.lastTracking?.to_user_id === user?.user?.id ? (
                       <>
-                        {selectedFile?.lastTracking?.id && selectedFile?.lastTracking?.status_id === 1 ? (
+                        {/* Show Accept/Reject buttons when status_id = 1 AND is_forwarded = false */}
+                        {selectedFile?.lastTracking?.status_id === 1 && selectedFile?.lastTracking?.is_forwarded === false ? (
                           <div className="action-buttons">
                             <h5 className="text-muted mb-3">Action Required</h5>
                             <div className="d-flex justify-content-center gap-3">
@@ -415,7 +416,7 @@ export default function FileForwardCard() {
                               </Button>
                             </div>
                           </div>
-                        ) : selectedFile?.lastTracking?.status_id === 2 ? ( // Only show Forward if status is accepted (2)
+                        ) : selectedFile?.lastTracking?.status_id === 2 && selectedFile?.lastTracking?.is_forwarded === false ? ( 
                           <div className="action-buttons">
                             <h5 className="text-muted mb-3">File Actions</h5>
                             <Button

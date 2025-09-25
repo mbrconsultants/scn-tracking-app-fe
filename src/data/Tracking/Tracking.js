@@ -381,7 +381,7 @@ export const Tracking = () => {
           </div>
           <small style={{ color: "#555" }}>
             <b style={{ fontWeight: "bolder" }}>Location:</b>{" "}
-            {row.previous_location_of_the_file?.name || "N/A"}
+            {row.previous_location_of_the_tracking?.name || "N/A"}
           </small>
         </div>
       ),
@@ -398,7 +398,7 @@ export const Tracking = () => {
           </div>
           <small style={{ color: "#555" }}>
             <b style={{ fontWeight: "bolder" }}>Location:</b>{" "}
-            {row.current_location_of_the_tracking?.name || "N/A"}
+            {row.to_location_of_the_tracking?.name || "N/A"}
           </small>
         </div>
       ),
@@ -406,8 +406,10 @@ export const Tracking = () => {
     },
     {
       name: "Current Location",
-      selector: (row) => row.file?.currentLocation?.name, // backend should return location object
-      cell: (row) => <span>{row.file?.currentLocation?.name || "N/A"}</span>,
+      selector: (row) => row.current_location_of_the_tracking?.name, // backend should return location object
+      cell: (row) => (
+        <span>{row.current_location_of_the_tracking?.name || "N/A"}</span>
+      ),
       sortable: true,
       width: "157px",
     },

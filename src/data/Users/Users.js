@@ -50,6 +50,7 @@ export const Users = ({ refreshKey }) => {
   const [isLoading, setLoading] = useState(false);
   const [units, setUnits] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const sigPadRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -63,6 +64,7 @@ export const Users = ({ refreshKey }) => {
     role_id: "",
     department_id: "",
     unit_id: "",
+    location_id: "",
     signature_url: "",
   });
 
@@ -81,6 +83,7 @@ export const Users = ({ refreshKey }) => {
     getUsersroles();
     getUnits();
     getDepartments();
+    getLocations();
   }, [refreshKey]);
 
   // const clearSignature = () => {
@@ -115,6 +118,15 @@ export const Users = ({ refreshKey }) => {
       console.error("Error fetching users:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getLocations = async () => {
+    try {
+      const res = await endpoint.get("/location/getAllLocations");
+      setLocations(res.data.data);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -268,6 +280,7 @@ export const Users = ({ refreshKey }) => {
       role_id: row.role_id || "",
       department_id: row.department_id || "",
       unit_id: row.unit_id || "",
+      location_id: row.location_id || "",
       signature_url: row.signature_url || "",
     });
     setShowEditModal(true);
@@ -676,6 +689,25 @@ export const Users = ({ refreshKey }) => {
                       {u.name}
                     </option>
                   ))}
+              </Form.Select>
+            </Form.Group>
+            {/* Location */}
+            <Form.Group className="mb-3">
+              <Form.Label>Location</Form.Label>
+              <Form.Select
+                name="location_id"
+                value={value.location_id}
+                onChange={(e) =>
+                  setValue({ ...value, location_id: e.target.value })
+                }
+                required
+              >
+                <option value="">-- select location --</option>
+                {locations.map((loc) => (
+                  <option key={loc.id} value={loc.id}>
+                    {loc.name} {loc.description ? `(${loc.description})` : ""}
+                  </option>
+                ))}
               </Form.Select>
             </Form.Group>
 

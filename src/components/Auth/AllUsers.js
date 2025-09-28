@@ -17,6 +17,7 @@ export default function AllUsers() {
   const [roles, setRoles] = useState([]);
   const [units, setUnits] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const sigPadRef = useRef(null);
 
@@ -30,6 +31,7 @@ export default function AllUsers() {
     unit_id: "",
     department_id: "",
     role_id: "",
+    location_id: "",
     signature_url: null,
     // signature_drawn: null,
   });
@@ -60,6 +62,7 @@ export default function AllUsers() {
       unit_id: "",
       department_id: "",
       role_id: "",
+      location_id: "",
       signature_url: null,
       // signature_drawn: null,
     });
@@ -93,10 +96,19 @@ export default function AllUsers() {
         console.error(err);
       }
     };
+    const getLocations = async () => {
+      try {
+        const res = await endpoint.get("/location/getAllLocations");
+        setLocations(res.data.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
     getRoles();
     getUnits();
     getDepartments();
+    getLocations();
   }, []);
 
   // handle input
@@ -329,6 +341,24 @@ export default function AllUsers() {
                       {u.name}
                     </option>
                   ))}
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Location</Form.Label>
+              <Form.Select
+                name="location_id"
+                value={formData.location_id}
+                onChange={handleChange}
+                required
+              >
+                <option value="">-- select location --</option>
+                {locations.map((loc) => (
+                  <option key={loc.id} value={loc.id}>
+                    {loc.name}{" "}
+                    {/* or loc.location_name depending on your API */}
+                  </option>
+                ))}
               </Form.Select>
             </Form.Group>
 

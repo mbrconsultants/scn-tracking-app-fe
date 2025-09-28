@@ -304,7 +304,7 @@ export const Users = ({ refreshKey }) => {
       style: { textAlign: "right" },
       sortable: true,
 
-      width: "250px",
+      width: "200px",
       cell: (row) => (
         <div className="fs-14 fw-semibold  ">
           {row.email !== null ? row.email : ""}
@@ -334,6 +334,20 @@ export const Users = ({ refreshKey }) => {
           {row.unit?.name ?? row.unit ?? ""}
         </div>
       ),
+    },
+    {
+      name: "Location",
+      selector: (row) => row.location,
+      cell: (row) => (
+        <div className="fs-12 fw-bold">
+          {row.location?.name ?? row.location ?? "N/A"}
+          <br />
+          <small className="text-muted">
+            ({row.location?.description || "N/A"})
+          </small>
+        </div>
+      ),
+      sortable: true,
     },
 
     {

@@ -120,18 +120,7 @@ export const TrackingFileRecord = ({ refreshKey }) => {
       cell: (row, index) => index + 1,
       width: "57px",
     },
-    // {
-    //   name: "Appeal Number",
-    //   selector: (row) => row.file?.file_number,
-    //   cell: (row) => <span>{row.file?.file_number || "N/A"}</span>,
-    //   width: "127px",
-    // },
-    // {
-    //   name: "From",
-    //   selector: (row) => row.sender?.surname,
-    //   cell: (row) => <span>{row.sender?.surname || "N/A"}</span>,
-    //   width: "85px",
-    // },
+
     {
       name: "From",
       selector: (row) => row.sender?.surname,
@@ -166,25 +155,6 @@ export const TrackingFileRecord = ({ refreshKey }) => {
       ),
       width: "160px",
     },
-
-    // {
-    //   name: "Remarks",
-    //   selector: (row) => row.remarks,
-    //   cell: (row) => (
-    //     <div>
-    //       {row.remarks && row.remarks.length > 0 ? (
-    //         row.remarks.map((r, idx) => (
-    //           <div key={idx} style={{ fontSize: "0.85rem" }}>
-    //             • {r.remark}
-    //           </div>
-    //         ))
-    //       ) : (
-    //         <span>No remarks</span>
-    //       )}
-    //     </div>
-    //   ),
-    //   width: "200px",
-    // },
 
     {
       name: "Date Sent",

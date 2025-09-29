@@ -286,6 +286,7 @@ export const CreateFile = ({ datas, getAllData }) => {
                 onClick={() => openQRCodeInNewTab(row.qr_Code_Url)}
                 title="Click to view QR code in new tab"
               />
+              <span style={{fontSize: "10px"}}>{row.file_Number}</span>
             </>
           ) : (
             <span className="text-muted">No QR</span>
@@ -477,7 +478,7 @@ export const CreateFile = ({ datas, getAllData }) => {
                     </option>
                     {locations.map((location) => (
                       <option key={location.id} value={location.id}>
-                        {location.name}
+                        {location.name} - (<span>{location.description}</span>)
                       </option>
                     ))}
                   </Form.Select>
